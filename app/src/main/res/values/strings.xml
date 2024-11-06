@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">UserInterface</string>
+    <string name="book_connect">
+        Book Connect 회원가입
+    </string>
 </resources>
