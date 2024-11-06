@@ -6,9 +6,19 @@
     android:layout_height="917dp"
     android:clipToOutline="true"
     android:background="#FFFFFF">
-    <!-- Auto layout, variables, and unit scale are not yet supported -->
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Widget.Design.AppBarLayout">
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            />
+    </com.google.android.material.appbar.AppBarLayout>
     <Button
-        android:id="@+id/image"
+        android:id="@+id/back"
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:layout_alignParentLeft="true"
@@ -110,9 +120,9 @@
     <Button
         android:id="@+id/rectangle_1"
         android:layout_width="344dp"
-        android:layout_height="52dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="23dp"
+        android:layout_marginLeft="33dp"
         android:layout_marginRight="23dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="560dp"
