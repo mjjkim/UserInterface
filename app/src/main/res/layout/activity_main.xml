@@ -62,7 +62,7 @@
         android:background="@drawable/rectangle_2"
         />
     <TextView
-        android:id="@+id/book"
+        android:id="@+id/et_sign"
         android:layout_width="194dp"
         android:layout_height="34dp"
         android:layout_alignParentLeft="true"
