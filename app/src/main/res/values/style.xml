@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="book_connect">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">15dp</item>
         <item name="android:textColor">#36848B</item>
+    </style>
+    <style name="some_id">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#55A9DB</item>
     </style>
 </resources>
