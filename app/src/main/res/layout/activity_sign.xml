@@ -6,17 +6,6 @@
     android:layout_height="917dp"
     android:clipToOutline="true"
     android:background="#FFFFFF">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Widget.Design.AppBarLayout">
-        <Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            />
-    </com.google.android.material.appbar.AppBarLayout>
     <Button
         android:id="@+id/back"
         android:layout_width="37dp"
