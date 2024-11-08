@@ -3,6 +3,7 @@ package com.example.userinterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,8 +25,6 @@ public class sign extends AppCompatActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-
-
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -33,12 +32,16 @@ public class sign extends AppCompatActivity {
             }
         });
 
-        // 아이디, 중복 확인, 비밀번호, 비밀번호 확인 모두 다 입력될 경우에만 돌아가게 코딩 필요
-        binding.enrollback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        // 회원 가입 버튼 구현 중
+        Button enrollBack = findViewById(R.id.enrollback);
+        enrollBack.setOnClickListener(v -> {
+            EditText emailLogin = findViewById(R.id.email);
+            EditText passwordLogin = findViewById(R.id.password);
+            EditText checkpasswordLogin = findViewById(R.id.checkpassword);
+
+            String email = emailLogin.getText().toString();
+            String password = passwordLogin.getText().toString();
+            String checkpassword = checkpasswordLogin.getText().toString();
         });
 
     }
