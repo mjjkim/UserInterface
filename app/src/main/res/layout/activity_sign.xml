@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:andorid="http://schemas.android.com/tools"
     android:id="@+id/android_com"
     android:layout_width="412dp"
     android:layout_height="917dp"
@@ -25,7 +24,7 @@
         android:layout_marginLeft="71dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="47dp"
-        android:text="회원 가입"
+        android:text="회원가입"
         android:textAppearance="@style/some_id"
         android:gravity="top"
         />
@@ -42,7 +41,6 @@
         android:gravity="top"
         />
     <EditText
-        andorid:id="@+id/email"
         android:layout_width="340dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
@@ -80,7 +78,6 @@
         android:layout_marginTop="395dp"
         app:passwordToggleEnabled="true">
         <EditText
-            android:id="@+id/password"
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
@@ -109,7 +106,6 @@
         android:layout_marginTop="485dp"
         app:passwordToggleEnabled="true">
         <EditText
-            android:id="@+id/checkpassword"
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
@@ -120,7 +116,7 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-        android:id="@+id/enrollback"
+        android:id="@+id/rectangle_1"
         android:layout_width="344dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
@@ -128,7 +124,7 @@
         android:layout_marginRight="23dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="560dp"
-        android:text="회원 가입"
+        android:text="로그인"
         android:background="@drawable/rectangle_2"
         />
 </RelativeLayout>
