@@ -107,7 +107,7 @@
         android:background="@drawable/rectangle_1"
         />
     <Button
-        android:id="@+id/rectangle_1"
+        android:id="@+id/enrollback"
         android:layout_width="344dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
