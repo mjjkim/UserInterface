@@ -14,7 +14,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.userinterface.databinding.ActivitySignBinding;
 
 public class sign extends AppCompatActivity {
+
     private Button back;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,10 +24,11 @@ public class sign extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         back = binding.back;
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                finish();
             }
         });
 
