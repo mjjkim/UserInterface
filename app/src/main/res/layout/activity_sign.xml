@@ -41,6 +41,7 @@
         android:gravity="top"
         />
     <EditText
+        android:id="@+id/email"
         android:layout_width="340dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
@@ -78,6 +79,7 @@
         android:layout_marginTop="395dp"
         app:passwordToggleEnabled="true">
         <EditText
+            android:id="@+id/password"
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
@@ -106,6 +108,7 @@
         android:layout_marginTop="485dp"
         app:passwordToggleEnabled="true">
         <EditText
+            android:id="@+id/checkpassword"
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
@@ -116,7 +119,7 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-        android:id="@+id/rectangle_1"
+        android:id="@+id/enrollback"
         android:layout_width="344dp"
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
