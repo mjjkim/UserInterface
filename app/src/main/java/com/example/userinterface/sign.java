@@ -26,5 +26,13 @@ public class sign extends AppCompatActivity {
             }
         });
 
+        // 아이디, 중복 확인, 비밀번호, 비밀번호 확인 모두 다 입력될 경우에만 돌아가게 코딩 필요
+        binding.enrollback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
     }
 }
