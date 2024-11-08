@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         binding.etSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(MainActivity.this, sign.class), 1000);
+                startActivity (new Intent(MainActivity.this, sign.class));
             }
         });
     }
