@@ -7,10 +7,13 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.userinterface.databinding.ActivitySignBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class sign extends AppCompatActivity {
 
     private Button back;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +21,12 @@ public class sign extends AppCompatActivity {
         ActivitySignBinding binding = ActivitySignBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        back = binding.back;
-        back.setOnClickListener(new View.OnClickListener() {
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+
+
+        binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -34,5 +41,16 @@ public class sign extends AppCompatActivity {
             }
         });
 
+    }
+
+    // 현재 로그인되어 있는지 확인
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            reload();
+        }
     }
 }

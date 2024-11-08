@@ -16,11 +16,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-        //회원가입 클릭시 회원가입 창으로 이동
+        //회원 가입 클릭시 회원 가입 창으로 이동
         binding.etSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(MainActivity.this, sign.class), 1000);
+                startActivity(new Intent(MainActivity.this, sign.class));
             }
         });
     }
