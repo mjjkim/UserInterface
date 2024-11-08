@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToOutline="true"
-    android:background="#F0EBEB"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     android:gravity="center">
     <TextView
