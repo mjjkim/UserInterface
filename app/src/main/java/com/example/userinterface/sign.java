@@ -14,7 +14,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.userinterface.databinding.ActivitySignBinding;
 
 public class sign extends AppCompatActivity {
+
     private Button back;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
