@@ -48,7 +48,7 @@
         android:layout_marginRight="23dp"
         android:layout_alignParentTop="true"
         android:background="@drawable/rectangle_1"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:paddingStart="16dp"
         />
     <!-- Auto layout, variables, and unit scale are not yet supported -->
