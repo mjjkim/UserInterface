@@ -21,6 +21,9 @@ import com.google.firebase.auth.SignInMethodQueryResult;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    // 남은 문제 : 아이디만 입력하고 회원 가입 버튼 누르는 경우, 회원 가입 버튼 누르고 홈 화면으로 안 돌아가는 거
+    // 아이다랑 비밀번호 조건 예시 적어놓기
+
     private Button back;
     private FirebaseAuth mAuth;
     private boolean isEmailAvailable = false; // 이메일 중복 여부 저장
