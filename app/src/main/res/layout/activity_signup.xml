@@ -48,6 +48,8 @@
         android:layout_marginLeft="33dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="268dp"
+        android:hint="aaa@email.com"
+        android:textColorHint="#81000000"
         android:background="@drawable/rectangle_1"
         />
 
