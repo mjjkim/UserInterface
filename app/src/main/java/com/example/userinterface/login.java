@@ -7,21 +7,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.userinterface.databinding.ActivityLoginBinding;
 import com.example.userinterface.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
 
         //회원가입 클릭시 회원가입 창으로 이동
-        binding.etSign.setOnClickListener(new View.OnClickListener() {
+        binding.tvSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity (new Intent(MainActivity.this, sign.class));
+                startActivity (new Intent(login.this, sign.class));
             }
         });
     }
