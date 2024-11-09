@@ -3,14 +3,12 @@ package com.example.userinterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.userinterface.databinding.ActivityLoginBinding;
-import com.example.userinterface.databinding.ActivityMainBinding;
 
-public class login extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +20,7 @@ public class login extends AppCompatActivity {
         binding.tvSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity (new Intent(login.this, sign.class));
+                startActivity (new Intent(LoginActivity.this, SignUpActivity.class));
             }
         });
     }

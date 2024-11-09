@@ -7,11 +7,11 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.userinterface.databinding.ActivitySignBinding;
+import com.example.userinterface.databinding.ActivitySignupBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class sign extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     private Button back;
     private FirebaseAuth mAuth;
@@ -19,7 +19,7 @@ public class sign extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivitySignBinding binding = ActivitySignBinding.inflate(getLayoutInflater());
+        ActivitySignupBinding binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         // Initialize Firebase Auth
@@ -53,7 +53,7 @@ public class sign extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            reload();
+//            reload();
         }
     }
 }
