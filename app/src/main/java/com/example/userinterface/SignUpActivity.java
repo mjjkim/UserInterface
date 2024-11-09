@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,14 +16,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    // 남은 문제 : 아이디만 입력하고 회원 가입 버튼 누르는 경우, 회원 가입 버튼 누르고 홈 화면으로 안 돌아가는 거
-
     private Button back;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private boolean isEmailAvailable = false; // 이메일 중복 여부 저장
     private boolean isDuplicateCheckDone = false; // 중복 확인 완료 여부
 
@@ -36,6 +37,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        // Firestore 인스턴스 초기화
+        db = FirebaseFirestore.getInstance();
 
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,53 +49,54 @@ public class SignUpActivity extends AppCompatActivity {
 
         // 중복 확인 버튼 기능 추가
         binding.duplicateCheck.setOnClickListener(v -> {
-            EditText emailLogin = findViewById(R.id.email);
-            String email = emailLogin.getText().toString();
+            String email = binding.email.getText().toString().trim().toLowerCase();;
 
             if (email.isEmpty()) {
                 Toast.makeText(SignUpActivity.this, "이메일을 입력해 주세요.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Firebase를 사용하여 이메일 중복 여부 확인
-            mAuth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task ->  {
-                isDuplicateCheckDone = true; // 중복 확인 완료 표시
+            // 이메일 중복 확인 플래그 초기화
+            isEmailAvailable = false;
+            isDuplicateCheckDone = false;
 
-                if (task.isSuccessful()) {
-                    SignInMethodQueryResult result = task.getResult();
-                    if (result != null && result.getSignInMethods() != null && result.getSignInMethods().isEmpty()) {
-                        // 이메일이 이미 사용 중일 때
-                        isEmailAvailable = false;
-                        isDuplicateCheckDone = true;
-                        Toast.makeText(SignUpActivity.this, "이미 사용 중인 이메일입니다.", Toast.LENGTH_SHORT).show();
-                        emailLogin.requestFocus();
-                    }
-                    else {
-                        // 이메일이 이미 사용 가능할 때
-                        isEmailAvailable = true;
-                        isDuplicateCheckDone = true;
-                        Toast.makeText(SignUpActivity.this, "사용 가능한 아이디입니다.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    // 중복 확인 실패
-                    isEmailAvailable = false;
-                    isDuplicateCheckDone = false;
-                    Toast.makeText(SignUpActivity.this, "중복 확인에 실패했습니다. 다시 시도해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            // 이메일 형식 확인
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(SignUpActivity.this, "유효한 이메일 주소를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            db.collection("users")
+                    .whereEqualTo("email", email)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                // 이메일이 이미 존재하는 경우
+                                isEmailAvailable = false;
+                                Toast.makeText(SignUpActivity.this, "이미 사용 중인 이메일입니다.", Toast.LENGTH_SHORT).show();
+                                binding.enrollback.setEnabled(false); // 이미 사용 중인 이메일이라면 회원가입 버튼 비활성화
+                            } else {
+                                // 사용 가능한 이메일인 경우
+                                isEmailAvailable = true;
+                                Toast.makeText(SignUpActivity.this, "사용 가능한 이메일입니다.", Toast.LENGTH_SHORT).show();
+                                binding.enrollback.setEnabled(true); // 이메일 중복 확인 후 회원가입 버튼 활성화
+                            }
+                        } else {
+                            // Firestore 오류 처리
+                            isEmailAvailable = false;
+                            Toast.makeText(SignUpActivity.this, "이메일 중복 확인 실패", Toast.LENGTH_SHORT).show();
+                        }
+                        isDuplicateCheckDone = true;  // 중복 확인 완료
+                    });
         });
 
         // 회원 가입 버튼 구현 중
-        Button enrollBack = findViewById(R.id.enrollback);
-        enrollBack.setOnClickListener(v -> {
-            EditText emailLogin = findViewById(R.id.email);
-            EditText passwordLogin = findViewById(R.id.password);
-            EditText checkpasswordLogin = findViewById(R.id.checkpassword);
-
-            String email = emailLogin.getText().toString();
-            String password = passwordLogin.getText().toString();
-            String checkpassword = checkpasswordLogin.getText().toString();
+        binding.enrollback.setOnClickListener(v -> {
+            String email = binding.email.getText().toString();
+            String password = binding.password.getText().toString();
+            String checkpassword = binding.checkpassword.getText().toString();
 
             if(!isDuplicateCheckDone) {
                 Toast.makeText(SignUpActivity.this, "이메일 중복 확인을 먼저 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
@@ -106,7 +110,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             if(!isValidPassword(password)) {
                 Toast.makeText(this, "비밀번호는 8자 이상, 대문자, 소문자, 숫자 특수 문자를 포함해야 합니다.", Toast.LENGTH_SHORT).show();
-                passwordLogin.requestFocus();
                 return;
             }
 
@@ -114,36 +117,46 @@ public class SignUpActivity extends AppCompatActivity {
                 // 비밀번호와 비밀번호 확인히 일치하지 않는 경우
                 Toast.makeText(this, "비밀번호와 비밀번호 확인이 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
                 // 비밀번호 입력란으로 포커스 이동
-                passwordLogin.requestFocus();
+                binding.password.requestFocus();
                 return;
             }
 
+            // Firebase Auth로 회원 가입 처리
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d("UI", "createUserWithEmail:success");
+                                // 회원가입 성공
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                updateUI(user);
-                            }
-                            else {
-                                // 회원 가입 실패, 중복된 이메일 확인
-                                if (task.getException() != null && task.getException().getMessage().contains("email address is already in use")) {
-                                    Toast.makeText(SignUpActivity.this, "이미 사용 중인 이메일입니다.", Toast.LENGTH_SHORT).show();
-                                    emailLogin.requestFocus();
+                                if (user != null) {
+                                    String userEmail = user.getEmail();
+                                    // Firestore에 사용자 정보 저장
+                                    db.collection("users").document(user.getUid())
+                                            .set(new HashMap<String, Object>() {{
+                                                put("email", userEmail);
+                                                put("name", "새 사용자");
+                                            }})
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d("UserInterface", "이메일 저장 성공");
+                                                // 로그인 화면으로 이동
+                                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.w("UserInterface", "이메일 저장 실패", e);
+                                                Toast.makeText(SignUpActivity.this, "이메일 저장 실패", Toast.LENGTH_SHORT).show();
+                                            });
                                 }
-                                else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w("UI", "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(SignUpActivity.this, "회원 가입 실패;", Toast.LENGTH_SHORT).show();
-                                }
+                            } else {
+                                // 회원가입 실패
+                                Log.w("UserInterface", "회원가입 실패", task.getException());
+                                Toast.makeText(SignUpActivity.this, "회원 가입 실패", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         });
-
     }
 
     private boolean isValidPassword(String password) {
@@ -159,7 +172,7 @@ public class SignUpActivity extends AppCompatActivity {
             // 소문자 포함
             return false;
         }
-        if (!password.matches(".*//d.*")) {
+        if (!password.matches(".*\\d.*")) {
             // 숫자 포함
             return false;
         }
@@ -172,7 +185,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            Intent intent = new Intent(this, SignUpActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
