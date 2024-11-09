@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "610409831006",
-    "project_id": "userinterface-d7ba7",
-    "storage_bucket": "userinterface-d7ba7.firebasestorage.app"
+    "project_number": "406074095614",
+    "project_id": "userinterface-2ae1d",
+    "storage_bucket": "userinterface-2ae1d.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:610409831006:android:b855c604ba51659cebb2cf",
+        "mobilesdk_app_id": "1:406074095614:android:2c32478af6d634238e32af",
         "android_client_info": {
           "package_name": "com.example.userinterface"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC0z0RnMAwei9LRtvV8kFOFdY2FJPIkwxg"
+          "current_key": "AIzaSyD08GBVCJyW0wIbsv6MyIIuYJi7RxGnNrE"
         }
       ],
       "services": {
