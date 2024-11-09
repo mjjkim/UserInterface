@@ -1,80 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Auto layout, variables, and unit scale are not yet supported -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/login"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToOutline="true"
     android:background="#F0EBEB"
-    android:orientation="vertical"
-    android:gravity="center">
-    <TextView
-        android:id="@+id/book_connect"
+    android:orientation="vertical">
+    <FrameLayout
+        android:id="@+id/main_frame"
         android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="1">
+    </FrameLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigator"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="69dp"
-        android:layout_marginRight="69dp"
-        android:layout_marginBottom="100dp"
-        android:layout_alignParentTop="true"
-        android:text="Book Connect"
-        android:textSize="40dp"
-        android:gravity="top|center"
-        android:textColor="#55a9db"
-        />
-    <!-- Auto layout, variables, and unit scale are not yet supported -->
-    <EditText
-        android:id="@+id/et_id"
-        android:hint="ID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="23dp"
-        android:layout_marginRight="23dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/rectangle_1"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        />
-    <EditText
-        android:id="@+id/et_password"
-        android:hint="Password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="23dp"
-        android:layout_marginRight="23dp"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/rectangle_1"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        />
-    <!-- Auto layout, variables, and unit scale are not yet supported -->
-    <Button
-        android:gravity="center"
-        android:id="@+id/rectangle_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="23dp"
-        android:layout_marginRight="23dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:text="로그인"
-        android:background="@drawable/rectangle_2"
-        />
-    <TextView
-        android:id="@+id/et_sign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/book_connect"
-        android:textAppearance="@style/book_connect"
-        android:gravity="top|center"
-        android:textColor="#55A9DB"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/menu"
+        android:background="#A3D8F9"
+        app:itemIconSize="30dp"
         />
 </LinearLayout>
