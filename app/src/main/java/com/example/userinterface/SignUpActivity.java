@@ -22,7 +22,6 @@ import com.google.firebase.auth.SignInMethodQueryResult;
 public class SignUpActivity extends AppCompatActivity {
 
     // 남은 문제 : 아이디만 입력하고 회원 가입 버튼 누르는 경우, 회원 가입 버튼 누르고 홈 화면으로 안 돌아가는 거
-    // 비밀번호 조건 예시 적어놓기
 
     private Button back;
     private FirebaseAuth mAuth;
@@ -102,6 +101,13 @@ public class SignUpActivity extends AppCompatActivity {
 
             if(!isEmailAvailable) {
                 Toast.makeText(SignUpActivity.this, "이미 사용 중인 이메일입니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(!isValidPassword(password)) {
+                Toast.makeText(this, "비밀번호는 8자 이상, 대문자, 소문자, 숫자 특수 문자를 포함해야 합니다.", Toast.LENGTH_SHORT).show();
+                passwordLogin.requestFocus();
+                return;
             }
 
             if(!password.equals(checkpassword)) {
@@ -138,6 +144,30 @@ public class SignUpActivity extends AppCompatActivity {
                     });
         });
 
+    }
+
+    private boolean isValidPassword(String password) {
+        if (password.length() < 8) {
+            // 8자 이상
+            return false;
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            // 대문자 포함
+            return false;
+        }
+        if (!password.matches(".*[a-z].*")) {
+            // 소문자 포함
+            return false;
+        }
+        if (!password.matches(".*//d.*")) {
+            // 숫자 포함
+            return false;
+        }
+        if (!password.matches(".*[!@#$%^&*+=?-].*")) {
+            // 특수 문자 포함
+            return false;
+        }
+        return true;
     }
 
     private void updateUI(FirebaseUser user) {
