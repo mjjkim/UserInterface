@@ -54,7 +54,7 @@
     <!-- Auto layout, variables, and unit scale are not yet supported -->
     <Button
         android:gravity="center"
-        android:id="@+id/rectangle_1"
+        android:id="@+id/loginbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
