@@ -1,68 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0EBEB"
+    android:background="#ffffff"
     android:orientation="vertical">
-    <FrameLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="4">
-
-        <ImageView
-            android:id="@+id/half_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#000000" />
-        <EditText
-            android:id="@+id/et_input"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="34dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rectangle_3"
-            android:drawableRight="@drawable/mirror"
-            />
-
-    </FrameLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="7"
-        android:orientation="vertical">
-
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:selectionRequired="true"
-            app:singleSelection="true"
-            android:layout_gravity="center">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_sort_recent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="최신순"
-                style="?attr/materialButtonOutlinedStyle"
-                 />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_sort_popular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="인기순"
-                style="?attr/materialButtonOutlinedStyle"/>
-
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+        android:text="지웅이의 서재"
+        android:textSize="30dp"
+        android:paddingStart="40dp"
+        android:paddingTop="40dp"
+        android:drawableLeft="@drawable/book" />
 </LinearLayout>
