@@ -24,6 +24,15 @@ public class LoginActivity extends AppCompatActivity {
         ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // 전역 예외 처리기 설정
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable e) {
+                Log.e("UInterface", "App crashed: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+
         // FirebaseAuth 인스턴스 초기화
         mAuth = FirebaseAuth.getInstance();
         if (mAuth == null) {
@@ -61,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     // 로그인 성공 시 메인 액티비티로 이동
                                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    finish();
                                 }
                                 else {
                                     // 로그인 실패 시 에러 메시지 출력
