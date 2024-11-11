@@ -48,7 +48,9 @@
         android:layout_below="@+id/tv_id"
         android:layout_marginTop="10dp"
         android:paddingStart="16dp"
-        android:inputType="text"
+        android:inputType="textPassword"
+        android:hint="aaa@email.com"
+        android:textColorHint="#81000000"
         android:background="@drawable/rectangle_1"
         />
     <Button
@@ -107,13 +109,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_password"
-        app:passwordToggleEnabled="true">
+        app:passwordToggleEnabled="true"
+        app:hintEnabled="false">
         <EditText
             android:id="@+id/password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="34dp"
             android:inputType="textPassword"
+            android:hint="8자 이상, 대/소/숫자/특수 문자 포함 필요"
+            android:textColorHint="#81000000"
+            android:textSize="16dp"
             android:paddingStart="16dp"
             android:background="@drawable/rectangle_1"
             />
