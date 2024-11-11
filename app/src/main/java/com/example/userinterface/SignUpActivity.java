@@ -205,5 +205,3 @@ public class SignUpActivity extends AppCompatActivity {
     private void reload() {
     }
 }
-
-// 주석
