@@ -3,16 +3,16 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/home"
-        android:title="Home"
+        android:title="홈"
+        />
+    <item
+        android:id="@+id/nav_chanllenge"
+        android:icon="@drawable/challenge"
+        android:title="챌린지"
         />
     <item
         android:id="@+id/nav_menu"
         android:icon="@drawable/menu"
-        android:title="Menu"
-        />
-    <item
-        android:id="@+id/nav_mypage"
-        android:icon="@drawable/mypage"
-        android:title="MyPage"
+        android:title="메뉴"
         />
 </menu>

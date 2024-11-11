@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment();
                 } else if (itemId == R.id.nav_menu) {
                     selectedFragment = new MenuFragment();
-                } else if (itemId == R.id.nav_mypage) {
-                    selectedFragment = new MypageFragment();
+                } else if (itemId == R.id.nav_chanllenge) {
+                    selectedFragment = new ChallengeFragment();
                 } else {
                     selectedFragment = new HomeFragment();
                 }
