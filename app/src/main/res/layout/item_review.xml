@@ -5,6 +5,7 @@
     android:orientation="horizontal"
     android:padding="4dp">
     <ImageView
+        android:id="@+id/image_book"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/vege"/>
@@ -13,17 +14,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="책 이름"
             android:padding="4dp"
             />
         <TextView
+            android:id="@+id/tv_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="책 저자"
             android:padding="4dp"/>
         <TextView
+            android:id="@+id/tv_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoSizeTextType="uniform"

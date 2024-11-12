@@ -6,12 +6,59 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:orientation="vertical">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="지웅이의 서재"
-        android:textSize="30dp"
+        android:drawableLeft="@drawable/book"
         android:paddingStart="40dp"
-        android:paddingTop="40dp"
-        android:drawableLeft="@drawable/book" />
+        android:layout_marginTop="40dp"
+        android:text="지웅이의 서재"
+        android:textSize="30dp" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:gravity="center"
+        android:id="@+id/toggleButtonGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:singleSelection="true"
+        >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbt_recent"
+            style="@style/CustomToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recent"
+            app:cornerRadius="8dp"
+            android:textColor="@color/toggle_button_selector"
+            android:backgroundTint="@color/toggle_background_selector"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbt_popular"
+            style="@style/CustomToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/popular"
+            app:cornerRadius="8dp"
+            android:textColor="@color/toggle_button_selector"
+            android:backgroundTint="@color/toggle_background_selector"/>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_gravity="center"
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:scrollbarSize="4dp"
+            android:scrollbars="vertical"/>
+    </LinearLayout>
+
+
+
 </LinearLayout>
