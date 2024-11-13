@@ -41,9 +41,13 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.google.firebase:firebase-analytics")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+    implementation(libs.retrofit)
+    implementation(libs.converter.simplexml)
+    implementation("com.squareup.retrofit2:converter-jaxb:2.9.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

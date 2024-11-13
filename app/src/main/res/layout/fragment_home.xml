@@ -26,7 +26,7 @@
         >
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/mbt_recent"
+            android:id="@+id/mbt_record"
             style="@style/CustomToggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:textColor="@color/toggle_button_selector"
             android:backgroundTint="@color/toggle_background_selector"/>
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/mbt_popular"
+            android:id="@+id/mbt_text"
             style="@style/CustomToggleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -64,10 +64,10 @@ public class HomeFragment extends Fragment {
         MaterialButtonToggleGroup toggleGroup = binding.toggleButtonGroup;
         toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
-                if (checkedId == R.id.mbt_recent) {
+                if (checkedId == R.id.mbt_record) {
                     // 최신순 정렬
 
-                } else if (checkedId == R.id.mbt_popular) {
+                } else if (checkedId == R.id.mbt_text) {
                     // 인기순 정렬
 
                 }
