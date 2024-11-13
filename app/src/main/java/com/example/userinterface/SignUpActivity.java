@@ -107,7 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
             isNicknameDuplicateCheck = false;
 
             db.collection("users")
-                    .whereEqualTo("nickname", nickname)
+                    .whereEqualTo("nickname", nickname.toLowerCase())
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -183,14 +183,16 @@ public class SignUpActivity extends AppCompatActivity {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user != null) {
                                     String userEmail = user.getEmail();
+                                    String userNickname = nickname.toLowerCase();
                                     // Firestore에 사용자 정보 저장
                                     db.collection("users").document(user.getUid())
                                             .set(new HashMap<String, Object>() {{
                                                 put("email", userEmail);
-                                                put("name", nickname);
+                                                put("nickname", userNickname);
                                             }})
                                             .addOnSuccessListener(aVoid -> {
-                                                Log.d("UserInterface", "회원 정보 저장 성공");
+                                                Log.d("UserInterface", "회원 가입 성공");
+                                                Toast.makeText(SignUpActivity.this, "회원 가입 성공!", Toast.LENGTH_SHORT).show();
                                                 // 로그인 화면으로 이동
                                                 Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                                                 startActivity(intent);
