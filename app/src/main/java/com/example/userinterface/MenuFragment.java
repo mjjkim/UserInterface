@@ -44,26 +44,22 @@ public class MenuFragment extends Fragment {
             String uid = currentUser.getUid();
 
             // Firestore에서 사용자 닉네임 가져오기
-            db.collection("users").document(uid).get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            // 닉네임 가져오기
-                            String nickname = documentSnapshot.getString("nickname");
+            db.collection("users").document(uid)
+                    .addSnapshotListener((documentSnapshot, error) -> {
+                        if (error != null) {
+                            Toast.makeText(requireContext(), "데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            String nickname = documentSnapshot.getString("nickname");
                             if (nickname != null && !nickname.isEmpty()) {
-                                // 닉네임을 텍스트뷰에 설정
-                                TextView titleTextView = binding.main.findViewById(R.id.menuNickname);
-                                titleTextView.setText("닉네임 : " + nickname);
+                                binding.menuNickname.setText("닉네임 : " + nickname);
                             }
                             else {
-                                // 닉네임 문서가 존재하지 않을 때 기본값
-                                binding.menuNickname.setText("닉네임 : 닉네임");
+                                binding.menuNickname.setText("닉네임 : nickname");
                             }
                         }
-                    })
-                    .addOnFailureListener(e -> {
-                        // Firestore 읽기 실패 처리
-                        Toast.makeText(requireContext(), "닉네임을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
                     });
         }
 
