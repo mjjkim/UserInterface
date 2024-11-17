@@ -135,10 +135,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         // 회원 가입 버튼
         binding.enrollback.setOnClickListener(v -> {
-            String email = binding.email.getText().toString();
-            String nickname = binding.nickname.getText().toString();
-            String password = binding.password.getText().toString();
-            String checkpassword = binding.checkpassword.getText().toString();
+            String email = binding.email.getText().toString().trim();
+            String nickname = binding.nickname.getText().toString().trim();
+            String password = binding.password.getText().toString().trim();
+            String checkpassword = binding.checkpassword.getText().toString().trim();
 
             if(!isEmailDuplicateCheck) {
                 Toast.makeText(SignUpActivity.this, "이메일 중복 확인을 먼저 해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
@@ -161,7 +161,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             if(!isValidPassword(password)) {
-                Toast.makeText(this, "비밀번호는 8자 이상, 대문자, 소문자, 숫자 특수 문자를 포함해야 합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "비밀번호는 8자 이상, 대문자, 소문자, 숫자, 특수 문자를 포함해야 합니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
 

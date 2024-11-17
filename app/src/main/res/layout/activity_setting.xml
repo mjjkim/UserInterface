@@ -141,6 +141,7 @@
 
         <!-- 비밀번호 변경 -->
         <LinearLayout
+            android:id="@+id/password_Change"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -154,7 +155,6 @@
                 android:contentDescription="비밀번호 변경" />
 
             <TextView
-                android:id="@+id/password_Change"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
