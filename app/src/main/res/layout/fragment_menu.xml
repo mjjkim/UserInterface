@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D3D3D3">
@@ -38,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:id="@+id/menuNickname"
             android:text="닉네임 : 지웅이가 너무해요"
             android:textSize="16sp"
             android:textColor="#000000" />
@@ -47,6 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/theme_color2"/>
+
     <!-- 메뉴 리스트 -->
     <LinearLayout
         android:id="@+id/menu_list"

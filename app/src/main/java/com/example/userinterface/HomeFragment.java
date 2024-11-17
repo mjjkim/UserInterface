@@ -84,12 +84,12 @@ public class HomeFragment extends Fragment {
 
                             if (nickname != null && !nickname.isEmpty()) {
                                 // 닉네임을 텍스트뷰에 설정
-                                TextView titleTextView = binding.main.findViewById(R.id.titleTextView);
-                                titleTextView.setText(nickname + "의 서재");
+                                TextView titleTextView = binding.main.findViewById(R.id.homeNickname);
+                                titleTextView.setText("  "+ nickname + "의 서재");
                             }
                         } else {
                             // 닉네임 문서가 존재하지 않을 때 기본값
-                            binding.titleTextView.setText("닉네임의 서재");
+                            binding.homeNickname.setText("닉네임의 서재");
                         }
                     })
                     .addOnFailureListener(e -> {
