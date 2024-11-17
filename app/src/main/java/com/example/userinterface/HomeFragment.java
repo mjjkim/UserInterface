@@ -12,9 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.userinterface.databinding.FragmentHomeBinding;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,20 +65,53 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 토글버튼 클릭시 최신순, 인기순 정렬
+        // Firestore 인스턴스 생성
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // 현재 로그인한 사용자 UID
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
+
+            // Firestore에서 사용자 닉네임 가져오기
+            db.collection("users").document(uid).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            // 닉네임 가져오기
+                            String nickname = documentSnapshot.getString("nickname");
+
+                            if (nickname != null && !nickname.isEmpty()) {
+                                // 닉네임을 텍스트뷰에 설정
+                                TextView titleTextView = binding.main.findViewById(R.id.titleTextView);
+                                titleTextView.setText(nickname + "의 서재");
+                            }
+                        } else {
+                            // 닉네임 문서가 존재하지 않을 때 기본값
+                            binding.titleTextView.setText("닉네임의 서재");
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Firestore 읽기 실패 처리
+                        Toast.makeText(requireContext(), "닉네임을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    });
+        }
+
+        // 토글 버튼 클릭시 독서 기록, 글귀 모음 전환
         MaterialButtonToggleGroup toggleGroup = binding.toggleButtonGroup;
         toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
                 if (checkedId == R.id.mbt_record) {
-                    // 최신순 정렬
-
-                } else if (checkedId == R.id.mbt_text) {
-                    // 인기순 정렬
-
+                    //  독서 기록 탭
+                }
+                else if (checkedId == R.id.mbt_text) {
+                    // 글귀 모음 탭
                 }
             }
         });
     }
+
     public void onDestroyView() {
         super.onDestroyView();
         // 뷰 참조를 해제하여 메모리 누수 방지

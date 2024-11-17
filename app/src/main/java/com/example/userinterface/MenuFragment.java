@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 
 public class MenuFragment extends Fragment {
 
+    // 닉네임, 설정, 로그아웃 만들기
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

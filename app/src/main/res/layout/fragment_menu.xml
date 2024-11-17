@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="닉네임 : 지웅이가 싫어요"
+            android:text="닉네임 : 지웅이가 너무해요"
             android:textSize="16sp"
             android:textColor="#000000" />
 
