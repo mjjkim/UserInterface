@@ -1,5 +1,6 @@
 package com.example.userinterface;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class MenuFragment extends Fragment {
     FragmentMenuBinding binding;
 
-    // 설정, 로그아웃 만들기
+    // 로그아웃 만들기
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,5 +68,14 @@ public class MenuFragment extends Fragment {
                         Toast.makeText(requireContext(), "닉네임을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
                     });
         }
+
+        // 설정 버튼 클릭 시 설정 창 이동
+        binding.settingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(requireContext(), SettingActivity.class));
+            }
+        });
+
     }
 }

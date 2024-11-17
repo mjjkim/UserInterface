@@ -13,7 +13,7 @@ import com.example.userinterface.databinding.ActivitySettingBinding;
 
 public class SettingActivity extends AppCompatActivity {
 
-    // 닉네임 변경, 비밀번호 변경
+    // 뒤로 가기, 닉네임 변경, 비밀번호 변경
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
