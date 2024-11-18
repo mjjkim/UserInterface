@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // 로그인 클릭 시 메인 창으로 이동
-        // 문제 : 로그인하면 앱 꺼짐
         binding.loginbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
