@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyRecordWrite"
+    android:orientation="vertical">
+    <TextView
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="   지웅이의 기록"
+        android:drawableLeft="@drawable/pencil"
+        android:textSize="25dp"
+        android:paddingStart="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp">
+        <ImageView
+            android:id="@+id/recordCover"
+            android:layout_width="100dp"
+            android:layout_height="130dp"
+            android:src="@drawable/vege"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/recordTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="책 이름"
+                android:padding="4dp"
+                />
+            <TextView
+                android:id="@+id/recordAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="책 저자"
+                android:padding="4dp"/>
+            <TextView
+                android:id="@+id/recordDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:padding="4dp"
+                android:text="책 소개"
+                />
+        </LinearLayout>
+
+</LinearLayout>

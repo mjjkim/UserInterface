@@ -1,31 +1,35 @@
 package com.example.userinterface;
 
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-@Root(name = "response", strict = false)
-public class AladinResponse {
-    @ElementList(name = "item", inline = true, required = false)
-    private List<BookItem> items;
+public class AladinResponse{
+    @SerializedName("title")
+    private String title; // 책 제목
 
-    public List<BookItem> getItems() {
-        return items;
+    @SerializedName("author")
+    private String author; // 책 지은이
+
+    @SerializedName("description")
+    private String description; // 책 설명
+
+    @SerializedName("publisher")
+    private String publisher; // 출판사
+
+    @SerializedName("pubDate")
+    private String pubDate; // 출판 날짜
+
+    @SerializedName("cover")
+    private String cover; // 표지 사진
+
+    @SerializedName("isbn")
+    private String isbn; // ISBN 국제 표준 도서 고유값
+
+    // Getters
+    public String toString() {
+        return "Title: " + title + ", Author: " + author + ", description: " + description +", Publisher: " + publisher + ", PubDate: " + pubDate + ", Cover: " + cover + ", ISBN: " + isbn;
     }
-}
-
-@Root(name = "item", strict = false)
-class Item {
-    @Element(name = "title", required = false)
-    private String title;
-
-    @Element(name = "author", required = false)
-    private String author;
-
-    @Element(name = "cover", required = false)
-    private String cover; // 책 표지 이미지 URL
 
     public String getTitle() {
         return title;
@@ -35,7 +39,48 @@ class Item {
         return author;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public String getPubDate() {
+        return pubDate;
+    }
+
     public String getCover() {
         return cover;
+    }
+
+    public String getIsbn() { return isbn;
+    }
+
+    // 응답에서 책 목록을 포함하는 클래스
+    public class AladinResponse2 {
+        @SerializedName("totalResults")
+        private int totalResults;
+
+        @SerializedName("itemsPerPage")
+        private int itemsPerPage;
+
+        @SerializedName("item")
+        private List<AladinResponse> books; // 책 목록
+
+        // Getters...
+
+        public int getTotalResults() {
+            return totalResults;
+        }
+
+        public int getItemsPerPage() {
+            return itemsPerPage;
+        }
+
+        public List<AladinResponse> getBooks() {
+            return books;
+        }
     }
 }
