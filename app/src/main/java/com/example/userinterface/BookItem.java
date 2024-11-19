@@ -14,7 +14,7 @@ public class BookItem {
         this.author = author;
         this.description = description;
     }
-    public String getBookimage(){
+    public String getBbbimage(){
         return bookimage;
     }
     public void setBookimage(String bookimage){

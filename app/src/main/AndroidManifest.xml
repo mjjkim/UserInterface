@@ -16,10 +16,10 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".MyRecordWrite"
+            android:name=".MyRecordWriteActivity"
             android:exported="false" />
         <activity
-            android:name=".MyRecord"
+            android:name=".MyRecordActivity"
             android:exported="true"></activity>
         <activity
             android:name=".SettingActivity"
@@ -34,10 +34,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".MyRecordActivity"
-            android:exported="true"></activity>
 
         <activity
             android:name=".SignUpActivity"

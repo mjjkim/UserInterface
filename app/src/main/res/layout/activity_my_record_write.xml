@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyRecordWrite"
     android:orientation="vertical">
     <TextView
         android:layout_margin="20dp"
@@ -53,5 +52,5 @@
                 android:text="책 소개"
                 />
         </LinearLayout>
-
+    </LinearLayout>
 </LinearLayout>

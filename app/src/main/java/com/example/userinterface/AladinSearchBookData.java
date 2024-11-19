@@ -1,6 +1,6 @@
 package com.example.userinterface;
 
-public class SearchBookData {
+public class AladinSearchBookData {
     // 책 검색 결과 리사이클러뷰에 들어갈 데이터
 
     // 책 제목, 지은이, 책 설명, 출판사, 출판날짜, 표지 사진
@@ -14,7 +14,7 @@ public class SearchBookData {
 
 
     // 생성자
-    public SearchBookData(String title, String author, String description, String publisher, String pubDate, String cover, String isbn) {
+    public AladinSearchBookData(String title, String author, String description, String publisher, String pubDate, String cover, String isbn) {
         this.title = title;
         this.author = author;
         this.description = description;
