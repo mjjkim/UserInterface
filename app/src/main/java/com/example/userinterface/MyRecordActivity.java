@@ -2,11 +2,7 @@ package com.example.userinterface;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,21 +16,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import com.example.userinterface.databinding.ActivityMyRecordBinding;
+import com.example.userinterface.databinding.ActivityMyrecordBinding;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-public class MyRecord extends AppCompatActivity {
+public class MyRecordActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    ActivityMyRecordBinding binding;
+    ActivityMyrecordBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMyRecordBinding.inflate(getLayoutInflater());
+        binding = ActivityMyrecordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 //        Retrofit retrofit = new Retrofit.Builder()
 //                .baseUrl("http://www.aladin.co.kr/ttb/api/")
@@ -60,7 +55,7 @@ public class MyRecord extends AppCompatActivity {
     }
 
     private void fetchBooks(String query) {
-        AladinApiSevice apiService = RetrofitInstance.getApiService();
+        AladinApiSevice apiService = AladinRetrofitInstance.getApiService();
         Call<AladinResponse> call = apiService.searchBooks(
                 "ttbdlsrks09871450001",
                 query,

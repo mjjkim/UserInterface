@@ -14,10 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
+
         <activity
             android:name=".SettingActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" ></activity>
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -27,9 +28,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MyRecordActivity"
+            android:exported="true"></activity>
+
         <activity
             android:name=".SignUpActivity"
             android:exported="false"></activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
