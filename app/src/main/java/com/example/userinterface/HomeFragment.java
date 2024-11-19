@@ -28,7 +28,7 @@ public class HomeFragment extends Fragment {
     FragmentHomeBinding binding; // View Binding 객체
 
     private RecyclerView recyclerView; //리사이클러 뷰
-    private ItemAdapter itemAdapter; //어댑터
+    private ReviewItem reviewItem; //어댑터
     private List<BookItem> itemList; // bookitem 리스트
 
     @Override
@@ -53,8 +53,8 @@ public class HomeFragment extends Fragment {
 
         // 어댑터 연결
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-        itemAdapter = new ItemAdapter(itemList);
-        recyclerView.setAdapter(itemAdapter);
+        reviewItem = new ReviewItem(itemList);
+        recyclerView.setAdapter(reviewItem);
         recyclerView.setLayoutManager(gridLayoutManager);
 
         // Inflate the layout for this fragment

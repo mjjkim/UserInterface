@@ -11,16 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
+public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> {
     private List<BookItem> bookItemList;
 
-    public ItemAdapter(List<BookItem> itemList) {
+    public ReviewItem(List<BookItem> itemList) {
         this.bookItemList = itemList;
     }
 
     @NonNull
     @Override
-    public ItemAdapter.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ReviewItem.ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_book, parent, false);
         return new ItemViewHolder(view);
