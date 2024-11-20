@@ -1,11 +1,17 @@
 package com.example.userinterface;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,13 +20,30 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 
 public class SettingActivity extends AppCompatActivity {
+    private Uri selectedImageUri;
+    private ActivitySettingBinding binding;
+    // userId 클래스 멤버 변수로 선언
+    private String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivitySettingBinding binding = ActivitySettingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        userId = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
+
 
         // 뒤로 가기 버튼 클릭
         binding.backButton.setOnClickListener(new View.OnClickListener() {
@@ -36,7 +59,7 @@ public class SettingActivity extends AppCompatActivity {
         binding.profileChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                openGallery();
             }
         });
 
@@ -164,6 +187,107 @@ public class SettingActivity extends AppCompatActivity {
         });
 
     }
+
+    // 갤러리 열기
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // URI 읽기 권한 추가
+        galleryLauncher.launch(galleryIntent);
+    }
+
+    private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    selectedImageUri = result.getData().getData();
+                    if (selectedImageUri != null) {
+                        uploadImageToFirebase(selectedImageUri);
+                    }
+                    else {
+                        Toast.makeText(this, "이미지를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
+    // Firebase Storage에 이미지 업로드
+    private void uploadImageToFirebase(Uri imageUri) {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null. User is not authenticated.");
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (imageUri == null) {
+            Log.e("UInterface", "Image URI is null.");
+            Toast.makeText(this, "이미지를 선택하지 않았습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference().child("profile_images/" + userId + ".jpg");
+
+        try {
+            InputStream stream = getContentResolver().openInputStream(imageUri);
+            if (stream == null) {
+                Log.e("UInterface", "Stream is null.");
+                Toast.makeText(this, "이미지를 처리할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            storageReference.putStream(stream)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d("UInterface", "Image upload succeeded.");
+                        storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                            Log.d("UInterface", "Download URL: " + uri);
+                            updateFirestore("profileImage", uri.toString());
+                        }).addOnFailureListener(e -> {
+                            Log.e("UInterface", "Failed to retrieve download URL: " + e.getMessage());
+                            Toast.makeText(this, "URL 가져오기 실패", Toast.LENGTH_SHORT).show();
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("UInterface", "Upload failed: " + e.getMessage());
+                        if (e instanceof StorageException) {
+                            StorageException se = (StorageException) e;
+                            Log.e("UInterface", "Error code: " + se.getErrorCode());
+                        }
+                        Toast.makeText(this, "이미지 업로드 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnCompleteListener(task -> {
+                        try {
+                            stream.close(); // 스트림 닫기
+                        } catch (IOException e) {
+                            Log.e("UInterface", "Failed to close stream: " + e.getMessage());
+                        }
+                    });
+        } catch (FileNotFoundException e) {
+            Log.e("UInterface", "File not found: " + e.getMessage());
+            Toast.makeText(this, "파일을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateFirestore(String field, String value) {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null. Cannot update Firestore.");
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(userId)
+                .update(field, value)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "Firestore updated successfully for field: " + field);
+                    Toast.makeText(this, "프로필이 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Failed to update Firestore: " + e.getMessage());
+                    Toast.makeText(this, "Firestore 업데이트 실패.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
 
     private void updateNickname(String newNickname) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();

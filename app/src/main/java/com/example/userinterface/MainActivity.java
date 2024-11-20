@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import com.example.userinterface.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.FirebaseApp;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -19,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Firebase 초기화
+        FirebaseApp.initializeApp(this);
 
         BottomNavigationView bottomNavigator = binding.bottomNavigator;
 

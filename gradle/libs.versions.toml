@@ -13,6 +13,7 @@ firebaseAuth = "23.1.0"
 firebaseDatabase = "21.0.0"
 firebaseFirestore = "25.1.1"
 retrofit = "2.9.0"
+camera = "1.5.1"
 
 [libraries]
 converter-simplexml = { module = "com.squareup.retrofit2:converter-simplexml", version.ref = "retrofit" }
@@ -28,6 +29,11 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camera" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
+camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camera" }
+camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camera" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
