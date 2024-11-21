@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
-
 android {
     namespace = "com.example.userinterface"
     compileSdk = 34
@@ -27,30 +26,35 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     viewBinding {
-        enable = true;
+        enable = true
     }
 }
 
 dependencies {
-    // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+    implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-analytics")
-    // Add the dependencies for any other desired Firebase products
-    // https://firebase.google.com/docs/android/setup#available-libraries
+
+    // Retrofit dependencies
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    // okhttp3 & logging-interceptor
-    implementation ("com.squareup.okhttp3:okhttp:3.2.0") // 2024.06 기준
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0") // 2024.06 기준
+
+    // OkHttp dependencies
+    implementation("com.squareup.okhttp3:okhttp:3.12.0") // Ensuring OkHttp version 3.12.0 is used
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // Glide dependencies
     implementation("com.github.bumptech.glide:glide:4.13.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
+
+    // Other dependencies
     implementation(libs.retrofit)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -60,7 +64,10 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)
+
+    // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
+

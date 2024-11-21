@@ -6,13 +6,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,17 +70,28 @@ public class MenuFragment extends Fragment {
             db.collection("users").document(uid)
                     .addSnapshotListener((documentSnapshot, error) -> {
                         if (error != null) {
+                            Log.e("UInterface", "Firestore 데이터 가져오기 실패: " + error.getMessage());
                             Toast.makeText(requireContext(), "데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         if (documentSnapshot != null && documentSnapshot.exists()) {
+                            // 닉네임 업데이트
                             String nickname = documentSnapshot.getString("nickname");
                             if (nickname != null && !nickname.isEmpty()) {
                                 binding.menuNickname.setText("닉네임 : " + nickname);
                             }
                             else {
                                 binding.menuNickname.setText("닉네임 : nickname");
+                            }
+
+                            // 프로필 이미지 업데이트
+                            String imageUrl = documentSnapshot.getString("profileImage");
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                setImageToImageView(imageUrl);
+                            } else {
+                                // 기본 이미지 설정
+                                binding.menuProfileImage.setImageResource(R.drawable.profile);
                             }
                         }
                     });
@@ -116,9 +124,14 @@ public class MenuFragment extends Fragment {
             // 현재 프래그먼트 종료
             requireActivity().finish();
         });
+    }
 
-
-
+    private void setImageToImageView(String imageUrl) {
+        Glide.with(requireContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.error)
+                .into(binding.menuProfileImage);
     }
 
     @Override
