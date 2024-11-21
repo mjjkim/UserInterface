@@ -6,10 +6,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +21,31 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
 public class MenuFragment extends Fragment {
     FragmentMenuBinding binding;
+
+    // import
+    AladinApiSevice service; // 레트로핏 서비스
+
+    // 책 목록을 출력하기 위한 리사이클러뷰 및 어댑터
+    private LinearLayoutManager linearLayoutManager; // 리사이클러뷰를 위한 리니어 레이아웃
+    private RecyclerView recyclerView;
+    SearchBookAdapter bookAdapter; // 책검색 결과 리사이클러뷰 어댑터
+    List<AladinSearchBookData> itemList;
+
+    // int
+    private int currentPage = 1; // 현재 페이지 번호
+    private final int maxResults = 100; // 한 페이지당 결과 개수
+    int total_page = 0; // 결과 값에 대한 총 페이지 수. // 문제가 생겼을때 결과값이 0이 되도록.
+
+    // string
+    String ttbkey = "ttbdlsrks09871450001"; // 알라딘 인증 키
+
+
+    // view
+    EditText book_search; // 책 검색어 입력창
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,6 +116,9 @@ public class MenuFragment extends Fragment {
             // 현재 프래그먼트 종료
             requireActivity().finish();
         });
+
+
+
     }
 
     @Override

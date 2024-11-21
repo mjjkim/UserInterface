@@ -1,5 +1,6 @@
 package com.example.userinterface;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -108,6 +109,13 @@ public class HomeFragment extends Fragment {
                 else if (checkedId == R.id.mbt_text) {
                     // 글귀 모음 탭
                 }
+            }
+        });
+
+        binding.RecordAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), MyRecordActivity.class));
             }
         });
     }
