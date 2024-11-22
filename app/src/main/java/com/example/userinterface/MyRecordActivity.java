@@ -2,8 +2,10 @@ package com.example.userinterface;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -39,6 +41,7 @@ public class MyRecordActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager; // 리사이클러뷰를 위한 리니어 레이아웃
     private RecyclerView recyclerView;
     SearchBookAdapter bookAdapter; // 책검색 결과 리사이클러뷰 어댑터
+    List<AladinSearchBookData> itemList;
 
     // int
     private int currentPage = 1; // 현재 페이지 번호
@@ -73,6 +76,20 @@ public class MyRecordActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(bookAdapter);
 
+        // 어댑터에 클릭 이벤트 설정
+        bookAdapter.setOnItemClickListener(bookData -> {
+            // 클릭된 책 데이터를 Intent로 전달
+            Intent intent = new Intent(MyRecordActivity.this, MyRecordWriteActivity.class);
+            intent.putExtra("title", bookData.getTitle());
+            intent.putExtra("author", bookData.getAuthor());
+            intent.putExtra("description", bookData.getDescription());
+            intent.putExtra("publisher", bookData.getPublisher());
+            intent.putExtra("pubDate", bookData.getPubDate());
+            intent.putExtra("cover", bookData.getCover());
+            intent.putExtra("isbn", bookData.getIsbn());
+            startActivity(intent);
+        });
+
 
         book_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -98,9 +115,9 @@ public class MyRecordActivity extends AppCompatActivity {
                     return true; // 엔터키 처리 완료
                 }
                 return false; //  엔터 키 처리 안함.
-
             }
         });
+
     }
     private void search_send (String ttbkey, String keyword, int page) {
         Log.e("알라딘검색메소드", "키: " + ttbkey + " 검색어 keyword : "+keyword + "요청 페이지: " + page);
@@ -167,7 +184,19 @@ class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.SearchBoo
 
     private List<AladinSearchBookData> bookList = new ArrayList<>();
 
+    private OnItemClickListener listener; // 클릭 이벤트 인터페이스
+
     public SearchBookAdapter(Activity context){this.mContext=context;}
+
+    // 클릭 이벤트 인터페이스
+    public interface OnItemClickListener {
+        void onItemClick(AladinSearchBookData bookData);
+    }
+
+    // 클릭 이벤트 리스너 설정 메서드
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     static class SearchBookViewHolder extends RecyclerView.ViewHolder{
         public ImageView cover;
@@ -179,13 +208,6 @@ class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.SearchBoo
             title = view.findViewById(R.id.tv_title);
             author = view.findViewById(R.id.tv_author);
             description = view.findViewById(R.id.tv_description);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
         }
         public void setItem(AladinSearchBookData item){
             title.setText(item.getTitle());
@@ -218,6 +240,13 @@ class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.SearchBoo
         // bh1. view에 아이템 setting 하기
         AladinSearchBookData item = bookList.get(position);
         holder.setItem(item);
+
+        // 클릭 이벤트 설정
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(item); // 클릭된 데이터 전달
+            }
+        });
     }
 
     @Override
@@ -234,4 +263,8 @@ class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.SearchBoo
 
     // 아이템 삭제
     public void clearItem() {bookList.clear();}
+
+    public List<AladinSearchBookData> getBookList(){
+        return bookList;
+    }
 }
