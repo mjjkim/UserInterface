@@ -1,5 +1,6 @@
 package com.example.userinterface;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,10 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
 
     public ReviewItem(List<BookItem> itemList) {
         this.bookItemList = itemList;
+    }
+
+    public void addItem(BookItem item){
+        bookItemList.add(item);
     }
 
     @NonNull
