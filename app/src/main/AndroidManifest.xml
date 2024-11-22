@@ -14,17 +14,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
+        <activity
+            android:name=".MessageBorad"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MyRecordWriteActivity"
             android:exported="false" />
         <activity
             android:name=".MyRecordActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".SettingActivity"
-            android:exported="true" ></activity>
-
+            android:exported="true" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -34,15 +41,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SignUpActivity"
-            android:exported="false"></activity>
-
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"></activity>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+        <activity
+            android:name=".MyRecord"
+            android:exported="true" />
     </application>
 
 </manifest>

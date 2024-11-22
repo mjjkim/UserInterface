@@ -90,6 +90,13 @@ public class MenuFragment extends Fragment {
             // 현재 프래그먼트 종료
             requireActivity().finish();
         });
+
+        binding.borad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(requireContext(), MessageBorad.class));
+            }
+        });
     }
 
     @Override
