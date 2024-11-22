@@ -1,7 +1,15 @@
 package com.example.userinterface;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,12 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.userinterface.databinding.FragmentHomeBinding;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -28,18 +30,48 @@ import java.util.List;
 public class HomeFragment extends Fragment {
     FragmentHomeBinding binding; // View Binding 객체
 
-    private RecyclerView recyclerView; //리사이클러 뷰
-    private ReviewItem reviewItem; //어댑터
+    // 내 서재 리사이클러뷰
+    private RecyclerView recyclerView;
+    private ReviewItem bookItemAdapter;
+
+    // 글귀모음 리사이클러뷰
+    private RecyclerView phraseRecyclerView;//어댑터
+    private SearchBookAdapter reviewAdapter;
     private List<BookItem> itemList; // bookitem 리스트
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
+        // 글귀 모음 예시
+        phraseRecyclerView = binding.PhraseRecyclerView;
+        reviewAdapter = new SearchBookAdapter(getActivity());
+
+        reviewAdapter.addItem(new AladinSearchBookData(
+                "title",
+                "author",
+                "description",
+                "publisher",
+                "pubDate",
+                String.valueOf(R.drawable.pin),
+                "isbn"
+        ));
+        reviewAdapter.addItem(new AladinSearchBookData(
+                "title",
+                "author",
+                "description",
+                "publisher",
+                "pubDate",
+                String.valueOf(R.drawable.imagewait),
+                "isbn"
+        ));
+        phraseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        phraseRecyclerView.setAdapter(reviewAdapter);
+        Log.d("omj", ""+reviewAdapter.getItemCount());
         // 아이템 리스트 예시
         recyclerView = binding.recyclerview;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         itemList = new ArrayList<>();
         itemList.add(new BookItem("1aaaa", "2", "33", "4"));
         itemList.add(new BookItem("1sf", "2", "33", "4"));
@@ -54,9 +86,10 @@ public class HomeFragment extends Fragment {
 
         // 어댑터 연결
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-        reviewItem = new ReviewItem(itemList);
-        recyclerView.setAdapter(reviewItem);
+        bookItemAdapter = new ReviewItem(itemList);
+        recyclerView.setAdapter(bookItemAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
+
 
         // Inflate the layout for this fragment
         return binding.getRoot();
@@ -103,11 +136,19 @@ public class HomeFragment extends Fragment {
         MaterialButtonToggleGroup toggleGroup = binding.toggleButtonGroup;
         toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
-                if (checkedId == R.id.mbt_record) {
+                FrameLayout RecodeFrameLayout = binding.bookFrameLayout;
+                FrameLayout PhraseFrameLayout = binding.PhraseFrameLayout;
+                if (checkedId == R.id.record) {
                     //  독서 기록 탭
+                    RecodeFrameLayout.setVisibility(View.VISIBLE);
+                    PhraseFrameLayout.setVisibility(View.GONE);
+                    bookItemAdapter.addItem(new BookItem("title", "author", "description"));
+                    bookItemAdapter.notifyDataSetChanged();
                 }
-                else if (checkedId == R.id.mbt_text) {
+                else if (checkedId == R.id.phrase) {
                     // 글귀 모음 탭
+                    RecodeFrameLayout.setVisibility(View.GONE);
+                    PhraseFrameLayout.setVisibility(View.VISIBLE);
                 }
             }
         });

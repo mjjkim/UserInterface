@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <EditText
-        android:id="@+id/ettest"
+        android:id="@+id/bookSearch"
         android:inputType="text"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
