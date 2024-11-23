@@ -69,7 +69,6 @@ public class HomeFragment extends Fragment {
         ));
         phraseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         phraseRecyclerView.setAdapter(reviewAdapter);
-        Log.d("omj", ""+reviewAdapter.getItemCount());
         // 아이템 리스트 예시
         recyclerView = binding.recyclerview;
         itemList = new ArrayList<>();

@@ -58,8 +58,6 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.Se
                     .load(item.getCover())
                     .error(R.drawable.imagewait)
                     .into(cover);
-            Log.d("omj", "뭐가 문제인고");
-
         }
     }
 
@@ -86,9 +84,6 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.Se
                 listener.onItemClick(item); // 클릭된 데이터 전달
             }
         });
-
-        // 확인용
-        Log.d("omj", "sibal");
     }
 
     @Override

@@ -1,10 +1,18 @@
 package com.example.userinterface;
 
 import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -23,40 +31,57 @@ public class MessageBorad extends AppCompatActivity {
     private MessageBoardAdapter adapter;
     private List<MessageBoardItem> items;
 
+    private String title;
+    private String author;
+    private String description;
+    private String review;
+    private String cover;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message_borad);
         ActivityMessageBoradBinding binding = ActivityMessageBoradBinding.inflate(getLayoutInflater());
-
+        setContentView(binding.getRoot());
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         items = new ArrayList<>();
-        items.add(new MessageBoardItem("제목: 지웅이가 싫어요", "내용: 지웅이 딱밤 한대", R.drawable.book, true));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실1" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실2" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실3" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실4" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실5" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실6" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실7" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실8" , "override는 ~~~ ", R.drawable.book, true ));
-        items.add(new MessageBoardItem("제목: 지웅이의 자바 교실9" , "override는 ~~~ ", R.drawable.book, true ));
-
 
         adapter = new MessageBoardAdapter(this, items);
         recyclerView.setAdapter(adapter);
 
-        binding.backButton.setOnClickListener(new View.OnClickListener() {
+        binding.boardBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(view == binding.backButton){
-                    finish();
+                finish();
+            }
+        });
+        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        title = data.getStringExtra("title");
+                        author = data.getStringExtra("author");
+                        cover = data.getStringExtra("cover");
+                        description = data.getStringExtra("description");
+                        review = data.getStringExtra("review");
+                        items.add(new MessageBoardItem(title, author, cover, true, review));
+                        adapter.notifyDataSetChanged();
+                        Log.d("omj", "Data Get Ok for MessageBoard");
+                    }
                 }
             }
         });
-
+        binding.searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launcher.launch(new Intent(MessageBorad.this, MyRecordActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+                Log.d("omj", "MessageBoard to MyRecord");
+            }
+        });
     }
 
 

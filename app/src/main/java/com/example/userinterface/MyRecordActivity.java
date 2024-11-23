@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -89,9 +90,14 @@ public class MyRecordActivity extends AppCompatActivity {
             intent.putExtra("pubDate", bookData.getPubDate());
             intent.putExtra("cover", bookData.getCover());
             intent.putExtra("isbn", bookData.getIsbn());
-            startActivity(intent);
+            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT));
         });
-
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         book_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

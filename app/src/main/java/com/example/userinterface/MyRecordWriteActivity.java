@@ -1,7 +1,9 @@
 package com.example.userinterface;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +28,9 @@ import java.util.Locale;
 
 public class MyRecordWriteActivity extends AppCompatActivity {
 
+    //리뷰 edittext
+    EditText reviewText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,45 +53,31 @@ public class MyRecordWriteActivity extends AppCompatActivity {
         bookAuthor.setText(author);
         bookDescription.setText(description);
 
+        // 데이터 송신 게시판으로 데이터 보내기
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("title", title);
+        resultIntent.putExtra("author", author);
+        resultIntent.putExtra("description", "description");
+        resultIntent.putExtra("cover", cover);
+
+
+        binding.recordAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resultIntent.putExtra("review", binding.etReview.getText().toString());
+                setResult(RESULT_OK, resultIntent);
+                Log.d("omj", "record to board");
+                finish();
+            }
+        });
+
         Glide.with(this)
                 .load(cover)
                 .error(R.drawable.imagewait)
                 .into(bookCover);
 
+        reviewText = binding.etReview;
 
-        // 날짜 선택 edit 텍스트
-        EditText dateEditText = binding.dateEditText;
-        // EditText 클릭 이벤트
-        dateEditText.setOnClickListener(view -> {
-            // DatePickerFragment 생성
-            DatePickerFragment datePickerFragment = new DatePickerFragment();
-
-            // 리스너 설정
-            datePickerFragment.setDatePickerListener(selectedDate -> {
-                // 선택한 날짜를 EditText에 설정
-                dateEditText.setText(selectedDate);
-            });
-
-            // FragmentManager를 통해 팝업 띄우기
-            datePickerFragment.show(getSupportFragmentManager(), "DATE_PICKER");
-        });
-
-        // 날짜 선택 edit 텍스트
-        EditText dateEditText2 = binding.dateEditText2;
-        // EditText 클릭 이벤트
-        dateEditText2.setOnClickListener(view -> {
-            // DatePickerFragment 생성
-            DatePickerFragment datePickerFragment = new DatePickerFragment();
-
-            // 리스너 설정
-            datePickerFragment.setDatePickerListener(selectedDate -> {
-                // 선택한 날짜를 EditText에 설정
-                dateEditText2.setText(selectedDate);
-            });
-
-            // FragmentManager를 통해 팝업 띄우기
-            datePickerFragment.show(getSupportFragmentManager(), "DATE_PICKER");
-        });
     }
     private String formatDate(Long timestamp) {
         if (timestamp == null) return "";
