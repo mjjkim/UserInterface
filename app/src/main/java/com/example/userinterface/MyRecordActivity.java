@@ -1,33 +1,23 @@
 package com.example.userinterface;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMyrecordBinding;
 
 import retrofit2.Call;
@@ -82,7 +72,7 @@ public class MyRecordActivity extends AppCompatActivity {
         // 어댑터에 클릭 이벤트 설정
         bookAdapter.setOnItemClickListener(bookData -> {
             // 클릭된 책 데이터를 Intent로 전달
-            Intent intent = new Intent(MyRecordActivity.this, MyRecordWriteActivity.class);
+            Intent intent = new Intent(MyRecordActivity.this, MessageBoardWriteActivity.class);
             intent.putExtra("title", bookData.getTitle());
             intent.putExtra("author", bookData.getAuthor());
             intent.putExtra("description", bookData.getDescription());
