@@ -39,7 +39,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
         holder.contentText.setText(item.getReview());
         Log.d("omj", item.getReview());
         holder.likeButton.setImageResource(item.isLiked() ? R.drawable.star : R.drawable.star);
-
+        holder.author.setText(item.getAuthor());
 
         Glide.with(holder.itemView.getContext())
                 .load(item.getCover())
@@ -62,6 +62,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView bookImage, likeButton;
         TextView titleText, contentText;
+        TextView author;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +70,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
             titleText = itemView.findViewById(R.id.titleText);
             contentText = itemView.findViewById(R.id.contentText);
             likeButton = itemView.findViewById(R.id.like_button);
+            author = itemView.findViewById(R.id.writer);
         }
     }
 
