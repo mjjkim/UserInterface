@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MyRecordStoreActivity">
+    <!-- AppBarLayout -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Light">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#ffffff"
+            android:title="My App"
+            android:titleTextColor="#000000"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/recordStoreTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="70dp"
+                android:text="책 제목"
+                android:textSize="20dp"
+                android:textColor="#000000"/>
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="148dp"
+                android:layout_height="210dp"
+                android:src="@drawable/imagewait"
+                android:layout_gravity="center"
+                android:id="@+id/recordStoreCover"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="작가"
+                android:id="@+id/recordStoreAuthor"
+                android:layout_marginTop="10dp"/>
+            <View
+                android:layout_margin="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CBE4E9"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp"
+                android:text="책 소개"
+                android:textColor="#000000"/>
+            <TextView
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="설명"
+                android:id="@+id/recordStoreDescription"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="출판사"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp"
+                android:textColor="#000000"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="출판사"
+                android:layout_margin="10dp"
+                android:id="@+id/recordStorePublisher"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ISBN"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp"
+                android:textColor="#000000"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="isbn"
+                android:layout_margin="10dp"
+                android:id="@+id/recordStoreIsbn"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="출판일"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp"
+                android:textColor="#000000"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="pubdate"
+                android:layout_margin="10dp"
+                android:id="@+id/recordStorePubDate" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="10dp"
+                android:text="도서 DB 제공: 알라딘"
+                android:textColor="#000000"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

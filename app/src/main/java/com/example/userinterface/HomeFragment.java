@@ -11,6 +11,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -151,15 +155,22 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
 
+                    }
+                });
         binding.RecordAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), MyRecordActivity.class));
+                launcher.launch(new Intent(getActivity(), MyRecordSearchActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
             }
         });
-    }
 
+    }
     public void onDestroyView() {
         super.onDestroyView();
         // 뷰 참조를 해제하여 메모리 누수 방지

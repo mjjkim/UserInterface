@@ -68,6 +68,8 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                 String cover = getIntent().getStringExtra("cover");
                 String review = binding.etReview.getText().toString();
 
+                setResult(RESULT_OK, resultIntent);
+
                 db.collection("message_boards").document(userId).get()
                         .addOnSuccessListener(documentSnapshot -> {
                             if (!documentSnapshot.exists() || !documentSnapshot.contains("posts")) {
