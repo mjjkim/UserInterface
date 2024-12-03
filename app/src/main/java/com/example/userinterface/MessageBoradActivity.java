@@ -39,13 +39,10 @@ public class MessageBoradActivity extends AppCompatActivity {
         ActivityMessageBoradBinding binding = ActivityMessageBoradBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         items = new ArrayList<>();
-
         adapter = new MessageBoardAdapter(this, items);
-        recyclerView.setAdapter(adapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.setAdapter(adapter);
 
         binding.boardBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +50,7 @@ public class MessageBoradActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -66,7 +64,7 @@ public class MessageBoradActivity extends AppCompatActivity {
                         review = data.getStringExtra("review");
                         items.add(new MessageBoardItem(title, author, cover, true, review));
                         adapter.notifyDataSetChanged();
-                        Log.d("omj", "Data Get Ok for MessageBoard");
+                        Log.d("UInterface", "Data Get Ok for MessageBoard");
                     }
                 }
             }
@@ -75,37 +73,37 @@ public class MessageBoradActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        items = new ArrayList<>();
-        adapter = new MessageBoardAdapter(this, items);
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerView.setAdapter(adapter);
-
-        // Firestore에서 데이터 가져오기
+        // 실시간 데이터 업데이트 감지
         db.collection("message_boards").document(userId)
-                        .get()
-                                .addOnSuccessListener(documentSnapshot -> {
-                                    if (documentSnapshot.exists() && documentSnapshot.contains("posts")) {
-                                        List<Map<String, Object>> posts = (List<Map<String, Object>>) documentSnapshot.get("posts");
-                                        for (Map<String, Object> post : posts){
-                                            String title = (String) post.get("title");
-                                            String author = (String) post.get("author");
-                                            String cover = (String) post.get("cover");
-                                            String review = (String) post.get("review");
-                                            items.add(new MessageBoardItem(title, author, cover, true, review));
-                                        }
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                })
-                                        .addOnFailureListener(e -> {
-                                            Log.e("UInterface", "Data Fail! : " + e.getMessage());
-                                        });
+                .addSnapshotListener((documentSnapshot, error) -> {
+                            if (error != null) {
+                                Log.e("UInterface", "데이터 업데이트 실패 : " + error.getMessage());
+                                return;
+                            }
+                            if (documentSnapshot != null && documentSnapshot.exists()) {
+                                // 기존 리스트 초기화
+                                items.clear();
+                                List<Map<String, Object>> posts = (List<Map<String, Object>>) documentSnapshot.get("posts");
+                                if (posts != null) {
+                                    for (Map<String, Object> post : posts) {
+                                        String title = (String) post.get("title");
+                                        String author = (String) post.get("author");
+                                        String cover = (String) post.get("cover");
+                                        String review = (String) post.get("review");
+                                        items.add(new MessageBoardItem(title, author, cover, true, review));
+                                 }
+                                adapter.notifyDataSetChanged();
+                                Log.d("UInterface", "게시글 업데이트 성공");
+                            }
+                        }
+                });
 
         binding.searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launcher.launch(new Intent(MessageBoradActivity.this, MyRecordActivity.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
-                Log.d("omj", "MessageBoard to MyRecord");
+                Log.d("UInterface", "MessageBoard to MyRecord");
             }
         });
     }
