@@ -20,6 +20,17 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
     private Context context;
     private List<MessageBoardItem> items;
 
+    private MessageBoardAdapter.OnItemClickListener listener; // 클릭 이벤트 인터페이스
+
+    // 클릭 이벤트 리스너 설정 메서드
+    public void setOnItemClickListener(MessageBoardAdapter.OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(MessageBoardItem item);
+    }
+
     public MessageBoardAdapter(Context context, List<MessageBoardItem> items) {
         this.context = context;
         this.items = items;

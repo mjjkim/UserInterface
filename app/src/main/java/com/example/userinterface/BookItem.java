@@ -15,10 +15,10 @@ public class BookItem {
         this.pubDate = pubDate;
         this.publisher = publisher;
     }
-    public String getBbbimage(){
+    public String getBookImage(){
         return bookimage;
     }
-    public void setBookimage(String bookimage){
+    public void setBookImage(String bookimage){
         this.bookimage = bookimage;
     }
     public String getTitle(){
