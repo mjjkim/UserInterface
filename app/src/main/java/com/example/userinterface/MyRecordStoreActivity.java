@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MyRecordStoreActivity extends AppCompatActivity {
-    String title, author, description, publisher, pubDate, cover;
+    String title, author, description, publisher, pubDate, cover, isbn;
 
 
     @Override
@@ -52,6 +52,7 @@ public class MyRecordStoreActivity extends AppCompatActivity {
         publisher = getIntent().getStringExtra("publisher");
         pubDate = getIntent().getStringExtra("pubDate");
         cover = getIntent().getStringExtra("cover");
+        isbn = getIntent().getStringExtra("isbn");
 
         // 정보 띄우기
         bookTitle.setText(title);
@@ -66,6 +67,9 @@ public class MyRecordStoreActivity extends AppCompatActivity {
         resultIntent.putExtra("author", author);
         resultIntent.putExtra("description", "description");
         resultIntent.putExtra("cover", cover);
+        resultIntent.putExtra("publisher", publisher);
+        resultIntent.putExtra("pubDate", pubDate);
+        resultIntent.putExtra("isbn", isbn);
 
 
         Glide.with(this)
@@ -100,6 +104,17 @@ public class MyRecordStoreActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_save) {
             // 저장 버튼 클릭 시 동작
             Toast.makeText(this, "저장 버튼이 눌렸습니다!", Toast.LENGTH_SHORT).show();
+
+            Bundle bundle;
+            bundle = new Bundle();
+            bundle.putString("title", title);
+            bundle.putString("author", author);
+            bundle.putString("description", description);
+            bundle.putString("publisher", publisher);
+            bundle.putString("cover", cover);
+            bundle.putString("pubDate", pubDate);
+
+            new HomeFragment().setArguments(bundle);
 
             // 커스텀 동작 추가
             Intent intent = new Intent()

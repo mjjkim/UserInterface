@@ -14,7 +14,7 @@
         android:paddingStart="40dp"
         android:layout_marginTop="40dp"
         android:id="@+id/homeNickname"
-        android:text="  지웅이의 서재"
+        android:text="  무명의 서재"
         android:textSize="30dp" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup

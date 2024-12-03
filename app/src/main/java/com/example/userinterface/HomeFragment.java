@@ -1,5 +1,7 @@
 package com.example.userinterface;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,6 +45,16 @@ public class HomeFragment extends Fragment {
     private SearchBookAdapter reviewAdapter;
     private List<BookItem> itemList; // bookitem 리스트
 
+    //수신받는 정보
+    String title;
+    String author;
+    String description;
+    String publisher;
+    String pubDate;
+    String cover;
+    String isbn;
+
+
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,26 +85,18 @@ public class HomeFragment extends Fragment {
         ));
         phraseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         phraseRecyclerView.setAdapter(reviewAdapter);
-        // 아이템 리스트 예시
+
         recyclerView = binding.recyclerview;
         itemList = new ArrayList<>();
-        itemList.add(new BookItem("1aaaa", "2", "33", "4"));
-        itemList.add(new BookItem("1sf", "2", "33", "4"));
-        itemList.add(new BookItem("1fas", "2", "33", "4"));
-        itemList.add(new BookItem("1asfas", "2", "33", "4"));
-        itemList.add(new BookItem("1da", "2", "33", "4"));
-        itemList.add(new BookItem("1aaaa", "2", "33", "4"));
-        itemList.add(new BookItem("1sf", "2", "33", "4"));
-        itemList.add(new BookItem("1fas", "2", "33", "4"));
-        itemList.add(new BookItem("1asfas", "2", "33", "4"));
-        itemList.add(new BookItem("1da", "2", "33", "4"));
+
+
+
 
         // 어댑터 연결
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
         bookItemAdapter = new ReviewItem(itemList);
         recyclerView.setAdapter(bookItemAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
-
 
         // Inflate the layout for this fragment
         return binding.getRoot();
@@ -145,8 +149,7 @@ public class HomeFragment extends Fragment {
                     //  독서 기록 탭
                     RecodeFrameLayout.setVisibility(View.VISIBLE);
                     PhraseFrameLayout.setVisibility(View.GONE);
-                    bookItemAdapter.addItem(new BookItem("title", "author", "description"));
-                    bookItemAdapter.notifyDataSetChanged();
+
                 }
                 else if (checkedId == R.id.phrase) {
                     // 글귀 모음 탭
@@ -159,7 +162,27 @@ public class HomeFragment extends Fragment {
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult o) {
+                        if(o.getResultCode() == RESULT_OK){
+//                             데이터 수신
+                            title = o.getData().getStringExtra("title");
+                            author = o.getData().getStringExtra("author");
+                            description = o.getData().getStringExtra("description");
+                            publisher = o.getData().getStringExtra("publisher");
+                            pubDate = o.getData().getStringExtra("pubDate");
+                            cover = o.getData().getStringExtra("cover");
+                            isbn = o.getData().getStringExtra("isbn");
 
+                            Log.d("omj",  "이름" + title);
+                            bookItemAdapter.addItem(new BookItem(
+                                    title,
+                                    author,
+                                    description,
+                                    cover,
+                                    pubDate,
+                                    publisher,
+                                    isbn
+                            ));
+                        }
                     }
                 });
         binding.RecordAddButton.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +192,20 @@ public class HomeFragment extends Fragment {
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
             }
         });
+
+        bookItemAdapter.setOnItemClickListener(new ReviewItem.OnItemClickListener() {
+            @Override
+            public void onItemClick(BookItem bookData) {
+                startActivity(new Intent(getActivity(), MyRecordModifyActivity.class)
+                        .putExtra("title", bookData.getTitle())
+                        .putExtra("author", bookData.getAuthor())
+                        .putExtra("cover", bookData.getBookImage())
+                        .putExtra("publisher", bookData.getPublisher())
+                        .putExtra("pubDate", bookData.getPubDate())
+                        .putExtra("description", bookData.getDescription()));
+            }
+        });
+
 
     }
     public void onDestroyView() {
