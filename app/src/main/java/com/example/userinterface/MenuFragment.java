@@ -26,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 
 public class MenuFragment extends Fragment {
-    FragmentMenuBinding binding;
+    FragmentMenuBinding binding = FragmentMenuBinding.inflate(getLayoutInflater());
 
     // import
     AladinApiSevice service; // 레트로핏 서비스
@@ -110,6 +110,31 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        // 댓글 단 글
+        binding.myComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(requireContext(), MyComment.class));
+            }
+        });
+
+        // 내가 쓴 글
+        binding.myList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(requireContext(), MyWrite.class));
+            }
+        });
+
+        // 스크랩 한 글
+        binding.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(requireContext(),MyLike.class));
+            }
+        });
+
+
         // 로그아웃 버튼 클릭 시 로그아웃
         binding.logoutButton.setOnClickListener(view1 -> {
             // Firebase Authentication에서 로그아웃
@@ -130,6 +155,7 @@ public class MenuFragment extends Fragment {
             requireActivity().finish();
         });
 
+        // 개시판
         binding.borad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
