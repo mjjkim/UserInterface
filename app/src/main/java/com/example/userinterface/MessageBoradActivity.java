@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class MessageBoradActivity extends AppCompatActivity {
 
-    private  RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private MessageBoardAdapter adapter;
     private List<MessageBoardItem> items;
 

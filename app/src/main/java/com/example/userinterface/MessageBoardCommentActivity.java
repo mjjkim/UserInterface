@@ -8,51 +8,50 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyWrite extends AppCompatActivity {
+public class MessageBoardCommentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_write);
+        setContentView(R.layout.activity_message_board_comment);
+
 
         // RecyclerView 설정
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // 데이터 준비
-        List<PostItem> items = new ArrayList<>();
-        items.add(new PostItem("책: 지웅이가 싫어요", "지웅이 싫다"));
-        items.add(new PostItem("책: 다른 이야기", "다른 책 내용을 여기에 표시"));
+        List<CommentItem> items = new ArrayList<>();
+        items.add(new CommentItem("책: 지웅이가 싫어요", "내용: 지웅이 싫다"));
+        items.add(new CommentItem("책: 철홍씨도 미워요", "내용: 다른 책의 내용을 표시합니다"));
 
         // 어댑터 설정
-        PostAdapter adapter = new PostAdapter(items);
+        CommentAdapter adapter = new CommentAdapter(items);
         recyclerView.setAdapter(adapter);
 
-        ImageView back_button = findViewById(R.id.backButton);
-        back_button.setOnClickListener(view -> {
-            finish();
+        Button backbutton = findViewById(R.id.backButton);
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
         });
-
 
     }
 
     // 내부 클래스: RecyclerView 어댑터
-    class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-        private final List<PostItem> itemList;
+    class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
+        private final List<CommentItem> itemList;
 
-        public PostAdapter(List<PostItem> itemList) {
+        public CommentAdapter(List<CommentItem> itemList) {
             this.itemList = itemList;
         }
 
@@ -64,10 +63,11 @@ public class MyWrite extends AppCompatActivity {
             return new ViewHolder(view);
         }
 
+
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             // 데이터 바인딩
-            PostItem item = itemList.get(position);
+            CommentItem item = itemList.get(position);
             holder.titleText.setText(item.getTitle());
             holder.contentText.setText(item.getContent());
         }
@@ -92,11 +92,11 @@ public class MyWrite extends AppCompatActivity {
         }
     }
 
-    private class PostItem {
+    public class CommentItem {
         private final String title;
         private final String content;
 
-        public PostItem(String title, String content) {
+        public CommentItem(String title, String content) {
             this.title = title;
             this.content = content;
         }
@@ -111,3 +111,4 @@ public class MyWrite extends AppCompatActivity {
     }
 
 }
+

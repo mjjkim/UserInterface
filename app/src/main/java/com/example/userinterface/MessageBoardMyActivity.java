@@ -7,55 +7,54 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyLike extends AppCompatActivity {
+public class MessageBoardMyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_like);
+        setContentView(R.layout.activity_message_board_my);
 
         // RecyclerView 설정
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // 데이터 준비
-        List<BoardItem> items = new ArrayList<>();
-        items.add(new BoardItem("책: 지웅이가 싫어요", "내용: 지웅이 싫다"));
-        items.add(new BoardItem("책: 김철홍도 싫어요 ", "내용: 다른 책 내용을 여기에 표시"));
+        List<PostItem> items = new ArrayList<>();
+        items.add(new PostItem("책: 지웅이가 싫어요", "지웅이 싫다"));
+        items.add(new PostItem("책: 다른 이야기", "다른 책 내용을 여기에 표시"));
 
         // 어댑터 설정
-        BoardAdapter adapter = new BoardAdapter(items);
+        PostAdapter adapter = new PostAdapter(items);
         recyclerView.setAdapter(adapter);
 
-        // 뒤로가기 버튼 동작
-        ImageView backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(view -> finish());
+        ImageView back_button = findViewById(R.id.backButton);
+        back_button.setOnClickListener(view -> {
+            finish();
+        });
+
+
     }
 
     // 내부 클래스: RecyclerView 어댑터
-    class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> {
-        private final List<BoardItem> itemList;
+    class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+        private final List<PostItem> itemList;
 
-        public BoardAdapter(List<BoardItem> itemList) {
+        public PostAdapter(List<PostItem> itemList) {
             this.itemList = itemList;
         }
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // item_board 레이아웃 파일 inflate
+            // 기존 item_board 레이아웃 파일을 사용
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_board, parent, false);
             return new ViewHolder(view);
         }
@@ -63,7 +62,7 @@ public class MyLike extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             // 데이터 바인딩
-            BoardItem item = itemList.get(position);
+            PostItem item = itemList.get(position);
             holder.titleText.setText(item.getTitle());
             holder.contentText.setText(item.getContent());
         }
@@ -87,11 +86,12 @@ public class MyLike extends AppCompatActivity {
             }
         }
     }
-    public class BoardItem {
+
+    private class PostItem {
         private final String title;
         private final String content;
 
-        public BoardItem(String title, String content) {
+        public PostItem(String title, String content) {
             this.title = title;
             this.content = content;
         }

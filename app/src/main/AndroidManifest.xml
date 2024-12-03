@@ -15,16 +15,15 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
-            android:name=".MessageBorad"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!-- FileProvider 설정 -->
+            android:name=".MyRecordStoreActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
+        <activity
+            android:name=".MyRecordSearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MessageBoradActivity"
+            android:exported="true" /> <!-- FileProvider 설정 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -34,17 +33,24 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
         <activity
-            android:name=".MyRecordWriteActivity"
-            android:exported="false" />
+            android:name=".MessageBoardWriteActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MessageBoardCommentActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MessageBoardLikeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MessageBoardMyActivity"
+            android:exported="true" />
         <activity
             android:name=".MyRecordActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".SettingActivity"
-            android:exported="true"></activity>
-
+            android:exported="true" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -54,15 +60,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SignUpActivity"
-            android:exported="false"></activity>
-
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"></activity>
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
     </application>
 
 </manifest>
