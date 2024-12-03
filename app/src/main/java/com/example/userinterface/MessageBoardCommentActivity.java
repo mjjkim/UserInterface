@@ -37,7 +37,7 @@ public class MessageBoardCommentActivity extends AppCompatActivity {
         CommentAdapter adapter = new CommentAdapter(items);
         recyclerView.setAdapter(adapter);
 
-        Button backbutton = findViewById(R.id.backButton);
+        ImageView backbutton = findViewById(R.id.backButton);
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
