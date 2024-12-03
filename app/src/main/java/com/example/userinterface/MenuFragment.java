@@ -25,11 +25,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 
 public class MenuFragment extends Fragment {
+    FragmentMenuBinding binding;
 
-    private FragmentMenuBinding binding;
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-
+    // import
     AladinApiSevice service; // 레트로핏 서비스
 
     // 책 목록을 출력하기 위한 리사이클러뷰 및 어댑터
@@ -51,8 +49,10 @@ public class MenuFragment extends Fragment {
     EditText book_search; // 책 검색어 입력창
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         binding = FragmentMenuBinding.inflate(inflater, container, false);
+
         return binding.getRoot();
     }
 
@@ -61,8 +61,8 @@ public class MenuFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Firestore 인스턴스 생성
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         // 현재 로그인한 사용자 UID
         FirebaseUser currentUser = mAuth.getCurrentUser();
