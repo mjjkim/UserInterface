@@ -1,5 +1,8 @@
 package com.example.userinterface;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MessageBoardItem {
     private String title;
     private String author;
@@ -19,18 +22,49 @@ public class MessageBoardItem {
         this.review = review;
     }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public String getAuthor() {
+        return author;
+    }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-    public String getCover() { return cover; }
-    public void setCover(String cover) { this.cover = cover; }
+    public String getCover() {
+        return cover;
+    }
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
 
-    public boolean isLiked() { return isLiked; }
-    public void setLiked(boolean reviewed) { isLiked = reviewed; }
+    public boolean isLiked() {
+        return isLiked;
+    }
+    public void setLiked(boolean reviewed) {
+        isLiked = reviewed;
+    }
 
-    public String getReview(){ return review; }
-    public void setReview(String review){ this.review = review; }
+    public String getReview(){
+        return review;
+    }
+    public void setReview(String review){
+        this.review = review;
+    }
+
+    // Firestore에 저장하기 위해 객체를 Map으로 변환
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", title);
+        map.put("author", author);
+        map.put("cover", cover);
+        map.put("liked", isLiked);
+        map.put("review", review);
+        return map;
+    }
 }

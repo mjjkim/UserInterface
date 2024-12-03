@@ -49,7 +49,8 @@
         android:id="@+id/like_button"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/star"
+        android:src="@drawable/like_button_selector"
         android:contentDescription="좋아요 버튼"
-        />
+        android:clickable="true"
+        android:focusable="true" />
 </LinearLayout>

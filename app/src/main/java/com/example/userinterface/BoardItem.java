@@ -1,22 +1,27 @@
 package com.example.userinterface;
 
-public class BookItem {
+public class BoardItem {
     private String bookimage;
     private String title;
     private String author;
     private String description;
     private String pubDate;
     private String publisher;
-    private String isbn;
-    public BookItem(String title, String author, String description, String bookimage, String pubDate, String publisher, String isbn){
+    // 좋아요 상태 추가
+    private boolean isLiked;
+
+    public BoardItem(String title, String author, String description, String bookimage, String pubDate, String publisher){
         this.title = title;
         this.author = author;
         this.description = description;
         this.bookimage = bookimage;
         this.pubDate = pubDate;
         this.publisher = publisher;
-        this.isbn = isbn;
+        // 기본값
+        this.isLiked = false;
     }
+
+    // Getter 및 Setter
     public String getBookImage(){
         return bookimage;
     }
@@ -53,10 +58,10 @@ public class BookItem {
     public void setPublisher(String publisher){
         this.publisher = publisher;
     }
-    public String getIsbn(){
-        return isbn;
+    public boolean isLiked() {
+        return isLiked;
     }
-    public void setIsbn(String isbn){
-        this.isbn = isbn;
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 }
