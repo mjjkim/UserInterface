@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMessageBoardWriteBinding;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -38,42 +40,66 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
         TextView bookAuthor = binding.recordAuthor;
         TextView bookDescription = binding.recordDescription;
 
-        // 데이터 수신
+        // Firebase 설정
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        // 사용자 uid 가져오기
+        String uid = null;
+        if (currentUser != null) {
+            uid = currentUser.getUid();
+        }
+        else {
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        db.collection("users").document(uid)
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (error != null) {
+                        Log.e("UInterface", "Firestore 데이터 가져오기 실패 : " + error.getMessage());
+                        Toast.makeText(this, "데이터를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        String nickname = documentSnapshot.getString("nickname");
+                        if (nickname != null && !nickname.isEmpty()) {
+                            binding.messageBoardWriteNickname.setText(nickname + "의 기록");
+                        }
+                        else {
+                            binding.messageBoardWriteNickname.setText("닉네임의 기록");
+                        }
+                    }
+                });
+
+
+        // 책 데이터 수신
         String title = getIntent().getStringExtra("title");
         String author = getIntent().getStringExtra("author");
         String description = getIntent().getStringExtra("description");
-//        String publisher = getIntent().getStringExtra("publisher");
-//        String pubDate = getIntent().getStringExtra("pubDate");
+        String publisher = getIntent().getStringExtra("publisher");
+        String pubDate = getIntent().getStringExtra("pubDate");
         String cover = getIntent().getStringExtra("cover");
+
         bookTitle.setText(title);
         bookAuthor.setText(author);
         bookDescription.setText(description);
 
-        // 데이터 송신 게시판으로 데이터 보내기
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("title", title);
-        resultIntent.putExtra("author", author);
-        resultIntent.putExtra("description", "description");
-        resultIntent.putExtra("cover", cover);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // 게시글 추가 버튼 클릭 리스터
+        String finalUid = uid;
 
         binding.recordAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String title = getIntent().getStringExtra("title");
-                String author = getIntent().getStringExtra("author");
-                String description = getIntent().getStringExtra("description");
-                String cover = getIntent().getStringExtra("cover");
                 String review = binding.etReview.getText().toString();
 
-                setResult(RESULT_OK, resultIntent);
 
-                db.collection("message_boards").document(userId).get()
+                db.collection("message_boards").document(finalUid).get()
                         .addOnSuccessListener(documentSnapshot -> {
                             if (!documentSnapshot.exists() || !documentSnapshot.contains("posts")) {
-                                db.collection("message_boards").document(userId)
+                                db.collection("message_boards").document(finalUid)
                                         .set(new HashMap<String, Object>() {{
                                             put("posts", new ArrayList<>());
                                         }});
@@ -82,7 +108,7 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             // Firestore에 데이터 추가
                             MessageBoardItem newItem = new MessageBoardItem(title, author, cover, true, review);
-                            db.collection("message_boards").document(userId)
+                            db.collection("message_boards").document(finalUid)
                                     .update("posts", FieldValue.arrayUnion(newItem))
                                     .addOnSuccessListener(avoid -> {
                                         Log.d("UInterface", "Upload Success");
