@@ -17,15 +17,15 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/message_board"
+            android:src="@drawable/chat"
             android:layout_marginLeft="10dp"
-            android:contentDescription="설정 아이콘" />
+            android:contentDescription="대화 아이콘" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="게시판"
+            android:text="댓글 단 글"
             android:textSize="25dp"
             android:textStyle="bold"
             android:textColor="@color/theme_color2" />
@@ -62,7 +62,7 @@
             android:background="@drawable/rectangle_2"
             android:padding="12dp"
             android:drawableEnd="@drawable/mirror"
-            android:backgroundTint="@color/theme_color1"
+            android:backgroundTint="#B3D8EF"
             android:layout_alignParentTop="true"/>
     </LinearLayout>
 

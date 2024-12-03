@@ -15,15 +15,16 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
-            android:name=".MyRecordStoreActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
-        <activity
-            android:name=".MyRecordSearchActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MessageBoradActivity"
-            android:exported="true" /> <!-- FileProvider 설정 -->
+            android:name=".MessageBorad"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- FileProvider 설정 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -35,14 +36,15 @@
         </provider>
 
         <activity
-            android:name=".MessageBoardWriteActivity"
+            android:name=".MyRecordWriteActivity"
             android:exported="false" />
         <activity
             android:name=".MyRecordActivity"
-            android:exported="true" />
+            android:exported="true"></activity>
         <activity
             android:name=".SettingActivity"
-            android:exported="true" />
+            android:exported="true"></activity>
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -52,13 +54,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SignUpActivity"
-            android:exported="false" />
+            android:exported="false"></activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"></activity>
     </application>
 
 </manifest>
