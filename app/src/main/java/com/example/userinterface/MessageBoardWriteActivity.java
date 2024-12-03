@@ -113,11 +113,18 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                         })
                         .addOnCompleteListener(task -> {
                             // Firestore에 데이터 추가
-                            MessageBoardItem newItem = new MessageBoardItem(title, author, cover, true, review);
+                            HashMap<String, Object> newItem = new HashMap<>();
+                            newItem.put("title", title);
+                            newItem.put("author", author);
+                            newItem.put("cover", cover);
+                            newItem.put("review", review);
+                            newItem.put("userId", finalUid);
+                            newItem.put("liked", true);
+
                             db.collection("message_boards").document(finalUid)
                                     .update("posts", FieldValue.arrayUnion(newItem))
                                     .addOnSuccessListener(avoid -> {
-                                        Log.d("UInterface", "Upload Success");
+                                        Log.d("UInterface", "Upload Sucess");
                                         setResult(RESULT_OK);
                                         finish();
                                     })

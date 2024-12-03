@@ -81,7 +81,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
             titleText = itemView.findViewById(R.id.titleText);
             contentText = itemView.findViewById(R.id.contentText);
             likeButton = itemView.findViewById(R.id.like_button);
-            author = itemView.findViewById(R.id.writer);
+            author = itemView.findViewById(R.id.authorText);
         }
     }
 
