@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/reviewNickname"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="   지웅이의 기록"
+        android:drawableLeft="@drawable/pencil"
+        android:textSize="25dp"
+        android:paddingStart="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp">
+        <ImageView
+            android:id="@+id/reviewCover"
+            android:layout_width="100dp"
+            android:layout_height="130dp"
+            android:src="@drawable/imagewait"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/reviewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="책 이름"
+                android:padding="4dp"
+                />
+            <TextView
+                android:id="@+id/reviewAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="책 저자"
+                android:padding="4dp"/>
+            <TextView
+                android:id="@+id/reviewDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:padding="4dp"
+                android:text="책 소개"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <EditText
+        android:id="@+id/etReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"/>
+    <View
+        android:layout_margin="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CBE4E9"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="댓글"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="right"
+        android:textSize="20dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reviewRecyclerView"/>
+</LinearLayout>

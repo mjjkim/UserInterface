@@ -15,12 +15,15 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
+            android:name=".MessageBoardReview"
+            android:exported="false" />
+        <activity
             android:name=".MyRecordModifyActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".MyRecordStoreActivity"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
             android:name=".MyRecordSearchActivity"
             android:exported="false" />
@@ -36,6 +39,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".MessageBoardWriteActivity"
             android:exported="true" />
