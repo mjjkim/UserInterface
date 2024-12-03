@@ -72,7 +72,10 @@ public class MessageBoradActivity extends AppCompatActivity {
                                     String author = (String) post.get("author");
                                     String cover = (String) post.get("cover");
                                     String review = (String) post.get("review");
-                                    items.add(new MessageBoardItem(title, author, cover, true, review));
+                                    // liked 상태 반영
+                                    boolean liked = post.containsKey("liked") && (boolean) post.get("liked");
+
+                                    items.add(new MessageBoardItem(title, author, cover, liked, review));
                                 }
                             }
                         }

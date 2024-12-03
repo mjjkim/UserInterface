@@ -45,6 +45,7 @@
     </LinearLayout>
 
     <!-- 좋아요 버튼 -->
+
     <ImageView
         android:id="@+id/like_button"
         android:layout_width="24dp"

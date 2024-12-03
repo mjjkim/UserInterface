@@ -7,13 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -63,18 +63,24 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
                 .error(R.drawable.imagewait)
                 .into(holder.bookImage);
 
-        // 스크랩 버튼 상태에 따라 이미지 설정
-        holder.likeButton.setImageResource(item.isLiked() ? R.drawable.star_filled : R.drawable.star);
+        // 좋아요 버튼 상태에 따른 UI 업데이트
+        holder.likeButton.setImageResource(item.isLiked() ? R.drawable.vector_star_filled : R.drawable.vector_star);
 
+        // 좋아요 버튼 클릭 이벤트
         holder.likeButton.setOnClickListener(v -> {
+            // 좋아요 상태를 변경
             boolean newLikedState = !item.isLiked();
-            // 상태 업데이트
-            item.setLiked(!item.isLiked());
-            // UI 업데이트
-            notifyItemChanged(position);
+            item.setLiked(newLikedState);
 
-            // Firestor에 스크랩 상태 업데이트
+            // 상태 반영
+            holder.likeButton.setImageResource(newLikedState ? R.drawable.vector_star_filled : R.drawable.vector_star);
+
+            // Firestore에 상태 업데이트
             updateLikeStatusInFirestore(item, newLikedState);
+
+            // Toast 메시지 표시
+            String message = newLikedState ? "스크랩되었습니다!" : "스크랩이 취소되었습니다!";
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -84,25 +90,26 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // 기존 항목 삭제 및 업데이트
-        db.collection("message_boards").document(userId).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                List<Map<String, Object>> posts = (List<Map<String, Object>>) documentSnapshot.get("posts");
-                if (posts != null) {
-                    for (Map<String, Object> post : posts)
-                    {
-                        if (post.get("title").equals(item.getTitle())) {
-                            // 스크랩 상태만 업데이트
-                            post.put("liked", isLiked);
-                            break;
+        db.collection("message_boards").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        List<Map<String, Object>> posts = (List<Map<String, Object>>) documentSnapshot.get("posts");
+                        if (posts != null) {
+                            for (Map<String, Object> post : posts) {
+                                if (post.get("title").equals(item.getTitle())) {
+                                    post.put("liked", isLiked);
+                                    break;
+                                }
+                            }
+                            db.collection("message_boards").document(userId)
+                                    .update("posts", posts)
+                                    .addOnSuccessListener(avoid -> Log.d("UInterface", "Firestore 업데이트 성공"))
+                                    .addOnFailureListener(e -> Log.e("UInterface", "Firestore 업데이트 실패 : " + e.getMessage()));
                         }
                     }
-                }
-                db.collection("message_boards").document(userId)
-                        .update("posts", posts)
-                        .addOnSuccessListener(avoid -> Log.d("UInterface", "Firestore 업데이트 성공"))
-                        .addOnFailureListener(e -> Log.e("UInterface", "Firestore 업데이트 실패 : " + e.getMessage()));
-            }
-        });
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "Firestore 문서 가져오기 실패 : " + e.getMessage()));
     }
 
     @Override

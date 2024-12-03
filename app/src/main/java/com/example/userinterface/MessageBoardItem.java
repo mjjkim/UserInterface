@@ -60,11 +60,11 @@ public class MessageBoardItem {
     // Firestore에 저장하기 위해 객체를 Map으로 변환
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("title", title);
-        map.put("author", author);
-        map.put("cover", cover);
-        map.put("liked", isLiked);
-        map.put("review", review);
+        map.put("title", this.title);
+        map.put("author", this.author);
+        map.put("cover", this.cover);
+        map.put("liked", this.isLiked);
+        map.put("review", this.review);
         return map;
     }
 }

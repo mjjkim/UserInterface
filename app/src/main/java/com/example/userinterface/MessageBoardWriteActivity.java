@@ -119,7 +119,7 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                             newItem.put("cover", cover);
                             newItem.put("review", review);
                             newItem.put("userId", finalUid);
-                            newItem.put("liked", true);
+                            newItem.put("liked", false);
 
                             db.collection("message_boards").document(finalUid)
                                     .update("posts", FieldValue.arrayUnion(newItem))

@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/star_filled" android:state_selected="true" />
-    <item android:drawable="@drawable/star_unfilled" />
+    <!-- 선택된 상태: 노란색 -->
+    <item
+        android:drawable="@drawable/vector_star_filled"
+        android:state_selected="true" />
+    <!-- 기본 상태: 검은색 테두리, 내부 투명 -->
+    <item android:drawable="@drawable/vector_star" />
 </selector>
+
+
+
