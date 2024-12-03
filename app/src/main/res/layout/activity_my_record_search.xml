@@ -14,13 +14,13 @@
         android:gravity="center"
         android:layout_marginTop="10dp">
         <ImageView
-            android:id="@+id/backButton"
+            android:id="@+id/myRecordBackButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/a"
             />
         <EditText
-            android:id="@+id/bookSearch"
+            android:id="@+id/myRecordBookSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -32,7 +32,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/test"
+        android:id="@+id/myRecordSearchList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

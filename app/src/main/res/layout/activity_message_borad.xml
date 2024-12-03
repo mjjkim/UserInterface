@@ -62,7 +62,7 @@
             android:background="@drawable/rectangle_2"
             android:padding="12dp"
             android:drawableEnd="@drawable/mirror"
-            android:backgroundTint="#B3D8EF"
+            android:backgroundTint="@color/theme_color1"
             android:layout_alignParentTop="true"/>
     </LinearLayout>
 

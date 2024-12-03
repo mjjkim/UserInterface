@@ -2,26 +2,35 @@ package com.example.userinterface;
 
 public class MessageBoardItem {
     private String title;
-    private String content;
-    private int imageResId;
+    private String author;
+    private String cover;
     private boolean isLiked;
+    private String review;
 
-    public  MessageBoardItem(String title, String content, int imageResId, boolean isLiked){
+    public MessageBoardItem() {
+
+    }
+
+    public  MessageBoardItem(String title, String author, String cover, boolean isLiked, String review){
         this.title = title;
-        this.content = content;
-        this.imageResId = imageResId;
+        this.author = author;
+        this.cover = cover;
         this.isLiked = isLiked;
+        this.review = review;
     }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
 
-    public int getImageResId() { return imageResId; }
-    public void setImageResId(int imageResId) { this.imageResId = imageResId; }
+    public String getCover() { return cover; }
+    public void setCover(String cover) { this.cover = cover; }
 
     public boolean isLiked() { return isLiked; }
-    public void setLiked(boolean liked) { isLiked = liked; }
+    public void setLiked(boolean reviewed) { isLiked = reviewed; }
+
+    public String getReview(){ return review; }
+    public void setReview(String review){ this.review = review; }
 }

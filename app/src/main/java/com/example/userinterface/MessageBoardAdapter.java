@@ -1,6 +1,7 @@
 package com.example.userinterface;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -33,9 +36,15 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MessageBoardItem item = items.get(position);
         holder.titleText.setText(item.getTitle());
-        holder.contentText.setText(item.getContent());
-        holder.bookImage.setImageResource(item.getImageResId());
+        holder.contentText.setText(item.getReview());
+        Log.d("omj", item.getReview());
         holder.likeButton.setImageResource(item.isLiked() ? R.drawable.star : R.drawable.star);
+        holder.author.setText(item.getAuthor());
+
+        Glide.with(holder.itemView.getContext())
+                .load(item.getCover())
+                .error(R.drawable.imagewait)
+                .into(holder.bookImage);
 
         holder.likeButton.setOnClickListener(v -> {
             item.setLiked(!item.isLiked());
@@ -53,6 +62,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView bookImage, likeButton;
         TextView titleText, contentText;
+        TextView author;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,6 +70,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
             titleText = itemView.findViewById(R.id.titleText);
             contentText = itemView.findViewById(R.id.contentText);
             likeButton = itemView.findViewById(R.id.like_button);
+            author = itemView.findViewById(R.id.writer);
         }
     }
 
