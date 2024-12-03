@@ -159,7 +159,7 @@
                     android:text="챌린지 설정"
                     android:textColor="#0A86FD"
                     android:textSize="18dp"
-                    android:textStyler="bold"
+                    android:textStyle="bold"
                     tools:ignore="InvalidId" />
 
             </LinearLayout>
