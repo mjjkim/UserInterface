@@ -61,19 +61,20 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:text="책 정보"
-                android:id="@+id/bookInfo"/>
+                android:id="@+id/bookInfoButton"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:text="책 기록"
-                android:id="@+id/bookRecord"/>
+                android:id="@+id/bookRecordButton"/>
         </LinearLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:id="@+id/bookInfo">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,7 +120,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:id="@+id/bookRecord">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

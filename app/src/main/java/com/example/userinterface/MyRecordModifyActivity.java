@@ -1,7 +1,10 @@
 package com.example.userinterface;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -20,6 +23,12 @@ public class MyRecordModifyActivity extends AppCompatActivity {
     TextView bookPubDate;
     TextView bookDescrition;
     TextView bookIsbn;
+
+    Button bookInfoButton;
+    Button bookRecordButton;
+
+    FrameLayout bookInfo;
+    FrameLayout bookRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,5 +109,27 @@ public class MyRecordModifyActivity extends AppCompatActivity {
                 .load(cover)
                 .error(R.drawable.imagewait)
                 .into(bookImage);
+
+
+        bookInfoButton = binding.bookInfoButton;
+        bookRecordButton = binding.bookRecordButton;
+
+        bookInfo = binding.bookInfo;
+        bookRecord = binding.bookRecord;
+
+        bookInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bookInfo.setVisibility(View.VISIBLE);
+                bookRecord.setVisibility(View.GONE);
+            }
+        });
+        bookRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bookInfo.setVisibility(View.GONE);
+                bookRecord.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }
