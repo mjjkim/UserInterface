@@ -7,13 +7,15 @@ public class BookItem {
     private String description;
     private String pubDate;
     private String publisher;
-    public BookItem(String title, String author, String description, String bookimage, String pubDate, String publisher){
+    private String isbn;
+    public BookItem(String title, String author, String description, String bookimage, String pubDate, String publisher, String isbn){
         this.title = title;
         this.author = author;
         this.description = description;
         this.bookimage = bookimage;
         this.pubDate = pubDate;
         this.publisher = publisher;
+        this.isbn = isbn;
     }
     public String getBookImage(){
         return bookimage;
@@ -50,5 +52,11 @@ public class BookItem {
     }
     public void setPublisher(String publisher){
         this.publisher = publisher;
+    }
+    public String getIsbn(){
+        return isbn;
+    }
+    public void setIsbn(String isbn){
+        this.isbn = isbn;
     }
 }

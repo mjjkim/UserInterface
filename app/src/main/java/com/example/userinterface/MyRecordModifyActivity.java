@@ -2,20 +2,24 @@ package com.example.userinterface;
 
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMyRecordModifyBinding;
 
-import org.checkerframework.checker.units.qual.A;
-
-public class MyRecordModify extends AppCompatActivity {
+public class MyRecordModifyActivity extends AppCompatActivity {
+    TextView bookTitle;
+    TextView bookAuthor;
+    TextView bookPublihser;
+    ImageView bookImage;
+    TextView bookPubDate;
+    TextView bookDescrition;
+    TextView bookIsbn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +72,33 @@ public class MyRecordModify extends AppCompatActivity {
             datePickerFragment.show(getSupportFragmentManager(), "DATE_PICKER");
         });
 
+        // 책 데이터 수신
+        String title = getIntent().getStringExtra("title");
+        String author = getIntent().getStringExtra("author");
+        String description = getIntent().getStringExtra("description");
+        String publisher = getIntent().getStringExtra("publisher");
+        String pubDate = getIntent().getStringExtra("pubDate");
+        String cover = getIntent().getStringExtra("cover");
+        String isbn = getIntent().getStringExtra("isbn");
 
+        bookAuthor = binding.modifyAuthor;
+        bookTitle = binding.modifyTitle;
+        bookDescrition = binding.modifyDescription;
+        bookIsbn = binding.modifyISBN;
+        bookImage = binding.modifyCover;
+        bookPubDate = binding.modifyPubDate;
+        bookPublihser = binding.modifyPublisher;
 
+        bookAuthor.setText(author);
+        bookTitle.setText(title);
+        bookDescrition.setText(description);
+        bookIsbn.setText(isbn);
+        bookPublihser.setText(publisher);
+        bookPubDate.setText(pubDate);
 
-
+        Glide.with(this)
+                .load(cover)
+                .error(R.drawable.imagewait)
+                .into(bookImage);
     }
 }

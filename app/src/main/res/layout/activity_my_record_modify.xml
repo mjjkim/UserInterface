@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyRecordModify">
+    tools:context=".MyRecordModifyActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,13 +23,15 @@
             android:layout_height="210dp"
             android:layout_gravity="center"
             android:src="@drawable/imagewait"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:id="@+id/modifyCover"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="작가"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:id="@+id/modifyAuthor"/>
 
         <RatingBar
             android:layout_width="wrap_content"
@@ -71,11 +73,20 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="visible">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="책 설명"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="description"
+                    android:id="@+id/modifyDescription"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,12 +105,21 @@
                     android:layout_height="wrap_content"
                     android:text="isbn"
                     android:id="@+id/modifyISBN"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="출판일"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="pubDate"
+                    android:id="@+id/modifyPubDate"/>
             </LinearLayout>
         </FrameLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

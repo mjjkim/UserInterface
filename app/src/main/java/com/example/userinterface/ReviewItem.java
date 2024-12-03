@@ -30,6 +30,11 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
         void onItemClick(BookItem bookData);
     }
 
+    // 클릭 이벤트 리스너 설정 메서드
+    public void setOnItemClickListener(ReviewItem.OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     public void addItem(BookItem item){
         bookItemList.add(item);
         notifyDataSetChanged();

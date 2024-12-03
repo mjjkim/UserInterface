@@ -15,7 +15,7 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
-            android:name=".MyRecordModify"
+            android:name=".MyRecordModifyActivity"
             android:exported="true"/>
         <activity
             android:name=".MyRecordStoreActivity"

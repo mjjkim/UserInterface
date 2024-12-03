@@ -1,7 +1,6 @@
 package com.example.userinterface;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Intent.getIntent;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -53,6 +52,7 @@ public class HomeFragment extends Fragment {
     String publisher;
     String pubDate;
     String cover;
+    String isbn;
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -97,7 +97,6 @@ public class HomeFragment extends Fragment {
         bookItemAdapter = new ReviewItem(itemList);
         recyclerView.setAdapter(bookItemAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
-
 
         // Inflate the layout for this fragment
         return binding.getRoot();
@@ -171,6 +170,7 @@ public class HomeFragment extends Fragment {
                             publisher = o.getData().getStringExtra("publisher");
                             pubDate = o.getData().getStringExtra("pubDate");
                             cover = o.getData().getStringExtra("cover");
+                            isbn = o.getData().getStringExtra("isbn");
 
                             Log.d("omj",  "이름" + title);
                             bookItemAdapter.addItem(new BookItem(
@@ -179,7 +179,8 @@ public class HomeFragment extends Fragment {
                                     description,
                                     cover,
                                     pubDate,
-                                    publisher
+                                    publisher,
+                                    isbn
                             ));
                         }
                     }
@@ -191,6 +192,20 @@ public class HomeFragment extends Fragment {
                         .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
             }
         });
+
+        bookItemAdapter.setOnItemClickListener(new ReviewItem.OnItemClickListener() {
+            @Override
+            public void onItemClick(BookItem bookData) {
+                startActivity(new Intent(getActivity(), MyRecordModifyActivity.class)
+                        .putExtra("title", bookData.getTitle())
+                        .putExtra("author", bookData.getAuthor())
+                        .putExtra("cover", bookData.getBookImage())
+                        .putExtra("publisher", bookData.getPublisher())
+                        .putExtra("pubDate", bookData.getPubDate())
+                        .putExtra("description", bookData.getDescription()));
+            }
+        });
+
 
     }
     public void onDestroyView() {

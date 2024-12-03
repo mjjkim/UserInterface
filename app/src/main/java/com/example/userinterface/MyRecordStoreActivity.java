@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MyRecordStoreActivity extends AppCompatActivity {
-    String title, author, description, publisher, pubDate, cover;
+    String title, author, description, publisher, pubDate, cover, isbn;
 
 
     @Override
@@ -52,6 +52,7 @@ public class MyRecordStoreActivity extends AppCompatActivity {
         publisher = getIntent().getStringExtra("publisher");
         pubDate = getIntent().getStringExtra("pubDate");
         cover = getIntent().getStringExtra("cover");
+        isbn = getIntent().getStringExtra("isbn");
 
         // 정보 띄우기
         bookTitle.setText(title);
@@ -66,6 +67,9 @@ public class MyRecordStoreActivity extends AppCompatActivity {
         resultIntent.putExtra("author", author);
         resultIntent.putExtra("description", "description");
         resultIntent.putExtra("cover", cover);
+        resultIntent.putExtra("publisher", publisher);
+        resultIntent.putExtra("pubDate", pubDate);
+        resultIntent.putExtra("isbn", isbn);
 
 
         Glide.with(this)
