@@ -15,12 +15,15 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
-            android:name=".MyRecordModify"
-            android:exported="true" />
+            android:name=".MyRecordStoreActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
+        <activity
+            android:name=".MyRecordSearchActivity"
+            android:exported="false" />
         <activity
             android:name=".MessageBoradActivity"
-            android:exported="true">
-        </activity> <!-- FileProvider 설정 -->
+            android:exported="true" /> <!-- FileProvider 설정 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -30,10 +33,18 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
         <activity
             android:name=".MessageBoardWriteActivity"
-            android:exported="false" />
+            android:exported="true" />
+        <activity
+            android:name=".MessageBoardCommentActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MessageBoardLikeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".MessageBoardMyActivity"
+            android:exported="true" />
         <activity
             android:name=".MyRecordActivity"
             android:exported="true" />

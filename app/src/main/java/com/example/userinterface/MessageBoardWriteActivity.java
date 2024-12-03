@@ -9,11 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMessageBoardWriteBinding;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -27,7 +27,7 @@ import java.util.Locale;
 public class MessageBoardWriteActivity extends AppCompatActivity {
 
     //리뷰 edittext
-    EditText reviewText;
+    private EditText reviewText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +83,19 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
         String pubDate = getIntent().getStringExtra("pubDate");
         String cover = getIntent().getStringExtra("cover");
 
+        // 데이터 화면에 표시
         bookTitle.setText(title);
         bookAuthor.setText(author);
         bookDescription.setText(description);
 
+        // Glide로 이미지 로드
+        Glide.with(this)
+                .load(cover)
+                .error(R.drawable.imagewait)
+                .into(bookCover);
+
         // 게시글 추가 버튼 클릭 리스터
         String finalUid = uid;
-
         binding.recordAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -127,14 +133,21 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
             }
         });
 
-        Glide.with(this)
-                .load(cover)
-                .error(R.drawable.imagewait)
-                .into(bookCover);
+        // 뒤로 가기 동작 설정
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(MessageBoardWriteActivity.this, MyRecordActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity( intent);
+                finish();
+            }
+        });
 
         reviewText = binding.etReview;
 
     }
+
     private String formatDate(Long timestamp) {
         if (timestamp == null) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("MM월 dd일", Locale.getDefault());
