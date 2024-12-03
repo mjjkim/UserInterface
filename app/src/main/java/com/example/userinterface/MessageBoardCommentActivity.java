@@ -48,7 +48,7 @@ public class MessageBoardCommentActivity extends AppCompatActivity {
     }
 
     // 내부 클래스: RecyclerView 어댑터
-    class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
+    private class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
         private final List<CommentItem> itemList;
 
         public CommentAdapter(List<CommentItem> itemList) {
