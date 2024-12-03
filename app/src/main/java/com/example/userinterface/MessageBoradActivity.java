@@ -100,14 +100,14 @@ public class MessageBoradActivity extends AppCompatActivity {
             }
         });
 
-        binding.searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launcher.launch(new Intent(MessageBoradActivity.this, MyRecordActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
-                Log.d("UInterface", "MessageBoard to MyRecord");
-            }
-        });
+//        binding.searchButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                launcher.launch(new Intent(MessageBoradActivity.this, MyRecordActivity.class)
+//                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+//                Log.d("UInterface", "MessageBoard to MyRecord");
+//            }
+//        });
     }
 
 

@@ -25,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 
 public class MenuFragment extends Fragment {
-    FragmentMenuBinding binding = FragmentMenuBinding.inflate(getLayoutInflater());
+    FragmentMenuBinding binding;
 
     // import
     AladinApiSevice service; // 레트로핏 서비스

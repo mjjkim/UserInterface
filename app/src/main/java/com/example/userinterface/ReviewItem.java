@@ -21,6 +21,7 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
 
     public void addItem(BookItem item){
         bookItemList.add(item);
+        notifyDataSetChanged();
     }
 
     @NonNull
