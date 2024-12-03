@@ -79,7 +79,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
             updateLikeStatusInFirestore(item, newLikedState);
 
             // Toast 메시지 표시
-            String message = newLikedState ? "스크랩되었습니다!" : "스크랩이 취소되었습니다!";
+            String message = newLikedState ? "스크랩되었습니다!" : "스크랩이 해제되었습니다!";
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         });
     }
