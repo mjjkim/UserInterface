@@ -15,6 +15,9 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
+            android:name=".MyRecordModify"
+            android:exported="true"/>
+        <activity
             android:name=".MyRecordStoreActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"/>
