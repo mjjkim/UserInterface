@@ -166,22 +166,55 @@
 
             </LinearLayout>
 
-
         </LinearLayout>
 
-        <!-- Calendar Section -->
-        <FrameLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <!-- 이전 월 버튼 -->
+            <Button
+                android:id="@+id/prev_month_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="◀"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#333333"
+                android:layout_marginEnd="8dp" />
+
+            <!-- 현재 월 텍스트 -->
+            <TextView
+                android:id="@+id/current_month_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:gravity="center" />
+
+            <!-- 다음 월 버튼 -->
+            <Button
+                android:id="@+id/next_month_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▶"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#333333"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- RecyclerView Calendar Section -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/calendar_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_marginTop="16dp"
-            android:background="#E0E0E0">
+            android:background="#FFFFFF"
+            android:scrollbars="vertical" />
 
-            <CalendarView
-                android:id="@+id/calendar_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FFFFFF" />
-        </FrameLayout>
 
         <!-- Success and Failure Buttons -->
         <LinearLayout
