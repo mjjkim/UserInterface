@@ -10,11 +10,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/book"
+        android:drawableLeft="@drawable/book1"
         android:paddingStart="40dp"
         android:layout_marginTop="40dp"
         android:id="@+id/homeNickname"
         android:text="  지웅이의 서재"
+        android:textColor="#55A9DB"
         android:textSize="30dp" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
@@ -45,35 +46,41 @@
             android:textColor="@color/toggle_button_selector"
             android:backgroundTint="@color/toggle_background_selector"/>
     </com.google.android.material.button.MaterialButtonToggleGroup>
-
     <FrameLayout
         android:id="@+id/bookFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_gravity="center"
-                android:id="@+id/recyclerview"
+            android:layout_height="wrap_content">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:scrollbarSize="4dp"
-                android:scrollbars="vertical"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="8dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_gravity="center"
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:scrollbarSize="4dp"
+                    android:scrollbars="vertical"/>
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/RecordAddButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="8dp"/>
+            <ImageView
+                android:id="@+id/RecordAddButton"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/pen" />
+        </RelativeLayout>
+
     </FrameLayout>
 
     <FrameLayout
