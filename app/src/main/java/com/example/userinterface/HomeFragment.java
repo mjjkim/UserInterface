@@ -47,10 +47,10 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore db;
     private String userId;
 
-//    // 글귀모음 리사이클러뷰
-//    private RecyclerView phraseRecyclerView;//어댑터
-//    private SearchBookAdapter reviewAdapter;
-//
+    // 글귀모음 리사이클러뷰
+    private RecyclerView phraseRecyclerView;//어댑터
+    private PhraseAdapter phraseAdapter;
+
 //    //수신받는 정보
 //    String title;
 //    String author;
@@ -81,9 +81,15 @@ public class HomeFragment extends Fragment {
         // Firestore에서 데이터 불러오기
         loadBooksFromFirestore();
 
+        phraseRecyclerView = binding.PhraseRecyclerView;
+        phraseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        phraseAdapter = new PhraseAdapter();
+        phraseRecyclerView.setAdapter(phraseAdapter);
+
         return binding.getRoot();
 
         // 글귀 모음 예시
+
 //        phraseRecyclerView = binding.PhraseRecyclerView;
 //        reviewAdapter = new SearchBookAdapter(getActivity());
 
@@ -186,6 +192,8 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+
 //        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
 //                new ActivityResultCallback<ActivityResult>() {
 //                    @Override
@@ -225,6 +233,10 @@ public class HomeFragment extends Fragment {
 //                }
 //            }
 //        });
+
+
+
+
     }
 
     private void loadBooksFromFirestore() {
