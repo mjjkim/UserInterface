@@ -2,13 +2,15 @@ package com.example.userinterface;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import android.widget.Toast;
 
 import com.example.userinterface.databinding.FragmentChallengeBinding;
@@ -17,9 +19,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ChallengeFragment extends Fragment {
-
+    private FragmentChallengeBinding binding;
+    private TextView challengeSet;
+    private TextView challengeDetails;
+    private TextView challengeSetText;
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentChallengeBinding.inflate(inflater, container, false);
         View view = inflater.inflate(R.layout.fragment_challenge, container, false);
 
         challengeSet = view.findViewById(R.id.challengeSet);
@@ -28,22 +36,6 @@ public class ChallengeFragment extends Fragment {
 
         // 챌린지 설정 버튼 클릭 이벤트
         challengeSet.setOnClickListener(v -> openChallengeDialog());
-
-        return view;
-    }
-
-    private void openChallengeDialog() {
-        ChallengeSettingDialog dialog = new ChallengeSettingDialog();
-        dialog.setOnChallengeDataListener((challenge, date) -> {
-            // 데이터 수신 후 화면에 반영
-            challengeSetText.setText(challenge);
-            challengeDetails.setText("기간: " + date);
-        });
-        dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentChallengeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -87,7 +79,15 @@ public class ChallengeFragment extends Fragment {
 
         }
     }
-
+    private void openChallengeDialog() {
+        ChallengeSettingDialog dialog = new ChallengeSettingDialog();
+        dialog.setOnChallengeDataListener((challenge, date) -> {
+            // 데이터 수신 후 화면에 반영
+            challengeSetText.setText(challenge);
+            challengeDetails.setText("기간: " + date);
+        });
+        dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
