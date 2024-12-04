@@ -77,7 +77,7 @@ public class MessageBoradActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new MessageBoardAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MessageBoardItem item) {
-                startActivity(new Intent(MessageBoradActivity.this, MessageBoardReview.class)
+                startActivity(new Intent(MessageBoradActivity.this, MessageBoardReviewActivity.class)
                         .putExtra("title", item.getTitle())
                         .putExtra("author", item.getAuthor())
                         .putExtra("cover", item.getCover())

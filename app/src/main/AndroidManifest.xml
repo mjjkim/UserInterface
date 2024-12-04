@@ -15,7 +15,7 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
-            android:name=".MessageBoardReview"
+            android:name=".MessageBoardReviewActivity"
             android:exported="true" />
         <activity
             android:name=".MyRecordModifyActivity"
