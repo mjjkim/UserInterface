@@ -66,24 +66,24 @@ public class MessageBoardMyActivity extends AppCompatActivity {
                                 String title = (String) post.get("title");
                                 String content = (String) post.get("review");
                                 String postUserId = (String) post.get("userId");
-                                // 책 이미지 URL
                                 String cover = (String) post.get("cover");
-                                // 지은이
                                 String author = (String) post.get("author");
+                                com.google.firebase.Timestamp timestamp = (com.google.firebase.Timestamp) post.get("timestamp"); // timestamp 필드 가져오기
 
-                                Log.d("UInterface", "Post : " + post);
-                                Log.d("UInterface", "UserID : " + userId + ", PostUserID : " + postUserId);
-
-                                // 현재 사용자 ID와 작성자 ID가 일치하는 경우만 추가
                                 if (userId.equals(postUserId)) {
-                                    items.add(new PostItem(title, content, postUserId, cover, author));
+                                    items.add(new PostItem(title, content, postUserId, cover, author, timestamp));
                                 }
                             }
+
+                            // 최신순으로 정렬
+                            items.sort((item1, item2) -> item2.getTimestamp().compareTo(item1.getTimestamp()));
+
                             adapter.notifyDataSetChanged();
                             Log.d("UserInterface", "Adapter item count : " + items.size());
                         }
                     }
                 });
+
     }
 
     // 내부 클래스: RecyclerView 어댑터
@@ -117,6 +117,9 @@ public class MessageBoardMyActivity extends AppCompatActivity {
                     .error(R.drawable.error)
                     // 오류 이미지
                     .into(holder.bookImage);
+
+            // 별표(스크랩 아이콘) 숨기기
+            holder.likeButton.setVisibility(View.GONE);
         }
 
         @Override
@@ -146,13 +149,15 @@ public class MessageBoardMyActivity extends AppCompatActivity {
         private final String userId;
         private final String cover;
         private final String author;
+        private final com.google.firebase.Timestamp timestamp; // timestamp 필드 추가
 
-        public PostItem(String title, String content, String userId, String cover, String author) {
+        public PostItem(String title, String content, String userId, String cover, String author, com.google.firebase.Timestamp timestamp) {
             this.title = title;
             this.content = content;
             this.userId = userId;
             this.cover = cover;
             this.author = author;
+            this.timestamp = timestamp; // timestamp 초기화
         }
 
         public String getTitle() {
@@ -174,6 +179,9 @@ public class MessageBoardMyActivity extends AppCompatActivity {
         public String getAuthor() {
             return author;
         }
-    }
 
+        public com.google.firebase.Timestamp getTimestamp() {
+            return timestamp;
+        }
+    }
 }
