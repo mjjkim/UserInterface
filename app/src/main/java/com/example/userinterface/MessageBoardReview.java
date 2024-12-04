@@ -32,6 +32,7 @@ public class MessageBoardReview extends AppCompatActivity {
     TextView reviewTitle;
     TextView reviewAuthor;
     TextView reviewDescription;
+    EditText etReview;
 
     EditText editText;
     Button okButton;
@@ -49,6 +50,17 @@ public class MessageBoardReview extends AppCompatActivity {
         reviewTitle = binding.reviewTitle;
         reviewAuthor = binding.reviewAuthor;
         reviewDescription = binding.reviewDescription;
+        etReview = binding.etReview;
+
+        reviewTitle.setText(getIntent().getStringExtra("title"));
+        reviewAuthor.setText(getIntent().getStringExtra("author"));
+        reviewDescription.setText(getIntent().getStringExtra("description"));
+        Glide.with(this)
+                .load(getIntent().getStringExtra("cover"))
+                .into(binding.reviewCover);
+        etReview.setText(getIntent().getStringExtra("review"));
+        etReview.setFocusable(false);
+        etReview.setFocusableInTouchMode(false);
 
         //데이터 수신
         comment = binding.reviewRecyclerView;
@@ -68,6 +80,13 @@ public class MessageBoardReview extends AppCompatActivity {
                         , null
                 ));
                 editText.setText("");
+            }
+        });
+
+        binding.messageBoardReviewBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 

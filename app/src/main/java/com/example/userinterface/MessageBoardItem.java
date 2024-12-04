@@ -12,8 +12,10 @@ public class MessageBoardItem {
     private String review;
     private String userId;
     private com.google.firebase.Timestamp timestamp;
+    private String description;
 
-    public MessageBoardItem(String postId, String title, String author, String cover, boolean isLiked, String review, String userId, com.google.firebase.Timestamp timestamp) {
+    public MessageBoardItem(String postId, String title, String author, String cover, boolean isLiked, String review, String userId, com.google.firebase.Timestamp timestamp, String description) {
+        this.description = description;
         this.postId = postId;
         this.title = title;
         this.author = author;
@@ -74,6 +76,9 @@ public class MessageBoardItem {
     public void setPostId(String postId) {
         this.postId = postId;
     }
+
+    public String getDescription(){return description;}
+    public void setDescription(String description){this.description = description;}
 
     // Getter 및 Setter 추가
     public com.google.firebase.Timestamp getTimestamp() {

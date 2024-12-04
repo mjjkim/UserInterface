@@ -83,6 +83,13 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
             String message = newLikedState ? "스크랩되었습니다!" : "스크랩이 해제되었습니다!";
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         });
+
+        // 클릭 이벤트 설정
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(item); // 클릭된 데이터 전달
+            }
+        });
     }
 
     private void updateLikeStatusInFirestore(MessageBoardItem item, boolean isLiked) {

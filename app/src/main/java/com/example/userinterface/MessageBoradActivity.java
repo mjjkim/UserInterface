@@ -28,6 +28,7 @@ public class MessageBoradActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private String currentUserId;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +72,20 @@ public class MessageBoradActivity extends AppCompatActivity {
             launcher.launch(intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
             Log.d("UInterface", "MessageBoard to MyRecord");
         });
+
+        //리사이클러뷰 클릭 이벤트
+        adapter.setOnItemClickListener(new MessageBoardAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(MessageBoardItem item) {
+                startActivity(new Intent(MessageBoradActivity.this, MessageBoardReview.class)
+                        .putExtra("title", item.getTitle())
+                        .putExtra("author", item.getAuthor())
+                        .putExtra("cover", item.getCover())
+                        .putExtra("review", item.getReview())
+                        .putExtra("description", item.getDescription()));
+                Log.d("omj", "aaa");
+            }
+        });
     }
 
     private void loadMessageBoards() {
@@ -99,7 +114,7 @@ public class MessageBoradActivity extends AppCompatActivity {
                             boolean liked = false;
                             com.google.firebase.Timestamp timestamp = (com.google.firebase.Timestamp) post.get("timestamp");
 
-                            tempItems.add(new MessageBoardItem(postId, title, author, cover, liked, review, userId, timestamp));
+                            tempItems.add(new MessageBoardItem(postId, title, author, cover, liked, review, userId, timestamp, null));
                         }
                     }
                 }
@@ -164,6 +179,7 @@ public class MessageBoradActivity extends AppCompatActivity {
         String author = data.getStringExtra("author");
         String cover = data.getStringExtra("cover");
         String review = data.getStringExtra("review");
+        String description = data.getStringExtra("description");
 
         String postId = db.collection("message_boards").document().getId(); // 고유 ID 생성
 
@@ -180,11 +196,15 @@ public class MessageBoradActivity extends AppCompatActivity {
         db.collection("message_boards").document(currentUserId)
                 .update("posts", com.google.firebase.firestore.FieldValue.arrayUnion(newPost))
                 .addOnSuccessListener(aVoid -> {
-                    items.add(new MessageBoardItem(postId, title, author, cover, false, review, currentUserId, com.google.firebase.Timestamp.now()));
+                    items.add(new MessageBoardItem(postId, title, author, cover, false, review, currentUserId, com.google.firebase.Timestamp.now(), description));
                     adapter.notifyDataSetChanged();
                     Log.d("UInterface", "게시글 추가 성공");
                 })
                 .addOnFailureListener(e -> Log.e("UInterface", "게시글 추가 실패: " + e.getMessage()));
+
+
+
+
     }
 
 }
