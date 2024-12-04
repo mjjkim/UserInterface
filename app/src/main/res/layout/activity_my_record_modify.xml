@@ -1,166 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MyRecordModifyActivity">
-    <LinearLayout
+    tools:context=".MyRecordStoreActivity">
+    <!-- AppBarLayout -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Light">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/reviewToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#ffffff"
+            android:title="My App"
+            android:titleTextColor="#000000"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+    </com.google.android.material.appbar.AppBarLayout>
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="title"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:textSize="30dp"
-            android:id="@+id/modifyTitle"/>
-        <ImageView
-            android:layout_width="148dp"
-            android:layout_height="210dp"
-            android:layout_gravity="center"
-            android:src="@drawable/imagewait"
-            android:layout_margin="10dp"
-            android:id="@+id/modifyCover"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="작가"
-            android:layout_margin="5dp"
-            android:id="@+id/modifyAuthor"/>
-
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:rating="0"
-            style="?android:attr/ratingBarStyleIndicator"
-            android:progressTint="#FFCC01"
-            android:id="@+id/ratingBar"
-            android:layout_gravity="center"
-            android:stepSize="1.0"
-            android:isIndicator="false"
-            />
-
-
-        <View
-            android:layout_margin="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#CBE4E9"/>
+        tools:context=".MyRecordModifyActivity">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="title"
+                android:gravity="center"
+                android:layout_marginTop="55dp"
+                android:textSize="30dp"
+                android:id="@+id/modifyTitle"/>
+            <ImageView
+                android:layout_width="148dp"
+                android:layout_height="210dp"
+                android:layout_gravity="center"
+                android:src="@drawable/imagewait"
+                android:layout_margin="10dp"
+                android:id="@+id/modifyCover"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="작가"
+                android:layout_margin="5dp"
+                android:id="@+id/modifyAuthor"/>
+
+            <RatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:text="책 정보"
-                android:id="@+id/bookInfoButton"/>
-            <Button
-                android:layout_width="wrap_content"
+                android:rating="0"
+                style="?android:attr/ratingBarStyleIndicator"
+                android:progressTint="#FFCC01"
+                android:id="@+id/ratingBar"
+                android:layout_gravity="center"
+                android:stepSize="1.0"
+                android:isIndicator="false"
+                />
+
+
+            <View
+                android:layout_margin="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CBE4E9"/>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:text="책 기록"
-                android:id="@+id/bookRecordButton"/>
+                android:orientation="horizontal">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:text="책 정보"
+                    android:id="@+id/bookInfoButton"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:text="책 기록"
+                    android:id="@+id/bookRecordButton"/>
+            </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:id="@+id/bookInfo">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="책 설명"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="description"
+                        android:id="@+id/modifyDescription"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="출판사"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="publisher"
+                        android:id="@+id/modifyPublisher"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ISBN"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="isbn"
+                        android:id="@+id/modifyISBN"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="출판일"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="pubDate"
+                        android:id="@+id/modifyPubDate"/>
+                </LinearLayout>
+            </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:id="@+id/bookRecord">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:hint="시작 날짜">
+                        <EditText
+                            android:id="@+id/dateEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:drawableEnd="@drawable/calendar"
+                            android:inputType="none"
+                            android:background="?android:attr/editTextBackground" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:hint="끝 날짜">
+
+                        <EditText
+                            android:id="@+id/dateEditText2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:drawableEnd="@drawable/calendar"
+                            android:inputType="none"
+                            android:background="?android:attr/editTextBackground" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+            </FrameLayout>
+
         </LinearLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:id="@+id/bookInfo">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="책 설명"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="description"
-                    android:id="@+id/modifyDescription"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="출판사"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="publisher"
-                    android:id="@+id/modifyPublisher"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ISBN"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="isbn"
-                    android:id="@+id/modifyISBN"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="출판일"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="pubDate"
-                    android:id="@+id/modifyPubDate"/>
-            </LinearLayout>
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:id="@+id/bookRecord">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:hint="시작 날짜">
-                    <EditText
-                        android:id="@+id/dateEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:drawableEnd="@drawable/calendar"
-                        android:inputType="none"
-                        android:background="?android:attr/editTextBackground" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:hint="끝 날짜">
-
-                    <EditText
-                        android:id="@+id/dateEditText2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:clickable="true"
-                        android:drawableEnd="@drawable/calendar"
-                        android:inputType="none"
-                        android:background="?android:attr/editTextBackground" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-        </FrameLayout>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

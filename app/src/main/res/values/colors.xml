@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="theme_pink">#FFC0CB</color>
     <color name="theme_color1">#81CCF8</color>
     <color name="theme_color2">#55A9DB</color>
+    <color name="transparent">#00000000</color> <!-- 투명 -->
+    <color name="default_star_color">#000000</color> <!-- 검은색 -->
+    <color name="selected_star_color">#FFD700</color> <!-- 노란색 -->
 </resources>

@@ -1,7 +1,5 @@
 package com.example.userinterface;
 
-import android.app.Activity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +14,10 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> {
-    private List<BookItem> bookItemList;
+    private List<BoardItem> boardItemList;
 
-    public ReviewItem(List<BookItem> itemList) {
-        this.bookItemList = itemList;
+    public ReviewItem(List<BoardItem> itemList) {
+        this.boardItemList = itemList;
     }
 
     private ReviewItem.OnItemClickListener listener; // 클릭 이벤트 인터페이스
@@ -27,7 +25,7 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
 
     // 클릭 이벤트 인터페이스
     public interface OnItemClickListener {
-        void onItemClick(BookItem bookData);
+        void onItemClick(BoardItem bookData);
     }
 
     // 클릭 이벤트 리스너 설정 메서드
@@ -35,8 +33,8 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
         this.listener = listener;
     }
 
-    public void addItem(BookItem item){
-        bookItemList.add(item);
+    public void addItem(BoardItem item){
+        boardItemList.add(item);
         notifyDataSetChanged();
     }
 
@@ -50,7 +48,7 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        BookItem item = bookItemList.get(position);
+        BoardItem item = boardItemList.get(position);
         holder.setItem(item);
         // 클릭 이벤트 설정
         holder.itemView.setOnClickListener(v -> {
@@ -63,7 +61,7 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
 
     @Override
     public int getItemCount() {
-        return bookItemList.size();
+        return boardItemList.size();
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -80,7 +78,7 @@ public class ReviewItem extends RecyclerView.Adapter<ReviewItem.ItemViewHolder> 
             authorTextView = itemView.findViewById(R.id.bookAuthorTextView);
             bookimageTextView = itemView.findViewById(R.id.bookCoverImageView);
         }
-        public void setItem(BookItem item){
+        public void setItem(BoardItem item){
             titleTextView.setText(item.getTitle());
             authorTextView.setText(item.getAuthor());
             Glide.with(itemView.getContext())

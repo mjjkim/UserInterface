@@ -105,16 +105,6 @@ public class MyRecordStoreActivity extends AppCompatActivity {
             // 저장 버튼 클릭 시 동작
             Toast.makeText(this, "저장 버튼이 눌렸습니다!", Toast.LENGTH_SHORT).show();
 
-            Bundle bundle;
-            bundle = new Bundle();
-            bundle.putString("title", title);
-            bundle.putString("author", author);
-            bundle.putString("description", description);
-            bundle.putString("publisher", publisher);
-            bundle.putString("cover", cover);
-            bundle.putString("pubDate", pubDate);
-
-            new HomeFragment().setArguments(bundle);
 
             // 커스텀 동작 추가
             Intent intent = new Intent()

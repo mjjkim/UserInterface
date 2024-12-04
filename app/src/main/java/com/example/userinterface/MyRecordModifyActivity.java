@@ -1,6 +1,10 @@
 package com.example.userinterface;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMyRecordModifyBinding;
@@ -131,5 +136,57 @@ public class MyRecordModifyActivity extends AppCompatActivity {
                 bookRecord.setVisibility(View.VISIBLE);
             }
         });
+
+        // Toolbar 설정
+        Toolbar toolbar = binding.reviewToolBar;
+
+        setSupportActionBar(toolbar);
+
+        // 제목 설정 (옵션)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+        }
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.a);
+        }
+
+    }
+    // 뒤로가기 버튼 동작 처리
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            // 현재 Activity 종료
+            finish();
+            return true;
+        } else if (item.getItemId() == R.id.review_action) {
+            // 저장 버튼 클릭 시 동작
+            Toast.makeText(this, "저장 버튼이 눌렸습니다!", Toast.LENGTH_SHORT).show();
+
+            // 커스텀 동작 추가
+//            Intent intent = new Intent()
+//                    .putExtra("title", title)
+//                    .putExtra("author", author)
+//                    .putExtra("description", description)
+//                    .putExtra("publisher", publisher)
+//                    .putExtra("cover", cover)
+//                    .putExtra("pubDate", pubDate);
+//            setResult(RESULT_OK, intent);
+            finish();
+
+            return true;
+        } else if(item.getItemId() == R.id.cancel_action){
+            // 현재 Activity 종료
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    // 메뉴 생성
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.reviewappbarmenu, menu); // 메뉴 리소스 연결
+        return true;
     }
 }
