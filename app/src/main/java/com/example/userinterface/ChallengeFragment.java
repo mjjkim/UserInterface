@@ -30,9 +30,9 @@ public class ChallengeFragment extends Fragment {
         binding = FragmentChallengeBinding.inflate(inflater, container, false);
         View view = inflater.inflate(R.layout.fragment_challenge, container, false);
 
-        challengeSet = view.findViewById(R.id.challengeSet);
-        challengeDetails = view.findViewById(R.id.challengeDetails);
-        challengeSetText = view.findViewById(R.id.challenge_set_text);
+        challengeSet = binding.challengeSet;
+        challengeDetails = binding.challengeDetails;
+        challengeSetText = binding.challengeSetText;
 
         // 챌린지 설정 버튼 클릭 이벤트
         challengeSet.setOnClickListener(v -> openChallengeDialog());
