@@ -68,7 +68,26 @@
         android:text="댓글"
         android:layout_marginEnd="10dp"
         android:layout_gravity="right"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:paddingBottom="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:background="@drawable/edittext_border"
+            android:hint="댓글을 입력하세요"
+            android:textSize="22dp"
+            android:id="@+id/reviewEditText"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="확인"
+            android:id="@+id/okButton"/>
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

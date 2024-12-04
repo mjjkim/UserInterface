@@ -35,6 +35,12 @@ public class MyRecordModifyActivity extends AppCompatActivity {
     FrameLayout bookInfo;
     FrameLayout bookRecord;
 
+    EditText dateEditText;
+    EditText dateEditText2;
+    EditText feel;
+    EditText phrase;
+    EditText reason;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +59,7 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         });
 
         // 날짜 선택 edit 텍스트
-        EditText dateEditText = binding.dateEditText;
+        dateEditText = binding.dateEditText;
         // EditText 클릭 이벤트
         dateEditText.setOnClickListener(view -> {
             // DatePickerFragment 생성
@@ -70,7 +76,7 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         });
 
         // 날짜 선택 edit 텍스트
-        EditText dateEditText2 = binding.dateEditText2;
+        dateEditText2 = binding.dateEditText2;
         // EditText 클릭 이벤트
         dateEditText2.setOnClickListener(view -> {
             // DatePickerFragment 생성
@@ -151,6 +157,10 @@ public class MyRecordModifyActivity extends AppCompatActivity {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.a);
         }
 
+        phrase = binding.goodPhrase;
+        feel = binding.feel;
+        reason = binding.reason;
+
     }
     // 뒤로가기 버튼 동작 처리
     @Override
@@ -163,15 +173,6 @@ public class MyRecordModifyActivity extends AppCompatActivity {
             // 저장 버튼 클릭 시 동작
             Toast.makeText(this, "저장 버튼이 눌렸습니다!", Toast.LENGTH_SHORT).show();
 
-            // 커스텀 동작 추가
-//            Intent intent = new Intent()
-//                    .putExtra("title", title)
-//                    .putExtra("author", author)
-//                    .putExtra("description", description)
-//                    .putExtra("publisher", publisher)
-//                    .putExtra("cover", cover)
-//                    .putExtra("pubDate", pubDate);
-//            setResult(RESULT_OK, intent);
             finish();
 
             return true;
