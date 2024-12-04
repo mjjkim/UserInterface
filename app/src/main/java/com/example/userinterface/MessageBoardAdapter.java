@@ -40,7 +40,10 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
         this.context = context;
         this.items = items;
     }
-
+    public void updateList(List<MessageBoardItem> filteredList) {
+        items = filteredList;
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
