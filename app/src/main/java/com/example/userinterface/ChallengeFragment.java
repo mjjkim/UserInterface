@@ -1,5 +1,6 @@
 package com.example.userinterface;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +19,8 @@ import com.example.userinterface.databinding.FragmentChallengeBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.checkerframework.checker.units.qual.C;
 
 public class ChallengeFragment extends Fragment {
     private FragmentChallengeBinding binding;
@@ -78,6 +82,28 @@ public class ChallengeFragment extends Fragment {
                     });
 
         }
+
+        Button button1 = view.findViewById(R.id.tab_in_progress);
+        Button button2 = view.findViewById(R.id.tab_past_challenges);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                button1.setTextColor(Color.rgb(0, 123, 255));
+                button2.setTextColor(Color.rgb(85, 85, 85));
+                button1.setBackgroundColor(Color.rgb(211, 234, 253));
+                button2.setBackgroundColor(Color.rgb(224, 224, 224));
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                button1.setTextColor(Color.rgb(85, 85, 85));
+                button2.setTextColor(Color.rgb(0, 123, 255));
+                button2.setBackgroundColor(Color.rgb(211, 234, 253));
+                button1.setBackgroundColor(Color.rgb(224, 224, 224));
+            }
+        });
     }
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();
