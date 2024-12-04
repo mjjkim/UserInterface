@@ -1,6 +1,7 @@
 package com.example.userinterface;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Intent.getIntent;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -13,12 +14,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.userinterface.databinding.FragmentHomeBinding;
