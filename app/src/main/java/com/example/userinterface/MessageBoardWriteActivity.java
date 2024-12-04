@@ -23,10 +23,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MessageBoardWriteActivity extends AppCompatActivity {
 
-    //리뷰 edittext
+    private FirebaseFirestore db;
     private EditText reviewText;
 
     @Override
@@ -35,22 +36,20 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
         ActivityMessageBoardWriteBinding binding = ActivityMessageBoardWriteBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        db = FirebaseFirestore.getInstance();
+
         ImageView bookCover = binding.recordCover;
         TextView bookTitle = binding.recordTitle;
         TextView bookAuthor = binding.recordAuthor;
         TextView bookDescription = binding.recordDescription;
 
         // Firebase 설정
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        // 사용자 uid 가져오기
-        String uid = null;
-        if (currentUser != null) {
-            uid = currentUser.getUid();
-        }
-        else {
+        String uid = currentUser != null ? currentUser.getUid() : null;
+
+        if (uid == null) {
             Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -65,12 +64,7 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                     }
                     if (documentSnapshot != null && documentSnapshot.exists()) {
                         String nickname = documentSnapshot.getString("nickname");
-                        if (nickname != null && !nickname.isEmpty()) {
-                            binding.messageBoardWriteNickname.setText(nickname + "의 기록");
-                        }
-                        else {
-                            binding.messageBoardWriteNickname.setText("닉네임의 기록");
-                        }
+                        binding.messageBoardWriteNickname.setText(nickname != null ? nickname + "의 기록" : "닉네임의 기록");
                     }
                 });
 
@@ -94,50 +88,56 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                 .error(R.drawable.imagewait)
                 .into(bookCover);
 
-        // 게시글 추가 버튼 클릭 리스터
+        // 게시글 추가 버튼 클릭 리스너
         String finalUid = uid;
-        binding.recordAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String review = binding.etReview.getText().toString();
 
+        binding.recordAddButton.setOnClickListener(view -> {
+            String review = binding.etReview.getText().toString();
 
-                db.collection("message_boards").document(finalUid).get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (!documentSnapshot.exists() || !documentSnapshot.contains("posts")) {
-                                db.collection("message_boards").document(finalUid)
-                                        .set(new HashMap<String, Object>() {{
-                                            put("posts", new ArrayList<>());
-                                        }});
-                            }
-                        })
-                        .addOnCompleteListener(task -> {
-                            // Firestore에 데이터 추가
-                            HashMap<String, Object> newItem = new HashMap<>();
-                            newItem.put("title", title);
-                            newItem.put("author", author);
-                            newItem.put("cover", cover);
-                            newItem.put("review", review);
-                            newItem.put("userId", finalUid);
-                            newItem.put("liked", false);
+            if (review.isEmpty()) {
+                Toast.makeText(this, "리뷰를 작성해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                            db.collection("message_boards").document(finalUid)
-                                    .update("posts", FieldValue.arrayUnion(newItem))
-                                    .addOnSuccessListener(avoid -> {
-                                        Log.d("UInterface", "Upload Sucess");
-                                        setResult(RESULT_OK);
-                                        finish();
+            // 고유 postId 생성
+            String postId = db.collection("message_boards").document().getId();
+
+            // Firestore에 데이터 추가
+            Map<String, Object> newItem = new HashMap<>();
+            newItem.put("postId", postId);
+            newItem.put("title", title);
+            newItem.put("author", author);
+            newItem.put("cover", cover);
+            newItem.put("review", review);
+            newItem.put("userId", finalUid);
+            newItem.put("liked", false);
+            newItem.put("timestamp", com.google.firebase.Timestamp.now());
+
+            // Firestore에 posts 배열 업데이트
+            db.collection("message_boards").document(finalUid).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (!documentSnapshot.exists()) {
+                            // 문서가 없으면 초기화
+                            Map<String, Object> initialData = new HashMap<>();
+                            initialData.put("posts", new ArrayList<>());
+                            db.collection("message_boards").document(finalUid).set(initialData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // 문서 초기화 후 posts 업데이트
+                                        updatePosts(finalUid, newItem);
                                     })
                                     .addOnFailureListener(e -> {
-                                        Log.e("UInterface", "Upload Failed : " + e.getMessage());
-                                        Toast.makeText(MessageBoardWriteActivity.this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
+                                        Log.e("UInterface", "문서 초기화 실패: " + e.getMessage());
+                                        Toast.makeText(this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
                                     });
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e("UInterface", "Upload Failed : " + e.getMessage());
-                            Toast.makeText(MessageBoardWriteActivity.this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
-                        });
-            }
+                        } else {
+                            // 문서가 있으면 바로 posts 업데이트
+                            updatePosts(finalUid, newItem);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("UInterface", "Firestore 문서 확인 실패: " + e.getMessage());
+                        Toast.makeText(this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
+                    });
         });
 
         // 뒤로 가기 동작 설정
@@ -146,18 +146,27 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 Intent intent = new Intent(MessageBoardWriteActivity.this, MyRecordActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity( intent);
+                startActivity(intent);
                 finish();
             }
         });
 
         reviewText = binding.etReview;
-
     }
 
-    private String formatDate(Long timestamp) {
-        if (timestamp == null) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("MM월 dd일", Locale.getDefault());
-        return sdf.format(timestamp);
+    // Firestore posts 업데이트 함수
+    private void updatePosts(String uid, Map<String, Object> newItem) {
+        db.collection("message_boards").document(uid)
+                .update("posts", FieldValue.arrayUnion(newItem))
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "게시글 추가 성공");
+                    Toast.makeText(this, "게시글이 추가되었습니다.", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "게시글 업데이트 실패: " + e.getMessage());
+                    Toast.makeText(this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
+                });
     }
 }

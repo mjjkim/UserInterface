@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapter.ViewHolder>{
@@ -84,33 +85,32 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
         });
     }
 
-    // Firestore에 스크랩 상태 업데이트 메서드
     private void updateLikeStatusInFirestore(MessageBoardItem item, boolean isLiked) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserId = FirebaseAuth.getInstance().getUid();
 
-        // 기존 항목 삭제 및 업데이트
-        db.collection("message_boards").document(userId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        List<Map<String, Object>> posts = (List<Map<String, Object>>) documentSnapshot.get("posts");
-                        if (posts != null) {
-                            for (Map<String, Object> post : posts) {
-                                if (post.get("title").equals(item.getTitle())) {
-                                    post.put("liked", isLiked);
-                                    break;
-                                }
-                            }
-                            db.collection("message_boards").document(userId)
-                                    .update("posts", posts)
-                                    .addOnSuccessListener(avoid -> Log.d("UInterface", "Firestore 업데이트 성공"))
-                                    .addOnFailureListener(e -> Log.e("UInterface", "Firestore 업데이트 실패 : " + e.getMessage()));
-                        }
-                    }
+        String postId = item.getPostId();
+        if (postId == null || postId.isEmpty()) {
+            Log.e("UInterface", "postId가 null이거나 비어 있습니다. 업데이트를 중단합니다.");
+            return;
+        }
+
+        db.collection("user_likes").document(currentUserId)
+                .update(postId, isLiked)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "스크랩 상태 업데이트 성공: " + postId);
                 })
-                .addOnFailureListener(e -> Log.e("UInterface", "Firestore 문서 가져오기 실패 : " + e.getMessage()));
+                .addOnFailureListener(e -> {
+                    // 문서가 없으면 새로 생성
+                    Map<String, Object> initialData = new HashMap<>();
+                    initialData.put(postId, isLiked);
+                    db.collection("user_likes").document(currentUserId)
+                            .set(initialData)
+                            .addOnSuccessListener(aVoid -> Log.d("UInterface", "스크랩 상태 초기화 후 저장 성공: " + postId))
+                            .addOnFailureListener(err -> Log.e("UInterface", "스크랩 상태 저장 실패: " + err.getMessage()));
+                });
     }
+
 
     @Override
     public int getItemCount() {
@@ -121,8 +121,7 @@ public class MessageBoardAdapter extends RecyclerView.Adapter<MessageBoardAdapte
     // viewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView bookImage, likeButton;
-        TextView titleText, contentText;
-        TextView author;
+        TextView titleText, contentText, author;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
