@@ -3,7 +3,10 @@ package com.example.userinterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -86,8 +89,31 @@ public class MessageBoradActivity extends AppCompatActivity {
                 Log.d("omj", "aaa");
             }
         });
-    }
 
+        //책 이름 검색 ㅇㅇ;
+        binding.searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    String query = binding.searchBar.getText().toString().trim();
+                    filterBooks(query);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+    }
+    private void filterBooks(String query) {
+        List<MessageBoardItem> filteredList = new ArrayList<>();
+        for (MessageBoardItem book : items) {
+            if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(book);
+            }
+        }
+        adapter.updateList(filteredList);
+    }
     private void loadMessageBoards() {
         db.collection("message_boards").addSnapshotListener((querySnapshot, error) -> {
             if (error != null) {
