@@ -171,6 +171,20 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        // 내 서재 클릭할 경우 MyRecordModifyActivity로 이동 이미 저장해 둔 책의 정보를 수정할 수 있는 activity
+        bookItemAdapter.setOnItemClickListener(new ReviewItem.OnItemClickListener() {
+            @Override
+            public void onItemClick(BoardItem bookData) {
+                startActivity(new Intent(getActivity(), MyRecordModifyActivity.class)
+                        .putExtra("title", bookData.getTitle())
+                        .putExtra("author", bookData.getAuthor())
+                        .putExtra("publisher", bookData.getPublisher())
+                        .putExtra("cover", bookData.getBookImage())
+                        .putExtra("description", bookData.getDescription())
+                        .putExtra("pubDate", bookData.getPubDate())
+                );
+            }
+        });
 
 //        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
 //                new ActivityResultCallback<ActivityResult>() {

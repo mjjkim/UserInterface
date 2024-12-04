@@ -6,5 +6,5 @@ public class RecordData {
     String Phrase;
     String feel;
     String reason;
-    String note;
+    String gital;
 }

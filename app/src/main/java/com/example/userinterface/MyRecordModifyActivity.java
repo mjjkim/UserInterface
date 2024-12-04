@@ -40,6 +40,7 @@ public class MyRecordModifyActivity extends AppCompatActivity {
     EditText feel;
     EditText phrase;
     EditText reason;
+    EditText gital;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +161,7 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         phrase = binding.goodPhrase;
         feel = binding.feel;
         reason = binding.reason;
+        gital = binding.gital;
 
     }
     // 뒤로가기 버튼 동작 처리
