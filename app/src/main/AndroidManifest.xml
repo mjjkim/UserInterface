@@ -15,6 +15,15 @@
         android:theme="@style/Theme.UserInterface"
         tools:targetApi="31">
         <activity
+            android:name=".MyPhraseModifyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyPhraseStoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyPhraseSearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".MessageBoardReviewActivity"
             android:exported="true" />
         <activity

@@ -158,6 +158,36 @@ public class HomeFragment extends Fragment {
             launcher.launch(intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
         });
 
+        ActivityResultLauncher<Intent> phraseLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+                        if(o.getResultCode()==RESULT_OK){
+                            String cover = o.getData().getStringExtra("cover");
+                            String title = o.getData().getStringExtra("title");
+                            String phrase = o.getData().getStringExtra("phrase");
+                            String feel = o.getData().getStringExtra("feel");
+                            String author = o.getData().getStringExtra("author");
+                            phraseAdapter.addPhrase(new BoardItem(
+                                    title,
+                                    author,
+                                    phrase,
+                                    cover,
+                                    feel,
+                                    null
+                            ));
+                        }
+                    }
+                });
+
+        binding.PhraseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                phraseLauncher.launch(new Intent(getActivity(), MyPhraseSearchActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+            }
+        });
+
         // 토글 버튼 클릭시 독서 기록, 글귀 모음 전환
         MaterialButtonToggleGroup toggleGroup = binding.toggleButtonGroup;
         toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -177,6 +207,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
         // 내 서재 클릭할 경우 MyRecordModifyActivity로 이동 이미 저장해 둔 책의 정보를 수정할 수 있는 activity
         bookItemAdapter.setOnItemClickListener(new ReviewItem.OnItemClickListener() {
             @Override
@@ -192,6 +223,18 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //글귀 모음 클릭할 경우 이동
+        phraseAdapter.setOnItemClickListener(new PhraseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BoardItem bookData) {
+                startActivity(new Intent(getActivity(), MyPhraseModifyActivity.class)
+                        .putExtra("title", bookData.getTitle())
+                        .putExtra("author", bookData.getAuthor())
+                        .putExtra("cover", bookData.getBookImage())
+                        .putExtra("phrase", bookData.getDescription())
+                        .putExtra("feel", bookData.getPubDate()));
+            }
+        });
 
 
 //        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),

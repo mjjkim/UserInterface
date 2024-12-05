@@ -26,7 +26,7 @@
             android:id="@+id/phraseTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="책: 지웅이가 싫어요"
+            android:text="책 제목"
             android:textSize="16sp"
             android:textColor="#000000" />
         <TextView
@@ -44,14 +44,4 @@
             android:maxLines="2"/>
     </LinearLayout>
 
-    <!-- 좋아요 버튼 -->
-
-    <ImageView
-        android:id="@+id/like_button"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/like_button_selector"
-        android:contentDescription="좋아요 버튼"
-        android:clickable="true"
-        android:focusable="true" />
 </LinearLayout>
