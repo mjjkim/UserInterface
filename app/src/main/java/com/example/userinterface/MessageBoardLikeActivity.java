@@ -79,28 +79,22 @@ public class MessageBoardLikeActivity extends AppCompatActivity {
     private void fetchPostsByIds(List<String> postIds) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("message_boards").get()
+        db.collection("message_boards")
+                .whereIn("postId", postIds) // postId가 스크랩된 ID 리스트에 포함된 게시물만 가져오기
+                .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<BoardItem> tempItems = new ArrayList<>();
 
-                    for (QueryDocumentSnapshot board : querySnapshot) {
-                        List<Map<String, Object>> posts = (List<Map<String, Object>>) board.get("posts");
-                        if (posts != null) {
-                            for (Map<String, Object> post : posts) {
-                                String postId = (String) post.get("postId");
-                                if (postIds.contains(postId)) {
-                                    String title = (String) post.get("title");
-                                    String content = (String) post.get("review");
-                                    String cover = (String) post.get("cover");
-                                    String author = (String) post.get("author");
-                                    com.google.firebase.Timestamp timestamp = (com.google.firebase.Timestamp) post.get("timestamp");
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        String postId = document.getString("postId");
+                        String title = document.getString("title");
+                        String content = document.getString("review");
+                        String cover = document.getString("cover");
+                        String author = document.getString("author");
+                        com.google.firebase.Timestamp timestamp = document.getTimestamp("timestamp");
 
-                                    tempItems.add(new BoardItem(postId, title, content, cover, author, timestamp));
-                                }
-                            }
-                        }
+                        tempItems.add(new BoardItem(postId, title, content, cover, author, timestamp));
                     }
-
 
                     // 데이터 정렬 (최신순 정렬)
                     tempItems.sort((item1, item2) -> item2.getTimestamp().compareTo(item1.getTimestamp()));
@@ -109,10 +103,11 @@ public class MessageBoardLikeActivity extends AppCompatActivity {
                     items.clear();
                     items.addAll(tempItems);
                     adapter.notifyDataSetChanged();
-                    Log.d("UInterface", "스크랩된 게시물 로드 완료");
+                    Log.d("UInterface", "스크랩된 게시물 로드 완료 : " + items.size());
                 })
                 .addOnFailureListener(e -> Log.e("UInterface", "게시물 로드 실패: " + e.getMessage()));
     }
+
 
     // 내부 클래스: RecyclerView 어댑터
     class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> {

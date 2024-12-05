@@ -76,19 +76,20 @@ public class MessageBoradActivity extends AppCompatActivity {
             Log.d("UInterface", "MessageBoard to MyRecord");
         });
 
-        //리사이클러뷰 클릭 이벤트
         adapter.setOnItemClickListener(new MessageBoardAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MessageBoardItem item) {
-                startActivity(new Intent(MessageBoradActivity.this, MessageBoardReviewActivity.class)
-                        .putExtra("title", item.getTitle())
-                        .putExtra("author", item.getAuthor())
-                        .putExtra("cover", item.getCover())
-                        .putExtra("review", item.getReview())
-                        .putExtra("description", item.getDescription()));
-                Log.d("omj", "aaa");
+                Intent intent = new Intent(MessageBoradActivity.this, MessageBoardReviewActivity.class);
+                intent.putExtra("postId", item.getPostId()); // postId 전달
+                intent.putExtra("title", item.getTitle());
+                intent.putExtra("author", item.getAuthor());
+                intent.putExtra("cover", item.getCover());
+                intent.putExtra("review", item.getReview());
+                intent.putExtra("description", item.getDescription());
+                startActivity(intent);
             }
         });
+
 
         //책 이름 검색 ㅇㅇ;
         binding.searchBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -114,47 +115,33 @@ public class MessageBoradActivity extends AppCompatActivity {
         }
         adapter.updateList(filteredList);
     }
+
     private void loadMessageBoards() {
-        db.collection("message_boards").addSnapshotListener((querySnapshot, error) -> {
-            if (error != null) {
-                Log.e("UInterface", "Firestore 오류: " + error.getMessage());
-                return;
-            }
+        db.collection("message_boards")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<MessageBoardItem> tempItems = new ArrayList<>(); // tempItems를 메서드 내에서 정의
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        String postId = document.getId();
+                        String title = document.getString("title");
+                        String author = document.getString("author");
+                        String cover = document.getString("cover");
+                        String review = document.getString("review");
+                        String description = document.getString("description");
+                        String userId = document.getString("userId");
+                        com.google.firebase.Timestamp timestamp = document.getTimestamp("timestamp");
 
-            if (querySnapshot != null) {
-                List<MessageBoardItem> tempItems = new ArrayList<>();
-                for (QueryDocumentSnapshot document : querySnapshot) {
-                    List<Map<String, Object>> posts = (List<Map<String, Object>>) document.get("posts");
-                    if (posts != null) {
-                        for (Map<String, Object> post : posts) {
-                            String postId = (String) post.get("postId");
-                            if (postId == null) {
-                                Log.e("UInterface", "postId가 null입니다. 데이터를 건너뜁니다.");
-                                continue;
-                            }
-                            String title = (String) post.get("title");
-                            String author = (String) post.get("author");
-                            String cover = (String) post.get("cover");
-                            String review = (String) post.get("review");
-                            String userId = (String) post.get("userId");
-                            boolean liked = false;
-                            com.google.firebase.Timestamp timestamp = (com.google.firebase.Timestamp) post.get("timestamp");
-
-                            tempItems.add(new MessageBoardItem(postId, title, author, cover, liked, review, userId, timestamp, null));
-                        }
+                        tempItems.add(new MessageBoardItem(postId, title, author, cover, false, review, userId, timestamp, description));
                     }
-                }
 
-                // 최신순 정렬
-                tempItems.sort((item1, item2) -> item2.getTimestamp().compareTo(item1.getTimestamp()));
+                    // 최신순 정렬
+                    tempItems.sort((item1, item2) -> item2.getTimestamp().compareTo(item1.getTimestamp()));
 
-                // 스크랩 상태 동기화
-                syncScrapStatus(tempItems);
-            }
-        });
+                    // 데이터를 items에 추가하고 동기화
+                    syncScrapStatus(tempItems);
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "게시글 로드 실패: " + e.getMessage()));
     }
-
-
 
     private void syncScrapStatus(List<MessageBoardItem> tempItems) {
         db.collection("user_likes").document(currentUserId)

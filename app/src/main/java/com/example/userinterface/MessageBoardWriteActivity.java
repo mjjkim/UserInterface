@@ -3,7 +3,6 @@ package com.example.userinterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,10 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class MessageBoardWriteActivity extends AppCompatActivity {
@@ -36,14 +32,13 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
         ActivityMessageBoardWriteBinding binding = ActivityMessageBoardWriteBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        db = FirebaseFirestore.getInstance();
-
         ImageView bookCover = binding.recordCover;
         TextView bookTitle = binding.recordTitle;
         TextView bookAuthor = binding.recordAuthor;
         TextView bookDescription = binding.recordDescription;
 
         // Firebase 설정
+        db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -54,6 +49,26 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        // 책 데이터 수신
+        String title = getIntent().getStringExtra("title");
+        String author = getIntent().getStringExtra("author");
+        String description = getIntent().getStringExtra("description");
+        String publisher = getIntent().getStringExtra("publisher");
+        String pubDate = getIntent().getStringExtra("pubDate");
+        String cover = getIntent().getStringExtra("cover");
+
+        // 화면 데이터 설정
+        binding.recordTitle.setText(title);
+        binding.recordAuthor.setText(author);
+        binding.recordDescription.setText(description);
+
+        // Glide로 이미지 로드
+        Glide.with(this)
+                .load(cover)
+                .error(R.drawable.imagewait)
+                .into(bookCover);
+
 
         db.collection("users").document(uid)
                 .addSnapshotListener((documentSnapshot, error) -> {
@@ -68,25 +83,10 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                     }
                 });
 
-
-        // 책 데이터 수신
-        String title = getIntent().getStringExtra("title");
-        String author = getIntent().getStringExtra("author");
-        String description = getIntent().getStringExtra("description");
-        String publisher = getIntent().getStringExtra("publisher");
-        String pubDate = getIntent().getStringExtra("pubDate");
-        String cover = getIntent().getStringExtra("cover");
-
         // 데이터 화면에 표시
         bookTitle.setText(title);
         bookAuthor.setText(author);
         bookDescription.setText(description);
-
-        // Glide로 이미지 로드
-        Glide.with(this)
-                .load(cover)
-                .error(R.drawable.imagewait)
-                .into(bookCover);
 
         // 게시글 추가 버튼 클릭 리스너
         String finalUid = uid;
@@ -107,38 +107,29 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
             newItem.put("postId", postId);
             newItem.put("title", title);
             newItem.put("author", author);
+            newItem.put("description", description);
             newItem.put("cover", cover);
             newItem.put("review", review);
-            newItem.put("userId", finalUid);
+            newItem.put("userId", uid);
             newItem.put("liked", false);
             newItem.put("timestamp", com.google.firebase.Timestamp.now());
 
-            // Firestore에 posts 배열 업데이트
-            db.collection("message_boards").document(finalUid).get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (!documentSnapshot.exists()) {
-                            // 문서가 없으면 초기화
-                            Map<String, Object> initialData = new HashMap<>();
-                            initialData.put("posts", new ArrayList<>());
-                            db.collection("message_boards").document(finalUid).set(initialData)
-                                    .addOnSuccessListener(aVoid -> {
-                                        // 문서 초기화 후 posts 업데이트
-                                        updatePosts(finalUid, newItem);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("UInterface", "문서 초기화 실패: " + e.getMessage());
-                                        Toast.makeText(this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
-                                    });
-                        } else {
-                            // 문서가 있으면 바로 posts 업데이트
-                            updatePosts(finalUid, newItem);
-                        }
+            db.collection("message_boards").document(postId)
+                    .set(newItem)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "게시글이 추가되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        // 메시지보드로 이동
+                        Intent intent = new Intent(this, MessageBoradActivity.class);
+                        startActivity(intent);
+                        finish(); // 현재 액티비티 종료
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("UInterface", "Firestore 문서 확인 실패: " + e.getMessage());
-                        Toast.makeText(this, "게시글 추가 실패", Toast.LENGTH_SHORT).show();
+                        Log.e("UInterface", "게시글 추가 실패: " + e.getMessage());
+                        Toast.makeText(this, "게시글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show();
                     });
         });
+
 
         // 뒤로 가기 동작 설정
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

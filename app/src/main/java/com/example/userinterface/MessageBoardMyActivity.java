@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,38 +52,33 @@ public class MessageBoardMyActivity extends AppCompatActivity {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // Firestore에서 내가 쓴 글 가져오기
-        db.collection("message_boards").document(userId)
-                .addSnapshotListener((documentSnapshot, error) -> {
+        db.collection("message_boards")
+                .whereEqualTo("userId", userId) // userId 필드가 현재 사용자와 일치하는 게시글만 필터링
+                .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         Log.e("UInterface", "Firestore 데이터 가져오기 실패 : " + error.getMessage());
                         return;
                     }
-                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (querySnapshot != null) {
                         items.clear();
-                        List<Map<String, Object>> posts = (List<Map<String, Object>>) documentSnapshot.get("posts");
-                        Log.d("UInterface", "Fetched posts : " + posts);
-                        if (posts != null) {
-                            for (Map<String, Object> post : posts) {
-                                String title = (String) post.get("title");
-                                String content = (String) post.get("review");
-                                String postUserId = (String) post.get("userId");
-                                String cover = (String) post.get("cover");
-                                String author = (String) post.get("author");
-                                com.google.firebase.Timestamp timestamp = (com.google.firebase.Timestamp) post.get("timestamp"); // timestamp 필드 가져오기
+                        for (QueryDocumentSnapshot document : querySnapshot) {
+                            String title = document.getString("title");
+                            String content = document.getString("review");
+                            String cover = document.getString("cover");
+                            String author = document.getString("author");
+                            com.google.firebase.Timestamp timestamp = document.getTimestamp("timestamp");
 
-                                if (userId.equals(postUserId)) {
-                                    items.add(new PostItem(title, content, postUserId, cover, author, timestamp));
-                                }
-                            }
-
-                            // 최신순으로 정렬
-                            items.sort((item1, item2) -> item2.getTimestamp().compareTo(item1.getTimestamp()));
-
-                            adapter.notifyDataSetChanged();
-                            Log.d("UserInterface", "Adapter item count : " + items.size());
+                            items.add(new PostItem(title, content, userId, cover, author, timestamp));
                         }
+
+                        // 최신순으로 정렬
+                        items.sort((item1, item2) -> item2.getTimestamp().compareTo(item1.getTimestamp()));
+
+                        adapter.notifyDataSetChanged();
+                        Log.d("UInterface", "내 게시글 로드 완료 : " + items.size());
                     }
                 });
+
 
     }
 
