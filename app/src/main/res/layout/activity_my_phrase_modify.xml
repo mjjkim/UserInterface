@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/rounded_background">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/a"
+            android:id="@+id/phraseModifyBackButton"/>
+        <!-- 화면 제목 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="책 제목"
+            android:id="@+id/phraseModifyTitle"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/quoteTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="나의 인상적인 글귀"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:paddingBottom="8dp"
+            android:layout_margin="8dp"/>
+        <ImageView
+            android:layout_width="148dp"
+            android:layout_height="210dp"
+            android:id="@+id/phraseModifyImage"
+            android:src="@drawable/imagewait"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="author"
+            android:gravity="center"
+            android:id="@+id/phraseModifyAuthor"/>
+        <!-- 글귀 입력 -->
+        <EditText
+            android:id="@+id/quoteModifyInput"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:hint="인상적인 글귀를 입력하세요"
+            android:padding="12dp"
+            android:gravity="top"
+            android:background="@drawable/edittext_rounded"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp" />
+
+        <!-- 메모 입력 -->
+        <EditText
+            android:id="@+id/memoModifyInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="이 글귀에 대한 느낀 점을 적어보세요"
+            android:padding="12dp"
+            android:gravity="top"
+            android:background="@drawable/edittext_rounded"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp" />
+
+        <!-- 저장 버튼 -->
+        <Button
+            android:id="@+id/saveModifyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="저장"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#B3D8EF"
+            android:textColor="@color/white"
+            android:padding="12dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+</ScrollView>

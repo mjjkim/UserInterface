@@ -57,13 +57,13 @@
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_alignParentTop="true"
             android:layout_margin="16dp"
-            android:hint="검색"
             android:background="@drawable/rectangle_2"
-            android:padding="12dp"
-            android:drawableEnd="@drawable/mirror"
             android:backgroundTint="#B3D8EF"
-            android:layout_alignParentTop="true"/>
+            android:drawableEnd="@drawable/mirror"
+            android:hint="검색"
+            android:padding="12dp" />
     </LinearLayout>
 
     <!-- 게시판 목록 RecyclerView -->
