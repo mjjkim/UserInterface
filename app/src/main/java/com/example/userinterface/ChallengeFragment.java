@@ -42,6 +42,7 @@ public class ChallengeFragment extends Fragment {
 
     private HashMap<String, String> dateStatusMap = new HashMap<>();
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -150,6 +151,8 @@ public class ChallengeFragment extends Fragment {
                 button1.setBackgroundColor(Color.rgb(224, 224, 224));
             }
         });
+
+
     }
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();

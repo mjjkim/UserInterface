@@ -54,6 +54,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.13.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
 
+    //Chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
     // Other dependencies
     implementation(libs.retrofit)
     implementation(libs.appcompat)
