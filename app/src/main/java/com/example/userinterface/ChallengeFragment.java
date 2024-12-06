@@ -1,5 +1,7 @@
 package com.example.userinterface;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -19,10 +21,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.userinterface.databinding.FragmentChallengeBinding;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
@@ -38,6 +49,11 @@ public class ChallengeFragment extends Fragment {
     private CalendarAdapter adapter;
     private List<DayModel> dayList = new ArrayList<>();
 
+    // 성공 실패 체크 데이터
+    boolean challengeCheck = false;
+    private int challengeSuccess;
+    private int challengeFloting;
+    private int challengeFail;
 
     private Calendar calendar = Calendar.getInstance(); // 전역 캘린더
 
@@ -140,6 +156,8 @@ public class ChallengeFragment extends Fragment {
                 button2.setTextColor(Color.rgb(85, 85, 85));
                 button1.setBackgroundColor(Color.rgb(211, 234, 253));
                 button2.setBackgroundColor(Color.rgb(224, 224, 224));
+                binding.challenging.setVisibility(View.VISIBLE);
+                binding.pastChallenge.setVisibility(View.GONE);
             }
         });
 
@@ -150,8 +168,118 @@ public class ChallengeFragment extends Fragment {
                 button2.setTextColor(Color.rgb(0, 123, 255));
                 button2.setBackgroundColor(Color.rgb(211, 234, 253));
                 button1.setBackgroundColor(Color.rgb(224, 224, 224));
+                binding.challenging.setVisibility(View.GONE);
+                binding.pastChallenge.setVisibility(View.VISIBLE);
             }
         });
+        BarChart barChart = binding.barChart;
+
+        // 샘플 데이터 (Firestore 데이터로 대체 가능)
+        int[] successCounts = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 월별 성공 횟수
+        String[] months = {"1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"}; // 월 이름
+
+        // BarEntry 리스트 생성
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < successCounts.length; i++) {
+            entries.add(new BarEntry(i, successCounts[i]+i));
+        }
+
+        // BarDataSet 생성
+        BarDataSet dataSet = new BarDataSet(entries, "월별 성공 횟수");
+        dataSet.setColor(getResources().getColor(R.color.theme_pink)); // 바 색상 설정
+        dataSet.setValueTextSize(14f);
+
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value);
+            }
+        });
+
+        // BarData 생성
+        BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.8f); // 바 너비 설정
+
+// BarChart에 데이터 설정
+        barChart.setData(barData);
+
+// X축 설정
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(months)); // 월 이름 적용
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+
+
+// Y축 설정
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setGranularity(1f); // 축 레이블 간격 설정
+        leftAxis.setGranularityEnabled(true);
+        leftAxis.setAxisMinimum(0f); // 최소값 설정
+        leftAxis.setAxisMaximum(30f); // 최대값 설정
+        YAxis rightAxis = barChart.getAxisRight();
+        rightAxis.setEnabled(false); // 오른쪽 Y축 숨기기
+        // 소수점 제거: 정수로 표시
+
+// 기타 설정
+        barChart.setFitBars(true);
+        barChart.getDescription().setEnabled(false); // 설명 텍스트 비활성화
+        barChart.animateY(1000); // 애니메이션
+
+        binding.challengeFloatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(challengeCheck) {
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setMessage("챌린지를 포기하시겠습니까?")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    challengeSet.setClickable(true);
+                                    challengeSetText.setText("챌린지를 선택하세요");
+                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                }
+                            })
+                            .setNegativeButton("취소", null)
+                            .create();
+                    dialog.show();
+                }
+            }
+        });
+
+        binding.challengeSuccessButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(challengeCheck) {
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setMessage("챌린지에 성공하셨습니까?")
+                            .setPositiveButton("성공", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    challengeSet.setClickable(true);
+                                    challengeSetText.setText("챌린지를 선택하세요");
+                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                }
+                            })
+                            .setNegativeButton("실패", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    challengeSet.setClickable(true);
+                                    challengeSetText.setText("챌린지를 선택하세요");
+                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                }
+                            })
+                            .create();
+                    dialog.show();
+                }
+            }
+        });
+
+
+        // 여기부터는 지난 챌린지 ㅇㅇ
+
+
+
 
 
     }
@@ -161,6 +289,8 @@ public class ChallengeFragment extends Fragment {
             // 데이터 수신 후 화면에 반영
             challengeSetText.setText(challenge);
             challengeDetails.setText("기간: " + date);
+            challengeSet.setClickable(false);
+            challengeCheck = true;
         });
         dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
     }

@@ -61,197 +61,318 @@
                     android:backgroundTint="#E0E0E0"
                 android:textColor="#555555" />
         </LinearLayout>
-
-        <!-- Challenge Details -->
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
+            android:layout_height="match_parent"
+            android:id="@+id/challenging">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            <!-- Challenge Details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ch2"
+                        android:contentDescription="Trophy Icon"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/challengeNickname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="철홍이의 챌린지"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/book1"
+                        android:contentDescription="Goal Icon"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/challenge_set_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="챌린지를 선택하세요"
+                        android:textSize="18dp"
+                        android:textColor="#333333" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/timecheck"
+                        android:contentDescription="Calendar Icon"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/challengeDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="9999-12-31 ~ 9999-12-31"
+                        android:textSize="18dp"
+                        android:textColor="#333333" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end|center_vertical"
+                    android:layout_margin="8dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:src="@drawable/setting2"
+                        android:contentDescription="Setting Icon"/>
+
+                    <TextView
+                        android:id="@+id/challengeSet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="챌린지 설정"
+                        android:textColor="#0A86FD"
+                        android:textSize="18dp"
+                        android:textStyle="bold"
+                        tools:ignore="InvalidId" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_width="match_parent">
+                android:gravity="center"
+                android:padding="8dp">
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ch2"
-                    android:contentDescription="Trophy Icon"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:id="@+id/challengeNickname"
+                <!-- 이전 월 버튼 -->
+                <Button
+                    android:id="@+id/prev_month_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="철홍이의 챌린지"
-                    android:textSize="18dp"
+                    android:text="◀"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#333333"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- 현재 월 텍스트 -->
+                <TextView
+                    android:id="@+id/current_month_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#333333"/>
+                    android:textColor="#333333"
+                    android:gravity="center" />
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/book1"
-                    android:contentDescription="Goal Icon"
-                    android:layout_marginEnd="8dp" />
-
-                <TextView
-                    android:id="@+id/challenge_set_text"
+                <!-- 다음 월 버튼 -->
+                <Button
+                    android:id="@+id/next_month_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="하루에 책 30분 읽기"
-                    android:textSize="18dp"
-                    android:textColor="#333333" />
+                    android:text="▶"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#333333"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
-
-            <LinearLayout
+            <!-- RecyclerView Calendar Section -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/calendar_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_height="300dp"
+                android:layout_marginTop="16dp"
+                android:background="#FFFFFF"
+                android:scrollbars="vertical" />
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/timecheck"
-                    android:contentDescription="Calendar Icon"
-                    android:layout_marginEnd="8dp" />
 
-                <TextView
-                    android:id="@+id/challengeDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2024-12-03 ~ 2025-01-01"
-                    android:textSize="18dp"
-                    android:textColor="#333333" />
-            </LinearLayout>
-
+            <!-- Success and Failure Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="end|center_vertical"
-                android:layout_margin="8dp">
+                android:layout_marginTop="16dp"
+                android:gravity="center">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="8dp"
-                    android:src="@drawable/setting2"
-                    android:contentDescription="Setting Icon"/>
-
-                <TextView
-                    android:id="@+id/challengeSet"
-                    android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/success_button"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="챌린지 설정"
-                    android:textColor="#0A86FD"
-                    android:textSize="18dp"
-                    android:textStyle="bold"
-                    tools:ignore="InvalidId" />
+                    android:layout_weight="1"
+                    android:text="성공"
+                    android:backgroundTint="#D3EAFD"
+                    android:textColor="#007BFF" />
+
+                <Button
+                    android:id="@+id/failure_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="실패"
+                    android:backgroundTint="#FFD3D3"
+                    android:textColor="#FF0000"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/challengeSuccessButton"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/success"
+                        android:scaleType="fitXY"
+                        android:background="@drawable/rounded_border"
+                        android:padding="3dp"/>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <!-- Floating Flag Icon -->
+                    <ImageButton
+                        android:id="@+id/challengeFloatingButton"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="16dp"
+                        android:contentDescription="Flag Icon"
+                        android:src="@drawable/giveup"
+                        android:background="@drawable/rounded_border"
+                        android:padding="3dp"/>
+                </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
+        </FrameLayout>
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="8dp">
-
-            <!-- 이전 월 버튼 -->
-            <Button
-                android:id="@+id/prev_month_button"
-                android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/pastChallenge"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="◀"
-                android:backgroundTint="#FFFFFF"
-                android:textColor="#333333"
-                android:layout_marginEnd="8dp" />
+                android:orientation="vertical">
 
-            <!-- 현재 월 텍스트 -->
-            <TextView
-                android:id="@+id/current_month_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:gravity="center" />
+                <!-- 달성률 표시 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp">
+                    <TextView
+                        android:id="@+id/achievementText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="달성률: 50%"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal" />
 
-            <!-- 다음 월 버튼 -->
-            <Button
-                android:id="@+id/next_month_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="▶"
-                android:backgroundTint="#FFFFFF"
-                android:textColor="#333333"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
+                    <ProgressBar
+                        android:id="@+id/achievementProgressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:progress="50"
+                        android:max="100"
+                        android:progressTint="#B3D8EF"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
-        <!-- RecyclerView Calendar Section -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/calendar_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="16dp"
-            android:background="#FFFFFF"
-            android:scrollbars="vertical" />
+                <!-- 일일 목표 -->
+                <TextView
+                    android:id="@+id/dailyGoalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="오늘 하루 60분 독서를 완료하세요!"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:padding="12dp"
+                    android:background="#B3D8EF" />
+                <TextView
+                    android:id="@+id/successCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="성공: 10회"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="16dp" />
+
+                <TextView
+                    android:id="@+id/failureCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="실패: 2회"
+                    android:textSize="18sp" />
+
+                <!-- 보상 시스템 -->
+                <TextView
+                    android:id="@+id/rewardBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100% 성공: 완벽한 도전자 배지!"
+                    android:paddingTop="8dp" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/barChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="16dp" />
 
 
-        <!-- Success and Failure Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:gravity="center">
+                <!-- 알림 설정 -->
+                <Button
+                    android:id="@+id/setNotificationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="알림 설정"
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    android:backgroundTint="#122574"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="16dp" />
+            </LinearLayout>
+        </FrameLayout>
 
-            <Button
-                android:id="@+id/success_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="성공"
-                android:backgroundTint="#D3EAFD"
-                android:textColor="#007BFF" />
-
-            <Button
-                android:id="@+id/failure_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="실패"
-                android:backgroundTint="#FFD3D3"
-                android:textColor="#FF0000"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
-
-        <!-- Floating Flag Icon -->
-        <ImageView
-            android:id="@+id/floating_flag"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/giveup"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:contentDescription="Flag Icon" />
     </LinearLayout>
 </ScrollView>
