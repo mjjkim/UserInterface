@@ -359,18 +359,12 @@
                     android:layout_height="300dp"
                     android:layout_margin="16dp" />
 
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_margin="16dp"/>
 
-                <!-- 알림 설정 -->
-                <Button
-                    android:id="@+id/setNotificationButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="알림 설정"
-                    android:layout_gravity="center"
-                    android:padding="8dp"
-                    android:backgroundTint="#122574"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="16dp" />
             </LinearLayout>
         </FrameLayout>
 

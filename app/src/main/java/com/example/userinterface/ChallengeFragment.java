@@ -22,13 +22,18 @@ import android.widget.Toast;
 
 import com.example.userinterface.databinding.FragmentChallengeBinding;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,14 +56,17 @@ public class ChallengeFragment extends Fragment {
 
     // 성공 실패 체크 데이터
     boolean challengeCheck = false;
-    private int challengeSuccess;
-    private int challengeFloting;
-    private int challengeFail;
+    private int challengeSuccessCount;
+    private int challengeFloatingCount;
+    private int challengeFailCount;
 
     private Calendar calendar = Calendar.getInstance(); // 전역 캘린더
 
     private HashMap<String, String> dateStatusMap = new HashMap<>();
 
+    // 파이차트
+    ArrayList<PieEntry> pieEntries;
+    PieChart pieChart;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -172,6 +180,68 @@ public class ChallengeFragment extends Fragment {
                 binding.pastChallenge.setVisibility(View.VISIBLE);
             }
         });
+
+        binding.challengeFloatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(challengeCheck) {
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setMessage("챌린지를 포기하시겠습니까?")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    challengeSet.setClickable(true);
+                                    challengeSetText.setText("챌린지를 선택하세요");
+                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                    updateChart(2);
+                                }
+                            })
+                            .setNegativeButton("취소", null)
+                            .create();
+                    dialog.show();
+                    challengeCheck=false;
+                }
+            }
+        });
+
+        binding.challengeSuccessButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                if(challengeCheck) {
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setMessage("챌린지에 성공하셨습니까?")
+                            .setPositiveButton("성공", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    challengeSet.setClickable(true);
+                                    challengeSetText.setText("챌린지를 선택하세요");
+                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                    updateChart(0);
+
+                                }
+                            })
+                            .setNegativeButton("실패", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    challengeSet.setClickable(true);
+                                    challengeSetText.setText("챌린지를 선택하세요");
+                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                    updateChart(1);
+                                }
+                            })
+                            .create();
+                    dialog.show();
+                    challengeCheck=false;
+                }
+            }
+        });
+
+
+        //past challenge
         BarChart barChart = binding.barChart;
 
         // 샘플 데이터 (Firestore 데이터로 대체 가능)
@@ -226,62 +296,62 @@ public class ChallengeFragment extends Fragment {
         barChart.getDescription().setEnabled(false); // 설명 텍스트 비활성화
         barChart.animateY(1000); // 애니메이션
 
-        binding.challengeFloatingButton.setOnClickListener(new View.OnClickListener() {
+
+        //pieChart 초기 설정
+        pieChart = binding.pieChart;
+
+        pieEntries = new ArrayList<>();
+        pieEntries.add(new PieEntry(challengeSuccessCount, "성공"));
+        pieEntries.add(new PieEntry(challengeFailCount, "실패"));
+        pieEntries.add(new PieEntry(challengeFloatingCount, "포기"));
+
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "카테고리");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        pieDataSet.setValueTextSize(16f);
+        pieDataSet.setValueFormatter(new ValueFormatter() {
             @Override
-            public void onClick(View view) {
-                if(challengeCheck) {
-                    AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setMessage("챌린지를 포기하시겠습니까?")
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    challengeSet.setClickable(true);
-                                    challengeSetText.setText("챌린지를 선택하세요");
-                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                }
-                            })
-                            .setNegativeButton("취소", null)
-                            .create();
-                    dialog.show();
-                }
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value);
             }
         });
 
-        binding.challengeSuccessButton.setOnClickListener(new View.OnClickListener() {
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.animateY(1000);
+
+    }
+
+    // 성공, 실패, 포기 횟수가 늘어날 때마다 카운트해서 업데이트
+    private void updateChart(int x) {
+        if(x==0){
+            challengeSuccessCount++;
+        } else if(x==1){
+            challengeFailCount++;
+        } else if (x==2){
+            challengeFloatingCount++;
+        }
+
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry(challengeSuccessCount, "성공"));
+        entries.add(new PieEntry(challengeFailCount, "실패"));
+        entries.add(new PieEntry(challengeFloatingCount, "포기"));
+
+        PieDataSet dataSet = new PieDataSet(entries, "결과");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+
+        PieData data = new PieData(dataSet);
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.WHITE);
+        data.setValueFormatter(new ValueFormatter() {
             @Override
-            public void onClick(View view) {
-                if(challengeCheck) {
-                    AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setMessage("챌린지에 성공하셨습니까?")
-                            .setPositiveButton("성공", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    challengeSet.setClickable(true);
-                                    challengeSetText.setText("챌린지를 선택하세요");
-                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                }
-                            })
-                            .setNegativeButton("실패", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    challengeSet.setClickable(true);
-                                    challengeSetText.setText("챌린지를 선택하세요");
-                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                }
-                            })
-                            .create();
-                    dialog.show();
-                }
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value);
             }
         });
 
-
-        // 여기부터는 지난 챌린지 ㅇㅇ
-
-
-
-
-
+        pieChart.setData(data);
+        pieChart.invalidate(); // 차트 갱신
     }
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();
