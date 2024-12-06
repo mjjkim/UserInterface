@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class ChallengeFragment extends Fragment {
     private TextView challengeSetText;
     private CalendarAdapter adapter;
     private List<DayModel> dayList = new ArrayList<>();
-    private DayModel selectedDay;
+
 
     private Calendar calendar = Calendar.getInstance(); // 전역 캘린더
 
@@ -65,7 +66,7 @@ public class ChallengeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // RecyclerView 설정
-        adapter = new CalendarAdapter(dayList, this::onDateClicked);
+        adapter = new CalendarAdapter(dayList, null);
         binding.calendarRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 7)); // 7열 (요일 기준)
         binding.calendarRecyclerView.setAdapter(adapter);
 
@@ -73,10 +74,10 @@ public class ChallengeFragment extends Fragment {
         initializeCalendar();
 
         // 성공 버튼 클릭 이벤트
-        binding.successButton.setOnClickListener(v -> updateDateStatus("✅"));
+        binding.successButton.setOnClickListener(v -> updateDateStatus("success"));
 
         // 실패 버튼 클릭 이벤트
-        binding.failureButton.setOnClickListener(v -> updateDateStatus("❌"));
+        binding.failureButton.setOnClickListener(v -> updateDateStatus("failure"));
 
         // 월 변경 버튼 이벤트 추가
         binding.prevMonthButton.setOnClickListener(v -> {
@@ -191,9 +192,9 @@ public class ChallengeFragment extends Fragment {
             dayList.add(new DayModel(String.format("%d-%02d-%02d", currentYear, currentMonth + 1, day), new ArrayList<>(), isToday));
         }
 
-        // 어댑터 갱신
-        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged(); // 어댑터 갱신
     }
+
 
 
     // 연도와 월 표시
@@ -207,23 +208,24 @@ public class ChallengeFragment extends Fragment {
      * 성공 또는 실패 상태를 업데이트합니다.
      */
     private void updateDateStatus(String status) {
-        if (selectedDay != null) {
-            selectedDay.setStatus(status); // 선택된 날짜 상태 업데이트
+        boolean updated = false;
+
+        for (DayModel day : dayList) {
+            if (day.isToday()) { // 오늘 날짜인지 확인
+                day.setStatus(status); // 상태 업데이트
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
             adapter.notifyDataSetChanged(); // RecyclerView 갱신
-            Toast.makeText(requireContext(), selectedDay.getDate() + "에 " + status + "로 표시되었습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "오늘 날짜에 " + (status.equals("success") ? "성공" : "실패") + "로 표시되었습니다.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(requireContext(), "날짜를 먼저 선택하세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "오늘 날짜를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
-
-    /**
-     * 날짜 클릭 이벤트
-     */
-    private void onDateClicked(DayModel day) {
-        selectedDay = day; // 선택된 날짜 업데이트
-        Toast.makeText(requireContext(), "선택된 날짜: " + day.getDate(), Toast.LENGTH_SHORT).show();
-    }
 
 
     @Override
@@ -238,11 +240,13 @@ public class ChallengeFragment extends Fragment {
         private String date; // yyyy-MM-dd 형식의 날짜
         private List<String> events; // 해당 날짜의 이벤트 목록
         private boolean isToday;
+        private String status; // 성공 또는 실패 상태 저장 (예: "success", "failure")
 
         public DayModel(String date, List<String> events, boolean isToday) {
             this.date = date;
             this.events = events;
             this.isToday = isToday;
+            this.status = ""; // 초기 상태는 빈 값
         }
 
         public String getDate() {
@@ -257,18 +261,17 @@ public class ChallengeFragment extends Fragment {
             return isToday;
         }
 
+        public String getStatus() {
+            return status;
+        }
+
         public void setEvents(List<String> events) {
             this.events = events;
         }
 
         public void setStatus(String status) {
-            if (events == null) {
-                events = new ArrayList<>();
-            }
-            events.clear(); // 기존 상태 제거
-            events.add(status); // 새로운 상태 추가
+            this.status = status;
         }
-
     }
 
     // 달력 리사이클러뷰로 만들기
@@ -298,8 +301,22 @@ public class ChallengeFragment extends Fragment {
             DayModel day = dayList.get(position);
             holder.bind(day);
 
-            holder.itemView.setOnClickListener(v -> onDateClickListener.onDateClick(day));
+            // 오늘 날짜에만 상태를 표시
+            if (day.isToday()) {
+                if (day.getStatus().equals("success")) {
+                    holder.statusImage.setVisibility(View.VISIBLE);
+                    holder.statusImage.setImageResource(R.drawable.smile); // 성공 이미지
+                } else if (day.getStatus().equals("failure")) {
+                    holder.statusImage.setVisibility(View.VISIBLE);
+                    holder.statusImage.setImageResource(R.drawable.sad); // 실패 이미지
+                } else {
+                    holder.statusImage.setVisibility(View.GONE); // 상태가 없으면 숨김
+                }
+            } else {
+                holder.statusImage.setVisibility(View.GONE); // 오늘이 아닌 날짜는 상태 숨김
+            }
         }
+
 
         @Override
         public int getItemCount() {
@@ -309,11 +326,13 @@ public class ChallengeFragment extends Fragment {
         public static class DayViewHolder extends RecyclerView.ViewHolder {
             private final TextView dayText;
             private final TextView eventText;
+            private final ImageView statusImage;
 
             public DayViewHolder(@NonNull View itemView) {
                 super(itemView);
                 dayText = itemView.findViewById(R.id.day_text);
                 eventText = itemView.findViewById(R.id.event_text);
+                statusImage = itemView.findViewById(R.id.status_image); // 이미지 뷰 추가
             }
 
             public void bind(DayModel day) {
@@ -327,6 +346,7 @@ public class ChallengeFragment extends Fragment {
                 }
             }
         }
+
     }
 
 
