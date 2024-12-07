@@ -45,28 +45,28 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChallengeFragment extends Fragment {
     private FragmentChallengeBinding binding;
-    private TextView challengeSet;
-    private TextView challengeDetails;
-    private TextView challengeSetText;
+    private TextView challengeSet, challengeDetails, challengeSetText;
     private CalendarAdapter adapter;
     private List<DayModel> dayList = new ArrayList<>();
 
     // 성공 실패 체크 데이터
-    boolean challengeCheck = false;
-    private int challengeSuccessCount;
-    private int challengeFloatingCount;
-    private int challengeFailCount;
+    private boolean challengeCheck = false;
+    private int challengeSuccessCount, challengeFloatingCount, challengeFailCount;
+
+    // Firebase
+    private FirebaseFirestore db;
+    private String userId;
 
     private Calendar calendar = Calendar.getInstance(); // 전역 캘린더
+    // 파이차트
+    private ArrayList<PieEntry> pieEntries;
+    private PieChart pieChart;
 
     private HashMap<String, String> dateStatusMap = new HashMap<>();
-
-    // 파이차트
-    ArrayList<PieEntry> pieEntries;
-    PieChart pieChart;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,6 +88,11 @@ public class ChallengeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Firebase 초기화
+        db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
 
         // RecyclerView 설정
         adapter = new CalendarAdapter(dayList, null);
@@ -119,40 +124,14 @@ public class ChallengeFragment extends Fragment {
         // 초기 월 텍스트 설정
         updateMonthText();
 
-        // Firestore 인스턴스 생성
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        // 현재 로그인한 사용자 UID
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
         if (currentUser != null) {
-            String uid = currentUser.getUid();
-
-            // Firestore에서 사용자 닉네임 가져오기
-            db.collection("users").document(uid).get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            // Firestore 문서 확인
-                            Log.d("Firestore", "문서 데이터: " + documentSnapshot.getData());
-                            String nickname = documentSnapshot.getString("nickname");
-
-                            if (nickname != null && !nickname.isEmpty()) {
-                                binding.challengeNickname.setText(nickname + "의 챌린지");
-                                Log.d("Firestore", "닉네임: " + nickname);
-                            } else {
-                                binding.challengeNickname.setText("닉네임의 챌린지");
-                                Log.d("Firestore", "닉네임 필드가 비어있음");
-                            }
-                        } else {
-                            Log.d("Firestore", "문서가 존재하지 않음");
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("Firestore", "Firestore 읽기 실패: " + e.getMessage());
-                        Toast.makeText(requireContext(), "닉네임을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
-                    });
-
+            userId = currentUser.getUid();
+            Log.d("UInterface", "User ID initialized: " + userId);
+            loadChartDataFromFirestore(); // Firestore 데이터 불러오기
+        } else {
+            Log.e("UInterface", "User is not logged in.");
+            Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Button button1 = view.findViewById(R.id.tab_in_progress);
@@ -324,35 +303,97 @@ public class ChallengeFragment extends Fragment {
 
     // 성공, 실패, 포기 횟수가 늘어날 때마다 카운트해서 업데이트
     private void updateChart(int x) {
-        if(x==0){
+        if (x == 0) {
             challengeSuccessCount++;
-        } else if(x==1){
+        } else if (x == 1) {
             challengeFailCount++;
-        } else if (x==2){
+        } else if (x == 2) {
             challengeFloatingCount++;
         }
 
-        ArrayList<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(challengeSuccessCount, "성공"));
-        entries.add(new PieEntry(challengeFailCount, "실패"));
-        entries.add(new PieEntry(challengeFloatingCount, "포기"));
+        // 파이 차트 데이터 업데이트
+        pieEntries.clear(); // 기존 데이터 지우기
+        pieEntries.add(new PieEntry(challengeSuccessCount, "성공"));
+        pieEntries.add(new PieEntry(challengeFailCount, "실패"));
+        pieEntries.add(new PieEntry(challengeFloatingCount, "포기"));
 
-        PieDataSet dataSet = new PieDataSet(entries, "결과");
+        PieDataSet dataSet = new PieDataSet(pieEntries, "결과");
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextSize(14f);
+        dataSet.setValueTextColor(Color.WHITE);
 
-        PieData data = new PieData(dataSet);
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.WHITE);
-        data.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return String.valueOf((int) value);
-            }
-        });
+        PieData pieData = new PieData(dataSet);
+        pieChart.setData(pieData);
+        pieChart.getDescription().setEnabled(false); // 설명 제거
+        pieChart.invalidate(); // 차트 갱신 (화면 다시 그리기)
+        pieChart.animateY(1000); // 애니메이션 추가
 
-        pieChart.setData(data);
-        pieChart.invalidate(); // 차트 갱신
+        // Firestore에 저장 (새 데이터만 저장)
+        if (x != -1) {
+            saveChartDataToFirestore();
+        }
     }
+
+
+
+    private void saveChartDataToFirestore() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot save chart data.");
+            return;
+        }
+
+        Map<String, Object> chartData = new HashMap<>();
+        chartData.put("successCount", challengeSuccessCount);
+        chartData.put("failCount", challengeFailCount);
+        chartData.put("floatingCount", challengeFloatingCount);
+
+        Log.d("UInterface", "Saving chartData: " + chartData);
+
+        db.collection("users").document(userId).collection("challenges").document("chartData")
+                .set(chartData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "Chart data saved successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Error saving chart data: " + e.getMessage());
+                });
+    }
+
+
+    private void loadChartDataFromFirestore() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot load chart data.");
+            return;
+        }
+
+        db.collection("users").document(userId).collection("challenges").document("chartData")
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Firestore 값 불러오기
+                        int loadedSuccessCount = documentSnapshot.getLong("successCount").intValue();
+                        int loadedFailCount = documentSnapshot.getLong("failCount").intValue();
+                        int loadedFloatingCount = documentSnapshot.getLong("floatingCount").intValue();
+
+                        // 불러온 값 누적 (현재 값에 더하기)
+                        challengeSuccessCount += loadedSuccessCount;
+                        challengeFailCount += loadedFailCount;
+                        challengeFloatingCount += loadedFloatingCount;
+
+                        Log.d("UInterface", "Loaded chartData: success=" + challengeSuccessCount +
+                                ", fail=" + challengeFailCount + ", floating=" + challengeFloatingCount);
+
+                        updateChart(-1); // UI 갱신
+                    } else {
+                        Log.d("UInterface", "No existing chart data found.");
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "Error loading chart data: " + e.getMessage()));
+    }
+
+
+
+
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();
         dialog.setOnChallengeDataListener((challenge, date) -> {
