@@ -19,6 +19,14 @@
         android:gravity="center"
         android:textStyle="bold" />
 
+    <!-- 상태 이미지 (성공/실패) -->
+    <ImageView
+        android:id="@+id/status_image"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="4dp"
+        android:visibility="gone" /> <!-- 초기에는 숨김 -->
+
     <!-- 이벤트 -->
     <TextView
         android:id="@+id/event_text"
