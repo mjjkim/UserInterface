@@ -193,6 +193,7 @@ public class ChallengeFragment extends Fragment {
                                     challengeSet.setClickable(true);
                                     challengeSetText.setText("챌린지를 선택하세요");
                                     challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                    challengeCheck = true;
                                     updateChart(2);
                                 }
                             })
@@ -220,6 +221,7 @@ public class ChallengeFragment extends Fragment {
                                     challengeSet.setClickable(true);
                                     challengeSetText.setText("챌린지를 선택하세요");
                                     challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                    challengeCheck = true;
                                     updateChart(0);
 
                                 }
@@ -230,6 +232,7 @@ public class ChallengeFragment extends Fragment {
                                     challengeSet.setClickable(true);
                                     challengeSetText.setText("챌린지를 선택하세요");
                                     challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+                                    challengeCheck = true;
                                     updateChart(1);
                                 }
                             })
@@ -360,7 +363,6 @@ public class ChallengeFragment extends Fragment {
             challengeSetText.setText(challenge);
             challengeDetails.setText("기간: " + date);
             challengeSet.setClickable(false);
-            challengeCheck = true;
         });
         dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
     }
