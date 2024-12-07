@@ -122,44 +122,44 @@ public class HomeFragment extends Fragment {
         ActivityResultLauncher<Intent> phraseLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        String title = result.getData().getStringExtra("title");
-                        String author = result.getData().getStringExtra("author");
-                        String cover = result.getData().getStringExtra("cover");
-                        String updatedPhrase = result.getData().getStringExtra("phrase");
-                        String updatedFeel = result.getData().getStringExtra("feel");
-
-                        Log.d("UInterface", "Received Updated Phrase: " + updatedPhrase);
-                        Log.d("UInterface", "Received Updated Feel: " + updatedFeel);
-
-                        if (title != null) {
-                            BoardItem updatedItem = new BoardItem(title, author, updatedPhrase, cover, updatedFeel, null);
-
-                            // Adapter에 업데이트
-                            phraseAdapter.addPhrase(updatedItem);
-
-                            // Firestore에 저장
-                            savePhraseToFirestore(updatedItem);
-                        } else {
-                            Log.e("UInterface", "Title is null, cannot save data.");
-                        }
-                    }
-                    else {
-                        Log.e("UInterface", "Result not OK or data is null.");
-                    }
+//                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+//                        String title = result.getData().getStringExtra("title");
+//                        String author = result.getData().getStringExtra("author");
+//                        String cover = result.getData().getStringExtra("cover");
+//                        String updatedPhrase = result.getData().getStringExtra("phrase");
+//                        String updatedFeel = result.getData().getStringExtra("feel");
+//
+//                        Log.d("UInterface", "Received Updated Phrase: " + updatedPhrase);
+//                        Log.d("UInterface", "Received Updated Feel: " + updatedFeel);
+//
+//                        if (title != null) {
+//                            BoardItem updatedItem = new BoardItem(title, author, updatedPhrase, cover, updatedFeel, null);
+//
+//                            // Adapter에 업데이트
+//                            phraseAdapter.addPhrase(updatedItem);
+//
+//                            // Firestore에 저장
+//                            savePhraseToFirestore(updatedItem);
+//                        } else {
+//                            Log.e("UInterface", "Title is null, cannot save data.");
+//                        }
+//                    }
+//                    else {
+//                        Log.e("UInterface", "Result not OK or data is null.");
+//                    }
                 }
         );
 
 
 
 
-        binding.PhraseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                phraseLauncher.launch(new Intent(getActivity(), MyPhraseSearchActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
-            }
-        });
+//        binding.PhraseButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                phraseLauncher.launch(new Intent(getActivity(), MyRecordSearchActivity.class)
+//                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+//            }
+//        });
 
         // 토글 버튼 클릭시 독서 기록, 글귀 모음 전환
         MaterialButtonToggleGroup toggleGroup = binding.toggleButtonGroup;
