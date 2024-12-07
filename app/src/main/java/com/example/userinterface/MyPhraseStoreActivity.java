@@ -1,21 +1,22 @@
 package com.example.userinterface;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMyPhraseStoreBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyPhraseStoreActivity extends AppCompatActivity {
     TextView bookTitle;
@@ -50,19 +51,34 @@ public class MyPhraseStoreActivity extends AppCompatActivity {
                 .load(cover)
                 .into(bookCover);
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra("title", title)
-                        .putExtra("cover", cover)
-                        .putExtra("phrase", phrase.getText().toString())
-                        .putExtra("feel", feel.getText().toString())
-                        .putExtra("author", author);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        });
+        saveButton.setOnClickListener(view -> savePhraseToFirestore(title, cover, author));
+    }
 
+    private void savePhraseToFirestore(String title, String cover, String author) {
+        // Firestore 초기화
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // 저장할 데이터 생성
+        Map<String, Object> phraseData = new HashMap<>();
+        phraseData.put("title", title);
+        phraseData.put("cover", cover);
+        phraseData.put("author", author);
+        phraseData.put("phrase", phrase.getText().toString());
+        phraseData.put("feel", feel.getText().toString());
+        phraseData.put("timestamp", com.google.firebase.Timestamp.now());
+
+        // Firestore의 사용자별 컬렉션에 데이터 저장
+        db.collection("users")
+                .document(userId)
+                .collection("phrases")
+                .add(phraseData) // 자동 문서 ID 생성
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(MyPhraseStoreActivity.this, "글귀가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(MyPhraseStoreActivity.this, "저장에 실패했습니다: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

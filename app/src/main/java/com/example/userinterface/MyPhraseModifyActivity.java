@@ -1,16 +1,15 @@
 package com.example.userinterface;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.userinterface.databinding.ActivityMyPhraseModifyBinding;
@@ -61,5 +60,24 @@ public class MyPhraseModifyActivity extends AppCompatActivity {
 
         bookPhrase.setText(phrase);
         bookFeel.setText(feel);
+
+        // 수정된 데이터를 저장
+        Button saveButton = binding.saveModifyButton;
+        saveButton.setOnClickListener(view -> {
+            String updatedPhrase = bookPhrase.getText().toString();
+            String updatedFeel = bookFeel.getText().toString();
+
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("title", title);
+            resultIntent.putExtra("author", author);
+            resultIntent.putExtra("cover", cover);
+            resultIntent.putExtra("phrase", updatedPhrase);
+            resultIntent.putExtra("feel", updatedFeel);
+
+            setResult(RESULT_OK, resultIntent);
+            finish();
+        });
+
+
     }
 }

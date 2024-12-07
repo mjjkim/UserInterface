@@ -1,6 +1,5 @@
 package com.example.userinterface;
 
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.PhraseHolder> {
-    List<BoardItem> list;
+    private List<BoardItem> list;
 
-    private PhraseAdapter.OnItemClickListener listener; // 클릭 이벤트 인터페이스
+    // 클릭 이벤트 인터페이스
+    private PhraseAdapter.OnItemClickListener listener;
 
     // 클릭 이벤트 인터페이스
     public interface OnItemClickListener {
@@ -31,8 +31,10 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.PhraseHold
     }
 
 
-    public PhraseAdapter(){list = new ArrayList<>();
+    public PhraseAdapter(){
+        list = new ArrayList<>();
     }
+
     @NonNull
     @Override
     public PhraseHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,35 +44,81 @@ public class PhraseAdapter extends RecyclerView.Adapter<PhraseAdapter.PhraseHold
 
     @Override
     public void onBindViewHolder(@NonNull PhraseHolder holder, int position) {
-        holder.title.setText(list.get(position).getTitle());
-        holder.author.setText(list.get(position).getAuthor());
-        holder.phrase.setText(list.get(position).getDescription());
+        BoardItem item = list.get(position);
+        holder.title.setText(item.getTitle());
+        holder.author.setText(item.getAuthor());
+        holder.phrase.setText(item.getDescription().isEmpty() ? "인상 깊은 구절을 입력하세요" : item.getDescription());
         Glide.with(holder.itemView)
-                .load(list.get(position).getBookImage())
-                        .into(holder.cover);
-        // 클릭 이벤트 설정
+                .load(item.getBookImage())
+                .into(holder.cover);
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onItemClick(list.get(position)); // 클릭된 데이터 전달
+                listener.onItemClick(item);
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    public void addPhrase(BoardItem item){
-        list.add(item);
+    // 리스트 반환 메서드 추가
+    public List<BoardItem> getList() {
+        return list;
+    }
+
+    // 리스트 초기화
+    public void clearPhrases() {
+        list.clear();
         notifyDataSetChanged();
     }
+
+    // 특정 항목 업데이트 메서드
+    public void updatePhrase(String title, String updatedPhrase, String updatedFeel, String cover) {
+        for (BoardItem item : list) {
+            if (item.getTitle().equals(title)) {
+                item.setDescription(updatedPhrase);
+                item.setPubDate(updatedFeel);
+                item.setBookImage(cover);
+                notifyDataSetChanged();
+                return;
+            }
+        }
+    }
+
+    // 항목을 추가하거나 업데이트하는 메서드
+    public void addPhrase(BoardItem newItem) {
+        boolean itemUpdated = false;
+        for (int i = 0; i < list.size(); i++) {
+            BoardItem item = list.get(i);
+            if (item.getTitle().equals(newItem.getTitle())) {
+                // 기존 항목 업데이트
+                item.setDescription(newItem.getDescription());
+                item.setPubDate(newItem.getPubDate());
+                item.setBookImage(newItem.getBookImage());
+                notifyItemChanged(i);
+                itemUpdated = true;
+                break;
+            }
+        }
+        if (!itemUpdated) {
+            // 새로운 항목 추가
+            list.add(newItem);
+            notifyItemInserted(list.size() - 1);
+        }
+    }
+
+
 
     static class PhraseHolder extends RecyclerView.ViewHolder{
         ImageView cover;
         TextView title;
         TextView author;
         TextView phrase;
+
         public PhraseHolder(@NonNull View itemView) {
             super(itemView);
             cover = itemView.findViewById(R.id.phraseCover);

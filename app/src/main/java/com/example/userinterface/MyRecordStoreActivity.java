@@ -65,11 +65,12 @@ public class MyRecordStoreActivity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putExtra("title", title);
         resultIntent.putExtra("author", author);
-        resultIntent.putExtra("description", "description");
+        resultIntent.putExtra("description", description); // 올바르게 설정
         resultIntent.putExtra("cover", cover);
         resultIntent.putExtra("publisher", publisher);
         resultIntent.putExtra("pubDate", pubDate);
         resultIntent.putExtra("isbn", isbn);
+        setResult(RESULT_OK, resultIntent);
 
 
         Glide.with(this)

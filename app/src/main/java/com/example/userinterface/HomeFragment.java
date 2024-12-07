@@ -1,7 +1,6 @@
 package com.example.userinterface;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Intent.getIntent;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,8 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -29,12 +26,11 @@ import com.example.userinterface.databinding.FragmentHomeBinding;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class HomeFragment extends Fragment {
     FragmentHomeBinding binding; // View Binding 객체
@@ -47,17 +43,9 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore db;
     private String userId;
 
-    // 글귀모음 리사이클러뷰
+    // 글귀 모음 리사이클러뷰
     private RecyclerView phraseRecyclerView;//어댑터
     private PhraseAdapter phraseAdapter;
-
-//    //수신받는 정보
-//    String title;
-//    String author;
-//    String description;
-//    String publisher;
-//    String pubDate;
-//    String cover;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -87,33 +75,6 @@ public class HomeFragment extends Fragment {
         phraseRecyclerView.setAdapter(phraseAdapter);
 
         return binding.getRoot();
-
-        // 글귀 모음 예시
-
-//        phraseRecyclerView = binding.PhraseRecyclerView;
-//        reviewAdapter = new SearchBookAdapter(getActivity());
-
-//        reviewAdapter.addItem(new AladinSearchBookData(
-//                "title",
-//                "author",
-//                "description",
-//                "publisher",
-//                "pubDate",
-//                String.valueOf(R.drawable.pin),
-//                "isbn"
-//        ));
-//        reviewAdapter.addItem(new AladinSearchBookData(
-//                "title",
-//                "author",
-//                "description",
-//                "publisher",
-//                "pubDate",
-//                String.valueOf(R.drawable.imagewait),
-//                "isbn"
-//        ));
-//        phraseRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-//        phraseRecyclerView.setAdapter(reviewAdapter);
-
     }
 
     @Override
@@ -158,27 +119,39 @@ public class HomeFragment extends Fragment {
             launcher.launch(intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
         });
 
-        ActivityResultLauncher<Intent> phraseLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult o) {
-                        if(o.getResultCode()==RESULT_OK){
-                            String cover = o.getData().getStringExtra("cover");
-                            String title = o.getData().getStringExtra("title");
-                            String phrase = o.getData().getStringExtra("phrase");
-                            String feel = o.getData().getStringExtra("feel");
-                            String author = o.getData().getStringExtra("author");
-                            phraseAdapter.addPhrase(new BoardItem(
-                                    title,
-                                    author,
-                                    phrase,
-                                    cover,
-                                    feel,
-                                    null
-                            ));
+        ActivityResultLauncher<Intent> phraseLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        String title = result.getData().getStringExtra("title");
+                        String author = result.getData().getStringExtra("author");
+                        String cover = result.getData().getStringExtra("cover");
+                        String updatedPhrase = result.getData().getStringExtra("phrase");
+                        String updatedFeel = result.getData().getStringExtra("feel");
+
+                        Log.d("UInterface", "Received Updated Phrase: " + updatedPhrase);
+                        Log.d("UInterface", "Received Updated Feel: " + updatedFeel);
+
+                        if (title != null) {
+                            BoardItem updatedItem = new BoardItem(title, author, updatedPhrase, cover, updatedFeel, null);
+
+                            // Adapter에 업데이트
+                            phraseAdapter.addPhrase(updatedItem);
+
+                            // Firestore에 저장
+                            savePhraseToFirestore(updatedItem);
+                        } else {
+                            Log.e("UInterface", "Title is null, cannot save data.");
                         }
                     }
-                });
+                    else {
+                        Log.e("UInterface", "Result not OK or data is null.");
+                    }
+                }
+        );
+
+
+
 
         binding.PhraseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,94 +208,124 @@ public class HomeFragment extends Fragment {
                         .putExtra("feel", bookData.getPubDate()));
             }
         });
-
-
-//        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-//                new ActivityResultCallback<ActivityResult>() {
-//                    @Override
-//                    public void onActivityResult(ActivityResult o) {
-//                        if(o.getResultCode() == RESULT_OK){
-////                             데이터 수신
-//                            title = o.getData().getStringExtra("title");
-//                            author = o.getData().getStringExtra("author");
-//                            description = o.getData().getStringExtra("description");
-//                            publisher = o.getData().getStringExtra("publisher");
-//                            pubDate = o.getData().getStringExtra("pubDate");
-//                            cover = o.getData().getStringExtra("cover");
-//
-//                            Log.d("omj",  "이름" + title);
-//                            bookItemAdapter.addItem(new BoardItem(
-//                                    title,
-//                                    author,
-//                                    description,
-//                                    cover,
-//                                    pubDate,
-//                                    publisher
-//                            ));
-//                        }
-//                    }
-//                });
-
-//        binding.toggleButtonGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-//            if (isChecked) {
-//                FrameLayout recordFrameLayout = binding.bookFrameLayout;
-//                FrameLayout phraseFrameLayout = binding.PhraseFrameLayout;
-//                if (checkedId == R.id.record) {
-//                    recordFrameLayout.setVisibility(View.VISIBLE);
-//                    phraseFrameLayout.setVisibility(View.GONE);
-//                } else if (checkedId == R.id.phrase) {
-//                    recordFrameLayout.setVisibility(View.GONE);
-//                    phraseFrameLayout.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        });
-
-
-
-
     }
 
     private void loadBooksFromFirestore() {
-        db.collection("user_books").document(userId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        List<Map<String, Object>> books = (List<Map<String, Object>>) documentSnapshot.get("books");
-                        if (books != null) {
-                            itemList.clear();
-                            for (Map<String, Object> book : books) {
-                                itemList.add(BoardItem.fromMap(book));
+        db.collection("users")
+                .document(userId)
+                .collection("books")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    itemList.clear();
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            BoardItem item = BoardItem.fromMap(document.getData());
+                            if (item != null) {
+                                itemList.add(item);
                             }
-                            bookItemAdapter.notifyDataSetChanged();
                         }
+                        bookItemAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d("UInterface", "No books found.");
                     }
                 })
-                .addOnFailureListener(e -> Log.e("UInterface", "데이터 불러오기 실패: " + e.getMessage()));
+                .addOnFailureListener(e -> Log.e("UInterface", "Books 데이터 로드 실패: " + e.getMessage()));
     }
 
-    // Firestore에 책 데이터 저장
-    private void saveBookToFirestore(BoardItem bookItem) {
-        db.collection("user_books").document(userId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    // books를 익명 클래스 밖에서 final로 선언
-                    final List<Map<String, Object>> books;
-                    if (documentSnapshot.exists()) {
-                        books = new ArrayList<>((List<Map<String, Object>>) documentSnapshot.get("books"));
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 프래그먼트로 돌아왔을 때 데이터 다시 로드
+        loadBooksFromFirestore();
+        loadPhrasesFromFirestore(); // 글귀 모음 데이터 새로 불러오기
+    }
+
+
+
+    private void loadPhrasesFromFirestore() {
+        db.collection("users")
+                .document(userId)
+                .collection("phrases")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    Log.d("UInterface", "글귀 데이터 가져오기 성공");
+                    phraseAdapter.clearPhrases(); // 기존 데이터 초기화
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            BoardItem item = BoardItem.fromMap(document.getData());
+                            if (item != null) { // null 체크
+                                Log.d("UInterface", "가져온 데이터: " + item.getTitle());
+                                phraseAdapter.addPhrase(item);
+                            } else {
+                                Log.d("UInterface", "데이터 변환 실패: " + document.getId());
+                            }
+                        }
+                        phraseAdapter.notifyDataSetChanged();
                     } else {
-                        books = new ArrayList<>();
+                        Log.d("UInterface", "글귀 데이터가 없습니다.");
                     }
-
-                    books.add(bookItem.toMap()); // 새 책 추가
-
-                    // Firestore에 저장
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("books", books); // Map으로 저장
-
-                    db.collection("user_books").document(userId)
-                            .set(data)
-                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "책 데이터 저장 성공"))
-                            .addOnFailureListener(e -> Log.e("Firestore", "책 데이터 저장 실패: " + e.getMessage()));
                 })
-                .addOnFailureListener(e -> Log.e("Firestore", "Firestore 읽기 실패: " + e.getMessage()));
+                .addOnFailureListener(e -> Log.e("UInterface", "글귀 데이터 로드 실패: " + e.getMessage()));
+    }
+
+    private void saveBookToFirestore(BoardItem bookItem) {
+        db.collection("users")
+                .document(userId)
+                .collection("books")
+                .document(bookItem.getTitle()) // 제목을 문서 ID로 사용
+                .set(bookItem.toMap())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "책 데이터 저장 성공");
+
+                    // 글귀 모음에 기본 데이터 자동 추가
+                    BoardItem phraseItem = new BoardItem(
+                            bookItem.getTitle(),
+                            bookItem.getAuthor(),
+                            "",                 // phrase (인상 깊은 글귀는 빈 값)
+                            bookItem.getBookImage(),
+                            "",                 // feel (느낀 점은 빈 값)
+                            null
+                    );
+
+                    savePhraseToFirestore(phraseItem); // Firestore에 저장
+                    phraseAdapter.addPhrase(phraseItem); // 바로 Adapter에 추가
+                    phraseAdapter.notifyDataSetChanged(); // Adapter 갱신
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "책 데이터 저장 실패: " + e.getMessage()));
+    }
+
+
+
+    private void savePhraseToFirestore(BoardItem phraseItem) {
+        db.collection("users")
+                .document(userId)
+                .collection("phrases")
+                .document(phraseItem.getTitle()) // 제목을 문서 ID로 사용
+                .set(phraseItem.toMap())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "글귀 데이터 저장 성공: " + phraseItem.getTitle());
+                    Toast.makeText(getActivity(), "글귀 데이터가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "글귀 데이터 저장 실패: " + e.getMessage());
+                    Toast.makeText(getActivity(), "저장 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    public void updatePhrasesFromFirestore() {
+        db.collection("users")
+                .document(userId)
+                .collection("phrases")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    phraseAdapter.clearPhrases(); // 기존 데이터 초기화
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        BoardItem item = BoardItem.fromMap(document.getData());
+                        if (item != null) {
+                            phraseAdapter.addPhrase(item);
+                        }
+                    }
+                });
     }
 
     ActivityResultLauncher<Intent> launcher = registerForActivityResult(

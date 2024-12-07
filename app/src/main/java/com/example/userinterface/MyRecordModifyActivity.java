@@ -99,44 +99,6 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         setupDatePickers();
     }
 
-    private void loadRecordFromFirestore() {
-        if (userId == null || documentId == null) {
-            Toast.makeText(this, "사용자 정보나 문서 ID를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        db.collection("user_records")
-                .document(userId)
-                .collection("books")
-                .document(documentId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Firestore에서 데이터 읽어와서 UI에 반영
-                        binding.modifyTitle.setText(documentSnapshot.getString("title"));
-                        binding.modifyAuthor.setText(documentSnapshot.getString("author"));
-                        binding.modifyPublisher.setText(documentSnapshot.getString("publisher"));
-                        binding.modifyPubDate.setText(documentSnapshot.getString("pubDate"));
-                        binding.modifyDescription.setText(documentSnapshot.getString("description"));
-                        binding.goodPhrase.setText(documentSnapshot.getString("phrase"));
-                        binding.feel.setText(documentSnapshot.getString("feel"));
-                        binding.reason.setText(documentSnapshot.getString("reason"));
-                        binding.gital.setText(documentSnapshot.getString("gital"));
-                        binding.dateEditText.setText(documentSnapshot.getString("startDate"));
-                        binding.dateEditText2.setText(documentSnapshot.getString("endDate"));
-                        Double rating = documentSnapshot.getDouble("rating");
-                        if (rating != null) {
-                            binding.ratingBar.setRating(rating.floatValue());
-                        }
-                    } else {
-                        Toast.makeText(this, "저장된 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "데이터 불러오기 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
     private void setupDatePickers() {
         binding.dateEditText.setOnClickListener(view -> {
             DatePickerFragment datePickerFragment = new DatePickerFragment();
@@ -151,40 +113,121 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         });
     }
 
-    // Firestore에 데이터 저장
+    private void loadRecordFromFirestore() {
+        if (userId == null || documentId == null) {
+            Toast.makeText(this, "사용자 정보나 문서 ID를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("users")
+                .document(userId)
+                .collection("books")
+                .document(documentId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        binding.modifyTitle.setText(documentSnapshot.getString("title"));
+                        binding.modifyAuthor.setText(documentSnapshot.getString("author"));
+                        binding.modifyPublisher.setText(documentSnapshot.getString("publisher"));
+                        binding.modifyPubDate.setText(documentSnapshot.getString("pubDate"));
+                        binding.modifyDescription.setText(documentSnapshot.getString("description"));
+                        binding.goodPhrase.setText(documentSnapshot.getString("phrase")); // 인상깊은 구절
+                        binding.feel.setText(documentSnapshot.getString("feel"));         // 느낀점
+                        binding.reason.setText(documentSnapshot.getString("reason"));     // 읽은 이유
+                        binding.gital.setText(documentSnapshot.getString("gital"));       // 기타
+                        binding.dateEditText.setText(documentSnapshot.getString("startDate")); // 시작 날짜
+                        binding.dateEditText2.setText(documentSnapshot.getString("endDate"));  // 끝 날짜
+                        Double rating = documentSnapshot.getDouble("rating");
+                        if (rating != null) {
+                            binding.ratingBar.setRating(rating.floatValue()); // 별점
+                        }
+                    } else {
+                        Toast.makeText(this, "저장된 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "데이터 불러오기 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
     private void saveRecordToFirestore() {
         if (userId == null || documentId == null) {
             Toast.makeText(this, "사용자 정보나 문서 ID를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Map<String, Object> recordData = new HashMap<>();
-        recordData.put("title", binding.modifyTitle.getText().toString());
-        recordData.put("author", binding.modifyAuthor.getText().toString());
-        recordData.put("publisher", binding.modifyPublisher.getText().toString());
-        recordData.put("pubDate", binding.modifyPubDate.getText().toString());
-        recordData.put("description", binding.modifyDescription.getText().toString());
-        recordData.put("phrase", binding.goodPhrase.getText().toString());
-        recordData.put("feel", binding.feel.getText().toString());
-        recordData.put("reason", binding.reason.getText().toString());
-        recordData.put("gital", binding.gital.getText().toString());
-        recordData.put("rating", binding.ratingBar.getRating());
-        // 시작 날짜와 끝 날짜 추가
-        recordData.put("startDate", binding.dateEditText.getText().toString());
-        recordData.put("endDate", binding.dateEditText2.getText().toString());
+        // cover 값 가져오기 (메서드 외부에서 선언)
+        final String cover = getIntent().getStringExtra("cover") != null ? getIntent().getStringExtra("cover") : "";
 
-        db.collection("user_records")
+        // EditText 값 가져오기
+        String goodPhrase = binding.goodPhrase.getText().toString();
+        String feel = binding.feel.getText().toString();
+        String reason = binding.reason.getText().toString();
+        String gital = binding.gital.getText().toString();
+        float rating = binding.ratingBar.getRating();
+        String startDate = binding.dateEditText.getText().toString();
+        String endDate = binding.dateEditText2.getText().toString();
+
+        // 저장할 데이터 맵 생성
+        Map<String, Object> recordData = new HashMap<>();
+        recordData.put("title", documentId);
+        recordData.put("author", binding.modifyAuthor.getText().toString());
+        recordData.put("phrase", goodPhrase);
+        recordData.put("feel", feel);
+        recordData.put("reason", reason);
+        recordData.put("gital", gital);
+        recordData.put("rating", rating);
+        recordData.put("startDate", startDate);
+        recordData.put("endDate", endDate);
+        recordData.put("cover", cover); // 커버 이미지 유지
+
+        // Firestore에 데이터 저장
+        db.collection("users")
                 .document(userId)
                 .collection("books")
                 .document(documentId)
                 .set(recordData)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    finish();
+                    saveToPhrases(goodPhrase, feel, cover); // 글귀 모음에 동시 저장
+                    setResult(RESULT_OK); // 결과 코드 설정
+                    finish(); // 저장 후 액티비티 종료
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "저장 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+
+    private void saveToPhrases(String goodPhrase, String feel, String cover) {
+        if (goodPhrase.isEmpty() || feel.isEmpty()) return;
+
+        Map<String, Object> phraseData = new HashMap<>();
+        phraseData.put("title", documentId);
+        phraseData.put("author", binding.modifyAuthor.getText().toString());
+        phraseData.put("phrase", goodPhrase);
+        phraseData.put("feel", feel);
+        phraseData.put("cover", cover);
+
+        db.collection("users")
+                .document(userId)
+                .collection("phrases")
+                .document(documentId)
+                .set(phraseData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "글귀 모음에 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "글귀 저장 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.reviewappbarmenu, menu);
+        return true;
     }
 
     // Toolbar 메뉴 동작
@@ -201,12 +244,5 @@ public class MyRecordModifyActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.reviewappbarmenu, menu);
-        return true;
     }
 }
