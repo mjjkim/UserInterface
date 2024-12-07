@@ -153,13 +153,13 @@ public class HomeFragment extends Fragment {
 
 
 
-        binding.PhraseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                phraseLauncher.launch(new Intent(getActivity(), MyRecordSearchActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
-            }
-        });
+//        binding.PhraseButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                phraseLauncher.launch(new Intent(getActivity(), MyRecordSearchActivity.class)
+//                        .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+//            }
+//        });
 
         // 토글 버튼 클릭시 독서 기록, 글귀 모음 전환
         MaterialButtonToggleGroup toggleGroup = binding.toggleButtonGroup;
