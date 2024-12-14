@@ -419,13 +419,18 @@ public class ChallengeFragment extends Fragment {
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();
         dialog.setOnChallengeDataListener((challenge, date) -> {
-            // 데이터 수신 후 화면에 반영
+            // 기존 TextView 업데이트
             challengeSetText.setText(challenge);
             challengeDetails.setText("기간: " + date);
             challengeSet.setClickable(false);
+
+            // 새롭게 dailyGoalText에 문구 업데이트
+            TextView dailyGoalText = binding.dailyGoalText; // dailyGoalText ID 가져오기
+            dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
         });
         dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
     }
+
 
     // 캘린더 데이터를 초기화합니다.
     private void initializeCalendar() {
