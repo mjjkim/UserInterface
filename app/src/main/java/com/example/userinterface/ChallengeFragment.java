@@ -53,8 +53,6 @@ public class ChallengeFragment extends Fragment {
     private CalendarAdapter adapter;
     private List<DayModel> dayList = new ArrayList<>();
 
-    // 성공 실패 체크 데이터
-    private boolean challengeCheck = false;
     private int challengeSuccessCount, challengeFloatingCount, challengeFailCount;
 
     // Firebase
@@ -163,7 +161,7 @@ public class ChallengeFragment extends Fragment {
         binding.challengeFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(challengeCheck) {
+                if(true) {
                     AlertDialog dialog = new AlertDialog.Builder(getContext())
                             .setMessage("챌린지를 포기하시겠습니까?")
                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -172,14 +170,12 @@ public class ChallengeFragment extends Fragment {
                                     challengeSet.setClickable(true);
                                     challengeSetText.setText("챌린지를 선택하세요");
                                     challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                    challengeCheck = true;
                                     updateChart(2);
                                 }
                             })
                             .setNegativeButton("취소", null)
                             .create();
                     dialog.show();
-                    challengeCheck=false;
                 }
             }
         });
@@ -191,7 +187,7 @@ public class ChallengeFragment extends Fragment {
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
-                if(challengeCheck) {
+                if(true) {
                     AlertDialog dialog = new AlertDialog.Builder(getContext())
                             .setMessage("챌린지에 성공하셨습니까?")
                             .setPositiveButton("성공", new DialogInterface.OnClickListener() {
@@ -200,7 +196,6 @@ public class ChallengeFragment extends Fragment {
                                     challengeSet.setClickable(true);
                                     challengeSetText.setText("챌린지를 선택하세요");
                                     challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                    challengeCheck = true;
                                     updateChart(0);
 
                                 }
@@ -211,13 +206,11 @@ public class ChallengeFragment extends Fragment {
                                     challengeSet.setClickable(true);
                                     challengeSetText.setText("챌린지를 선택하세요");
                                     challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                    challengeCheck = true;
                                     updateChart(1);
                                 }
                             })
                             .create();
                     dialog.show();
-                    challengeCheck=false;
                 }
             }
         });
