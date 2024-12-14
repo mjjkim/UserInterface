@@ -1,168 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/android_com"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToOutline="true"
     android:background="#ffffff">
-    <Button
-        android:id="@+id/back"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
-        android:layout_marginLeft="15dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="47dp"
-        android:drawableLeft="@drawable/a"
-        android:background="#ffffff"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignTop="@id/back"
-        android:layout_alignBottom="@id/back"
-        android:layout_marginTop="47dp"
-        android:paddingLeft="70dp"
-        android:text="회원가입"
-        android:textAppearance="@style/some_id"
-        android:gravity="top"
-        />
-
-    <TextView
-        android:id="@+id/tv_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/back"
-        android:layout_marginLeft="34dp"
-        android:layout_marginTop="10dp"
-        android:gravity="top"
-        android:text="아이디"
-        android:textColor="#55a9db"
-        android:textSize="24dp" />
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="34dp"
-        android:layout_below="@+id/tv_id"
-        android:layout_marginTop="10dp"
-        android:paddingStart="16dp"
-        android:inputType="text"
-        android:hint="cjw@ssu.com"
-        android:textColorHint="#81000000"
-        android:background="@drawable/rectangle_1"
-        />
-    <Button
-        android:id="@+id/duplicateEmailCheck"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/email"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:text="중복 확인"
-        android:background="@drawable/rectangle_small"
-        />
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="닉네임"
-        android:textAppearance="@style/some_id"
-        android:layout_below="@id/duplicateEmailCheck"
-        android:layout_marginLeft="34dp"
-        />
-    <EditText
-        android:id="@+id/nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="34dp"
-        android:layout_below="@+id/tv_name"
-        android:layout_marginTop="10dp"
-        android:paddingStart="16dp"
-        android:inputType="text"
-        android:hint="2자 이상 20자 이하, 대/소/한글 문자 사용 가능"
-        android:textSize="16dp"
-        android:textColorHint="#81000000"
-        android:background="@drawable/rectangle_1"
-        />
-
-    <Button
-        android:id="@+id/duplicateNickNameCheck"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/nickname"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/rectangle_small"
-        android:text="중복 확인" />
-    <TextView
-        android:id="@+id/tv_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/duplicateNickNameCheck"
-        android:layout_marginLeft="34dp"
-        android:text="비밀번호"
-        android:textAppearance="@style/some_id"
-        />
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputlayout"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/android_com"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_password"
-        app:passwordToggleEnabled="true"
-        app:hintEnabled="false">
+        android:layout_height="match_parent"
+        android:clipToOutline="true"
+        android:background="#ffffff">
+        <Button
+            android:id="@+id/back"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:layout_marginLeft="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="47dp"
+            android:drawableLeft="@drawable/a"
+            android:background="#ffffff"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@id/back"
+            android:layout_alignBottom="@id/back"
+            android:layout_marginTop="47dp"
+            android:paddingLeft="70dp"
+            android:text="회원가입"
+            android:textAppearance="@style/some_id"
+            android:gravity="top"
+            />
+
+        <TextView
+            android:id="@+id/tv_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/back"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="10dp"
+            android:gravity="top"
+            android:text="아이디"
+            android:textColor="#55a9db"
+            android:textSize="24dp" />
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="34dp"
-            android:inputType="textPassword"
-            android:hint="8자 이상, 대/소/숫자/특수 문자 포함 필요"
+            android:layout_below="@+id/tv_id"
+            android:layout_marginTop="10dp"
+            android:paddingStart="16dp"
+            android:inputType="text"
+            android:hint="cjw@ssu.com"
             android:textColorHint="#81000000"
-            android:textSize="16dp"
-            android:paddingStart="16dp"
             android:background="@drawable/rectangle_1"
             />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/tv_checkpassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/inputlayout"
-        android:layout_marginLeft="34dp"
-        android:layout_marginTop="10dp"
-        android:text="비밀번호 확인"
-        android:textAppearance="@style/some_id" />
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputlayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_checkpassword"
-        android:layout_marginTop="10dp"
-        app:passwordToggleEnabled="true">
+        <Button
+            android:id="@+id/duplicateEmailCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/email"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:text="중복 확인"
+            android:background="@drawable/rectangle_small"
+            />
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="닉네임"
+            android:textAppearance="@style/some_id"
+            android:layout_below="@id/duplicateEmailCheck"
+            android:layout_marginLeft="34dp"
+            />
         <EditText
-            android:id="@+id/checkpassword"
+            android:id="@+id/nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="34dp"
-            android:background="@drawable/rectangle_1"
-            android:inputType="textPassword"
+            android:layout_below="@+id/tv_name"
+            android:layout_marginTop="10dp"
             android:paddingStart="16dp"
+            android:inputType="text"
+            android:hint="2자 이상 20자 이하, 대/소/한글 문자 사용 가능"
+            android:textSize="16dp"
+            android:textColorHint="#81000000"
+            android:background="@drawable/rectangle_1"
             />
-    </com.google.android.material.textfield.TextInputLayout>
-    <Button
-        android:id="@+id/enrollback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/inputlayout2"
-        android:layout_marginLeft="34dp"
-        android:layout_marginTop="20dp"
-        android:textSize="20dp"
-        android:text="회원가입"
-        android:background="@drawable/rectangle_2"
-        />
-</RelativeLayout>
+
+        <Button
+            android:id="@+id/duplicateNickNameCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nickname"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/rectangle_small"
+            android:text="중복 확인" />
+        <TextView
+            android:id="@+id/tv_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/duplicateNickNameCheck"
+            android:layout_marginLeft="34dp"
+            android:text="비밀번호"
+            android:textAppearance="@style/some_id"
+            />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_password"
+            app:passwordToggleEnabled="true"
+            app:hintEnabled="false">
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="34dp"
+                android:inputType="textPassword"
+                android:hint="8자 이상, 대/소/숫자/특수 문자 포함 필요"
+                android:textColorHint="#81000000"
+                android:textSize="16dp"
+                android:paddingStart="16dp"
+                android:background="@drawable/rectangle_1"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_checkpassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/inputlayout"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="10dp"
+            android:text="비밀번호 확인"
+            android:textAppearance="@style/some_id" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputlayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_checkpassword"
+            android:layout_marginTop="10dp"
+            app:passwordToggleEnabled="true">
+            <EditText
+                android:id="@+id/checkpassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="34dp"
+                android:background="@drawable/rectangle_1"
+                android:inputType="textPassword"
+                android:paddingStart="16dp"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/enrollback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/inputlayout2"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"
+            android:text="회원가입"
+            android:background="@drawable/rectangle_2"
+            />
+    </RelativeLayout>
+</ScrollView>

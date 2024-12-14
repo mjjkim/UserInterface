@@ -20,9 +20,8 @@ public class MyPhraseModifyActivity extends AppCompatActivity {
     TextView bookAuthor;
     ImageView bookCover;
 
-    EditText bookPhrase;
-    EditText bookFeel;
-
+    TextView bookPhrase;
+    TextView bookFeel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,24 +59,6 @@ public class MyPhraseModifyActivity extends AppCompatActivity {
 
         bookPhrase.setText(phrase);
         bookFeel.setText(feel);
-
-        // 수정된 데이터를 저장
-        Button saveButton = binding.saveModifyButton;
-        saveButton.setOnClickListener(view -> {
-            String updatedPhrase = bookPhrase.getText().toString();
-            String updatedFeel = bookFeel.getText().toString();
-
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("title", title);
-            resultIntent.putExtra("author", author);
-            resultIntent.putExtra("cover", cover);
-            resultIntent.putExtra("phrase", updatedPhrase);
-            resultIntent.putExtra("feel", updatedFeel);
-
-            setResult(RESULT_OK, resultIntent);
-            finish();
-        });
-
 
     }
 }

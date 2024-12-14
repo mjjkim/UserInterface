@@ -38,8 +38,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,6 +95,9 @@ public class ChallengeFragment extends Fragment {
         binding.calendarRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 7)); // 7열 (요일 기준)
         binding.calendarRecyclerView.setAdapter(adapter);
 
+        // 저장된 Challenge 불러오기
+        loadChallengeFromFirestore();
+
         // 캘린더 데이터 초기화
         initializeCalendar();
 
@@ -106,26 +107,15 @@ public class ChallengeFragment extends Fragment {
         // 실패 버튼 클릭 이벤트
         binding.failureButton.setOnClickListener(v -> updateDateStatus("failure"));
 
-        // 월 변경 버튼 이벤트 추가
-        binding.prevMonthButton.setOnClickListener(v -> {
-            calendar.add(Calendar.MONTH, -1); // 이전 월로 이동
-            updateMonthText(); // 월 텍스트 업데이트
-            initializeCalendar(); // 새로운 월 데이터로 초기화
-        });
-
-        binding.nextMonthButton.setOnClickListener(v -> {
-            calendar.add(Calendar.MONTH, 1); // 다음 월로 이동
-            updateMonthText(); // 월 텍스트 업데이트
-            initializeCalendar(); // 새로운 월 데이터로 초기화
-        });
-
         // 초기 월 텍스트 설정
         updateMonthText();
 
         if (currentUser != null) {
             userId = currentUser.getUid();
             Log.d("UInterface", "User ID initialized: " + userId);
-            initializeCalendar(); // userId 초기화 후 호출
+
+            loadChallengeFromFirestore();
+            initializeCalendar();
             loadChartDataFromFirestore();
         } else {
             Log.e("UInterface", "User is not logged in.");
@@ -160,63 +150,31 @@ public class ChallengeFragment extends Fragment {
             }
         });
 
-        binding.challengeFloatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(true) {
-                    AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setMessage("챌린지를 포기하시겠습니까?")
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    challengeSet.setClickable(true);
-                                    challengeSetText.setText("챌린지를 선택하세요");
-                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                    updateChart(2);
-                                }
-                            })
-                            .setNegativeButton("취소", null)
-                            .create();
-                    dialog.show();
-                }
-            }
+        binding.challengeFloatingButton.setOnClickListener(rootView -> {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("챌린지를 포기하시겠습니까?")
+                    .setPositiveButton("확인", (dialogInterface, i) -> {
+                        resetChallengeFirestoreAndUI(2); // 포기 처리
+                    })
+                    .setNegativeButton("취소", null)
+                    .create()
+                    .show();
         });
 
-        binding.challengeSuccessButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar c = Calendar.getInstance();
-                int year = c.get(Calendar.YEAR);
-                int month = c.get(Calendar.MONTH);
-                int day = c.get(Calendar.DAY_OF_MONTH);
-                if(true) {
-                    AlertDialog dialog = new AlertDialog.Builder(getContext())
-                            .setMessage("챌린지에 성공하셨습니까?")
-                            .setPositiveButton("성공", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    challengeSet.setClickable(true);
-                                    challengeSetText.setText("챌린지를 선택하세요");
-                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                    updateChart(0);
 
-                                }
-                            })
-                            .setNegativeButton("실패", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    challengeSet.setClickable(true);
-                                    challengeSetText.setText("챌린지를 선택하세요");
-                                    challengeDetails.setText("9999-12-31 ~ 9999-12-31");
-                                    updateChart(1);
-                                }
-                            })
-                            .create();
-                    dialog.show();
-                }
-            }
+
+        binding.challengeSuccessButton.setOnClickListener(rootview -> {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("챌린지에 성공하셨습니까?")
+                    .setPositiveButton("성공", (dialogInterface, i) -> {
+                        resetChallengeFirestoreAndUI(0); // 성공 처리
+                    })
+                    .setNegativeButton("실패", (dialogInterface, i) -> {
+                        resetChallengeFirestoreAndUI(1); // 실패 처리
+                    })
+                    .create()
+                    .show();
         });
-
 
         //past challenge
         BarChart barChart = binding.barChart;
@@ -382,6 +340,63 @@ public class ChallengeFragment extends Fragment {
         binding.challengeNickname.setText(title);
     }
 
+    private void loadChallengeFromFirestore() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot load challenge.");
+            return;
+        }
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("currentChallenge")
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String challenge = documentSnapshot.getString("challenge");
+                        String date = documentSnapshot.getString("date");
+
+                        // 챌린지 기간 확인
+                        Calendar currentCalendar = Calendar.getInstance();
+                        String[] dateRange = date.split(" ~ ");
+                        String endDate = dateRange.length > 1 ? dateRange[1] : "";
+
+                        if (challenge != null && date != null && !isChallengeExpired(currentCalendar, endDate)) {
+                            // 진행 중인 챌린지
+                            challengeSetText.setText(challenge);
+                            challengeDetails.setText("기간: " + date);
+                            binding.dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
+                            challengeSet.setClickable(false);
+                        } else {
+                            // 기간 만료 또는 초기 상태
+                            resetChallengeUI();
+                        }
+                    } else {
+                        // 챌린지가 없는 경우
+                        resetChallengeUI();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Error loading challenge: " + e.getMessage());
+                    Toast.makeText(getContext(), "챌린지를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
+
+    // 챌린지 기간이 만료되었는지 확인하는 함수
+    private boolean isChallengeExpired(Calendar currentCalendar, String endDate) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM d, yyyy", java.util.Locale.ENGLISH);
+            Calendar endCalendar = Calendar.getInstance();
+            endCalendar.setTime(sdf.parse(endDate));
+
+            return currentCalendar.after(endCalendar); // 현재 날짜가 종료 날짜 이후인지 확인
+        } catch (Exception e) {
+            Log.e("UInterface", "Error parsing endDate: " + e.getMessage());
+            return true; // 오류 발생 시 만료된 것으로 처리
+        }
+    }
+
+
     private void loadChartDataFromFirestore() {
         if (userId == null) {
             Log.e("UInterface", "User ID is null, cannot load chart data.");
@@ -413,23 +428,76 @@ public class ChallengeFragment extends Fragment {
                 .addOnFailureListener(e -> Log.e("UInterface", "Error loading chart data: " + e.getMessage()));
     }
 
-
-
-
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();
         dialog.setOnChallengeDataListener((challenge, date) -> {
-            // 기존 TextView 업데이트
+            // UI 업데이트
             challengeSetText.setText(challenge);
             challengeDetails.setText("기간: " + date);
             challengeSet.setClickable(false);
 
-            // 새롭게 dailyGoalText에 문구 업데이트
-            TextView dailyGoalText = binding.dailyGoalText; // dailyGoalText ID 가져오기
-            dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
+            // Firestore에 챌린지 저장
+            saveChallengeToFirestore(challenge, date);
         });
         dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
     }
+
+    private void saveChallengeToFirestore(String challenge, String date) {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot save challenge.");
+            return;
+        }
+
+        // Firestore에 저장할 데이터
+        Map<String, Object> challengeData = new HashMap<>();
+        challengeData.put("challenge", challenge);
+        challengeData.put("date", date);
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("currentChallenge")
+                .set(challengeData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "Challenge saved successfully: " + challenge);
+                    Toast.makeText(getContext(), "챌린지가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                    // 저장 후 UI 업데이트
+                    challengeSetText.setText(challenge);
+                    challengeDetails.setText("기간: " + date);
+                    binding.dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
+                    challengeSet.setClickable(false);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Error saving challenge: " + e.getMessage());
+                    Toast.makeText(getContext(), "챌린지 저장에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void resetChallengeFirestoreAndUI(int chartType) {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot reset challenge.");
+            return;
+        }
+
+        db.collection("users").document(userId)
+                .collection("challenges").document("currentChallenge")
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "Challenge successfully reset.");
+                    resetChallengeUI();
+                    updateChart(chartType); // 차트 데이터 업데이트 (0: 성공, 1: 실패, 2: 포기)
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Error resetting challenge: " + e.getMessage());
+                });
+    }
+
+
+    private void resetChallengeUI() {
+        binding.dailyGoalText.setText("챌린지를 설정해주세요!");
+        challengeSet.setClickable(true);
+        challengeSetText.setText("챌린지를 설정해주세요!");
+        challengeDetails.setText("9999-12-31 ~ 9999-12-31");
+    }
+
 
 
     // 캘린더 데이터를 초기화합니다.

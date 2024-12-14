@@ -50,20 +50,21 @@
             android:gravity="center"
             android:id="@+id/phraseModifyAuthor"/>
         <!-- 글귀 입력 -->
-        <EditText
+
+        <!-- 메모 입력 -->
+        <TextView
             android:id="@+id/quoteModifyInput"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/edittext_rounded"
+            android:gravity="top"
             android:hint="인상적인 글귀를 입력하세요"
             android:padding="12dp"
-            android:gravity="top"
-            android:background="@drawable/edittext_rounded"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp" />
+            android:textSize="16sp" />
 
-        <!-- 메모 입력 -->
-        <EditText
+        <TextView
             android:id="@+id/memoModifyInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,16 +76,6 @@
             android:textSize="16sp"
             android:layout_marginTop="12dp" />
 
-        <!-- 저장 버튼 -->
-        <Button
-            android:id="@+id/saveModifyButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="저장"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#B3D8EF"
-            android:textColor="@color/white"
-            android:padding="12dp"
-            android:layout_gravity="center" />
+
     </LinearLayout>
 </ScrollView>
