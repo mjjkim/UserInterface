@@ -182,15 +182,6 @@
                 android:gravity="center"
                 android:padding="8dp">
 
-                <!-- 이전 월 버튼 -->
-                <Button
-                    android:id="@+id/prev_month_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="◀"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#333333"
-                    android:layout_marginEnd="8dp" />
 
                 <!-- 현재 월 텍스트 -->
                 <TextView
@@ -202,15 +193,6 @@
                     android:textColor="#333333"
                     android:gravity="center" />
 
-                <!-- 다음 월 버튼 -->
-                <Button
-                    android:id="@+id/next_month_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="▶"
-                    android:backgroundTint="#FFFFFF"
-                    android:textColor="#333333"
-                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
             <!-- RecyclerView Calendar Section -->

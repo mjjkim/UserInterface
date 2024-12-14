@@ -97,6 +97,9 @@ public class ChallengeFragment extends Fragment {
         binding.calendarRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 7)); // 7열 (요일 기준)
         binding.calendarRecyclerView.setAdapter(adapter);
 
+        // 저장된 Challenge 불러오기
+        loadChallengeFromFirestore();
+
         // 캘린더 데이터 초기화
         initializeCalendar();
 
@@ -106,26 +109,15 @@ public class ChallengeFragment extends Fragment {
         // 실패 버튼 클릭 이벤트
         binding.failureButton.setOnClickListener(v -> updateDateStatus("failure"));
 
-        // 월 변경 버튼 이벤트 추가
-        binding.prevMonthButton.setOnClickListener(v -> {
-            calendar.add(Calendar.MONTH, -1); // 이전 월로 이동
-            updateMonthText(); // 월 텍스트 업데이트
-            initializeCalendar(); // 새로운 월 데이터로 초기화
-        });
-
-        binding.nextMonthButton.setOnClickListener(v -> {
-            calendar.add(Calendar.MONTH, 1); // 다음 월로 이동
-            updateMonthText(); // 월 텍스트 업데이트
-            initializeCalendar(); // 새로운 월 데이터로 초기화
-        });
-
         // 초기 월 텍스트 설정
         updateMonthText();
 
         if (currentUser != null) {
             userId = currentUser.getUid();
             Log.d("UInterface", "User ID initialized: " + userId);
-            initializeCalendar(); // userId 초기화 후 호출
+
+            loadChallengeFromFirestore();
+            initializeCalendar();
             loadChartDataFromFirestore();
         } else {
             Log.e("UInterface", "User is not logged in.");
@@ -382,6 +374,38 @@ public class ChallengeFragment extends Fragment {
         binding.challengeNickname.setText(title);
     }
 
+    private void loadChallengeFromFirestore() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot load challenge.");
+            return;
+        }
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("currentChallenge")
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String challenge = documentSnapshot.getString("challenge");
+                        String date = documentSnapshot.getString("date");
+
+                        if (challenge != null && date != null) {
+                            // UI 업데이트
+                            challengeSetText.setText(challenge);
+                            challengeDetails.setText("기간: " + date);
+                            binding.dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
+                            challengeSet.setClickable(false);
+                            Log.d("UInterface", "Challenge loaded successfully.");
+                        }
+                    } else {
+                        Log.d("UInterface", "No existing challenge data found.");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Error loading challenge: " + e.getMessage());
+                    Toast.makeText(getContext(), "챌린지를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
     private void loadChartDataFromFirestore() {
         if (userId == null) {
             Log.e("UInterface", "User ID is null, cannot load chart data.");
@@ -413,24 +437,48 @@ public class ChallengeFragment extends Fragment {
                 .addOnFailureListener(e -> Log.e("UInterface", "Error loading chart data: " + e.getMessage()));
     }
 
-
-
-
     private void openChallengeDialog() {
         ChallengeSettingDialog dialog = new ChallengeSettingDialog();
         dialog.setOnChallengeDataListener((challenge, date) -> {
-            // 기존 TextView 업데이트
+            // UI 업데이트
             challengeSetText.setText(challenge);
             challengeDetails.setText("기간: " + date);
             challengeSet.setClickable(false);
 
-            // 새롭게 dailyGoalText에 문구 업데이트
-            TextView dailyGoalText = binding.dailyGoalText; // dailyGoalText ID 가져오기
-            dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
+            // Firestore에 챌린지 저장
+            saveChallengeToFirestore(challenge, date);
         });
         dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
     }
 
+    private void saveChallengeToFirestore(String challenge, String date) {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot save challenge.");
+            return;
+        }
+
+        // Firestore에 저장할 데이터
+        Map<String, Object> challengeData = new HashMap<>();
+        challengeData.put("challenge", challenge);
+        challengeData.put("date", date);
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("currentChallenge")
+                .set(challengeData)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "Challenge saved successfully: " + challenge);
+                    Toast.makeText(getContext(), "챌린지가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                    // 저장 후 UI 업데이트
+                    challengeSetText.setText(challenge);
+                    challengeDetails.setText("기간: " + date);
+                    binding.dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
+                    challengeSet.setClickable(false);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "Error saving challenge: " + e.getMessage());
+                    Toast.makeText(getContext(), "챌린지 저장에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
 
     // 캘린더 데이터를 초기화합니다.
     private void initializeCalendar() {
