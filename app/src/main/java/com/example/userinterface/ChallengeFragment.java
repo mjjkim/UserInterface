@@ -125,12 +125,14 @@ public class ChallengeFragment extends Fragment {
         if (currentUser != null) {
             userId = currentUser.getUid();
             Log.d("UInterface", "User ID initialized: " + userId);
-            loadChartDataFromFirestore(); // Firestore 데이터 불러오기
+            initializeCalendar(); // userId 초기화 후 호출
+            loadChartDataFromFirestore();
         } else {
             Log.e("UInterface", "User is not logged in.");
             Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
             return;
         }
+
 
         Button button1 = view.findViewById(R.id.tab_in_progress);
         Button button2 = view.findViewById(R.id.tab_past_challenges);
@@ -425,10 +427,13 @@ public class ChallengeFragment extends Fragment {
         dialog.show(getParentFragmentManager(), "ChallengeSettingDialog");
     }
 
-    /**
-     * 캘린더 데이터를 초기화합니다.
-     */
+    // 캘린더 데이터를 초기화합니다.
     private void initializeCalendar() {
+        if (userId == null) { // userId 검증
+            Log.e("UInterface", "User ID is null, cannot initialize calendar.");
+            return;
+        }
+
         dayList.clear(); // 기존 데이터 초기화
 
         // 현재 월과 연도 가져오기
@@ -444,17 +449,37 @@ public class ChallengeFragment extends Fragment {
             dayList.add(new DayModel("", new ArrayList<>(), false));
         }
 
-        // 실제 날짜 추가
-        for (int day = 1; day <= daysInMonth; day++) {
-            boolean isToday = (day == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                    && currentMonth == Calendar.getInstance().get(Calendar.MONTH)
-                    && currentYear == Calendar.getInstance().get(Calendar.YEAR));
-            dayList.add(new DayModel(String.format("%d-%02d-%02d", currentYear, currentMonth + 1, day), new ArrayList<>(), isToday));
-        }
+        Log.d("UInterface", "Initializing calendar for userId: " + userId);
 
-        adapter.notifyDataSetChanged(); // 어댑터 갱신
+        // Firestore에서 상태 불러오기
+        db.collection("users").document(userId).collection("calendarStatus")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    Map<String, String> statusMap = new HashMap<>();
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
+                        String docId = doc.getId();
+                        String status = doc.getString("status");
+                        if (status != null) {
+                            statusMap.put(docId, status);
+                        }
+                    }
+
+                    // 실제 날짜 추가
+                    for (int day = 1; day <= daysInMonth; day++) {
+                        boolean isToday = (day == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                                && currentMonth == Calendar.getInstance().get(Calendar.MONTH)
+                                && currentYear == Calendar.getInstance().get(Calendar.YEAR));
+
+                        String date = String.format("%d-%02d-%02d", currentYear, currentMonth + 1, day);
+                        String status = statusMap.getOrDefault(date, ""); // Firestore에서 상태 불러오기
+                        DayModel dayModel = new DayModel(date, new ArrayList<>(), isToday);
+                        dayModel.setStatus(status);
+                        dayList.add(dayModel);
+                    }
+                    adapter.notifyDataSetChanged(); // RecyclerView 갱신
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "Error loading calendar status: " + e.getMessage()));
     }
-
 
 
     // 연도와 월 표시
@@ -464,26 +489,65 @@ public class ChallengeFragment extends Fragment {
         binding.currentMonthText.setText(monthYear);
     }
 
-    /**
-     * 성공 또는 실패 상태를 업데이트합니다.
-     */
+    // 성공 또는 실패 상태를 업데이트
     private void updateDateStatus(String status) {
+        if (userId == null) { // userId 검증
+            Log.e("UInterface", "User ID is null, cannot update date status.");
+            return;
+        }
+
         boolean updated = false;
+        String todayDate = null; // 오늘 날짜를 저장할 변수
 
         for (DayModel day : dayList) {
             if (day.isToday()) { // 오늘 날짜인지 확인
+                todayDate = day.getDate(); // 날짜 가져오기
                 day.setStatus(status); // 상태 업데이트
                 updated = true;
                 break;
             }
         }
 
+        if (todayDate == null || todayDate.isEmpty()) { // 날짜 검증
+            Log.e("UInterface", "Today date is null or empty, cannot update Firestore.");
+            Toast.makeText(requireContext(), "오늘 날짜를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (updated) {
+            Log.d("UInterface", "Updating status for date: " + todayDate);
             adapter.notifyDataSetChanged(); // RecyclerView 갱신
+            saveStatusToFirestore(todayDate, status); // Firestore에 상태 저장
             Toast.makeText(requireContext(), "오늘 날짜에 " + (status.equals("success") ? "성공" : "실패") + "로 표시되었습니다.", Toast.LENGTH_SHORT).show();
         } else {
+            Log.e("UInterface", "오늘 날짜 업데이트 실패");
             Toast.makeText(requireContext(), "오늘 날짜를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    // Firestore에 날짜별 상태 저장
+    private void saveStatusToFirestore(String date, String status) {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot save status to Firestore.");
+            return;
+        }
+
+        if (date == null || date.isEmpty()) {
+            Log.e("UInterface", "Date is null or empty, cannot save status to Firestore.");
+            return;
+        }
+
+        Log.d("UInterface", "Saving status to Firestore: userId=" + userId + ", date=" + date + ", status=" + status);
+
+        Map<String, Object> statusMap = new HashMap<>();
+        statusMap.put("status", status);
+
+        db.collection("users").document(userId)
+                .collection("calendarStatus").document(date)
+                .set(statusMap)
+                .addOnSuccessListener(aVoid -> Log.d("UInterface", "Status saved for date: " + date))
+                .addOnFailureListener(e -> Log.e("UInterface", "Error saving status to Firestore: " + e.getMessage()));
     }
 
 
