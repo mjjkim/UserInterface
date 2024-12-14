@@ -64,7 +64,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/challenging">
+            android:id="@+id/challenging"
+            >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -275,31 +276,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- 달성률 표시 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp">
-                    <TextView
-                        android:id="@+id/achievementText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="달성률: 50%"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal" />
 
-                    <ProgressBar
-                        android:id="@+id/achievementProgressBar"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:progress="50"
-                        android:max="100"
-                        android:progressTint="#B3D8EF"
-                        android:layout_marginTop="8dp" />
-                </LinearLayout>
 
                 <!-- 일일 목표 -->
                 <TextView
@@ -311,28 +288,20 @@
                     android:textSize="16sp"
                     android:textColor="@color/black"
                     android:padding="12dp"
-                    android:background="#B3D8EF" />
-                <TextView
-                    android:id="@+id/successCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="성공: 10회"
-                    android:textSize="18sp"
-                    android:layout_marginEnd="16dp" />
+                    android:background="@drawable/rectangle_2"
+                    android:backgroundTint="#D3EAFD"/>
 
-                <TextView
-                    android:id="@+id/failureCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="실패: 2회"
-                    android:textSize="18sp" />
+
+
 
                 <!-- 보상 시스템 -->
                 <TextView
                     android:id="@+id/rewardBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="100% 성공: 완벽한 도전자 배지!"
+                    android:text="월별 독서 현황 "
+                    android:textSize="21dp"
+                    android:textColor="@color/theme_color1"
                     android:paddingTop="8dp" />
 
                 <com.github.mikephil.charting.charts.BarChart
@@ -340,6 +309,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:layout_margin="16dp" />
+
+                <TextView
+                    android:id="@+id/rewardBadgeSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="지난 챌린지"
+                    android:textSize="16dp"
+                    android:textColor="@color/theme_color1"
+                    android:paddingTop="8dp" />
 
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/pieChart"
