@@ -44,7 +44,17 @@
             android:layout_gravity="end" />
     </LinearLayout>
     <!-- 상단 타이틀 -->
-
+    <EditText
+        android:id="@+id/messageMySearch"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="16dp"
+        android:hint="검색"
+        android:background="@drawable/rectangle_2"
+        android:padding="12dp"
+        android:drawableEnd="@drawable/mirror"
+        android:backgroundTint="#B3D8EF"
+        android:layout_alignParentTop="true" />
 
     <!-- 게시판 목록 RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView

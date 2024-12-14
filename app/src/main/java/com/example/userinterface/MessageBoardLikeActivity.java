@@ -3,9 +3,12 @@ package com.example.userinterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,6 +51,31 @@ public class MessageBoardLikeActivity extends AppCompatActivity {
 
         // 스크랩된 게시물 로드
         loadLikedPosts();
+
+        EditText search = findViewById(R.id.search_bar);
+        //책 이름 검색 ㅇㅇ;
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)){
+                    String query = search.getText().toString().trim();
+                    filterBooks(query);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+    }
+    private void filterBooks(String query) {
+        List<BoardItem> filteredList = new ArrayList<>();
+        for (BoardItem book : items) {
+            if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(book);
+            }
+        }
+        adapter.updateList(filteredList);
     }
 
     // Firestore에서 스크랩된 게시물 로드
@@ -112,10 +140,15 @@ public class MessageBoardLikeActivity extends AppCompatActivity {
 
     // 내부 클래스: RecyclerView 어댑터
     class BoardAdapter extends RecyclerView.Adapter<BoardAdapter.ViewHolder> {
-        private final List<BoardItem> itemList;
+        private List<BoardItem> itemList;
 
         public BoardAdapter(List<BoardItem> itemList) {
             this.itemList = itemList;
+        }
+
+        public void updateList(List<BoardItem> filteredList) {
+            itemList = filteredList;
+            notifyDataSetChanged();
         }
 
         @NonNull
