@@ -1,7 +1,6 @@
 package com.example.userinterface;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -36,6 +35,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -61,6 +61,10 @@ public class ChallengeFragment extends Fragment {
     // 파이차트
     private ArrayList<PieEntry> pieEntries;
     private PieChart pieChart;
+    private BarChart barChart;
+
+    // 클래스 멤버 변수로 선언
+    private int[] successCounts = new int[12]; // 1월~12월 성공 횟수 저장용
 
     private HashMap<String, String> dateStatusMap = new HashMap<>();
 
@@ -78,7 +82,6 @@ public class ChallengeFragment extends Fragment {
         // 챌린지 설정 버튼 클릭 이벤트
         challengeSet.setOnClickListener(v -> openChallengeDialog());
         return binding.getRoot();
-
     }
 
     @Override
@@ -88,18 +91,38 @@ public class ChallengeFragment extends Fragment {
         // Firebase 초기화
         db = FirebaseFirestore.getInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = auth.getCurrentUser();
+
+        FirebaseUser currentUser = auth.getCurrentUser(); // 현재 사용자 확인
+        if (currentUser != null) {
+            userId = currentUser.getUid();
+            Log.d("UInterface", "User logged in with ID: " + userId);
+        } else {
+            Log.e("UInterface", "User is not logged in.");
+            Toast.makeText(getContext(), "로그인이 필요합니다. 로그인 후 이용해주세요.", Toast.LENGTH_SHORT).show();
+            getActivity().finish(); // 로그아웃 상태라면 화면 종료
+        }
 
         // RecyclerView 설정
         adapter = new CalendarAdapter(dayList, null);
         binding.calendarRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 7)); // 7열 (요일 기준)
         binding.calendarRecyclerView.setAdapter(adapter);
 
-        // 저장된 Challenge 불러오기
-        loadChallengeFromFirestore();
+        // BarChart 초기화
+        barChart = binding.barChart; // XML 레이아웃의 BarChart ID
 
-        // 캘린더 데이터 초기화
-        initializeCalendar();
+        // PieChart 초기화
+        pieChart = binding.pieChart;
+
+        // UI 초기화 및 Firebase 데이터 로드
+        initializeCalendar(); // adapter 초기화 후 호출
+        loadChallengeFromFirestore();
+        // 차트 데이터 로드
+        loadPieChartDataFromFirestore(); // 원형 차트 데이터 로드
+        loadBarChartDataFromFirestore(); // 막대 차트 데이터 로드
+        loadUserNickname();
+
+        setupButtonActions();
+        loadUserNickname();
 
         // 성공 버튼 클릭 이벤트
         binding.successButton.setOnClickListener(v -> updateDateStatus("success"));
@@ -110,19 +133,13 @@ public class ChallengeFragment extends Fragment {
         // 초기 월 텍스트 설정
         updateMonthText();
 
-        if (currentUser != null) {
-            userId = currentUser.getUid();
-            Log.d("UInterface", "User ID initialized: " + userId);
-
-            loadChallengeFromFirestore();
-            initializeCalendar();
-            loadChartDataFromFirestore();
-        } else {
-            Log.e("UInterface", "User is not logged in.");
-            Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+        if (userId == null || userId.isEmpty()) {
+            Log.e("UInterface", "User ID is null or empty.");
+            Toast.makeText(getContext(), "유효한 사용자 정보가 없습니다. 다시 로그인해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        Log.d("UInterface", "User ID initialized: " + userId);
 
         Button button1 = view.findViewById(R.id.tab_in_progress);
         Button button2 = view.findViewById(R.id.tab_past_challenges);
@@ -205,10 +222,10 @@ public class ChallengeFragment extends Fragment {
         BarData barData = new BarData(dataSet);
         barData.setBarWidth(0.8f); // 바 너비 설정
 
-// BarChart에 데이터 설정
+        // BarChart에 데이터 설정
         barChart.setData(barData);
 
-// X축 설정
+        // X축 설정
         XAxis xAxis = barChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(months)); // 월 이름 적용
@@ -216,7 +233,7 @@ public class ChallengeFragment extends Fragment {
         xAxis.setGranularityEnabled(true);
 
 
-// Y축 설정
+        // Y축 설정
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setGranularity(1f); // 축 레이블 간격 설정
         leftAxis.setGranularityEnabled(true);
@@ -226,7 +243,7 @@ public class ChallengeFragment extends Fragment {
         rightAxis.setEnabled(false); // 오른쪽 Y축 숨기기
         // 소수점 제거: 정수로 표시
 
-// 기타 설정
+        // 기타 설정
         barChart.setFitBars(true);
         barChart.getDescription().setEnabled(false); // 설명 텍스트 비활성화
         barChart.animateY(1000); // 애니메이션
@@ -255,66 +272,85 @@ public class ChallengeFragment extends Fragment {
         pieChart.getDescription().setEnabled(false);
         pieChart.animateY(1000);
 
-        loadUserNickname();
     }
 
-    // 성공, 실패, 포기 횟수가 늘어날 때마다 카운트해서 업데이트
-    private void updateChart(int x) {
-        if (x == 0) {
-            challengeSuccessCount++;
-        } else if (x == 1) {
-            challengeFailCount++;
-        } else if (x == 2) {
-            challengeFloatingCount++;
+    private void setupChartUI() {
+        // BarChart 설정
+        BarChart barChart = binding.barChart;
+        int[] successCounts = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        String[] months = {"1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"};
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < successCounts.length; i++) {
+            entries.add(new BarEntry(i, successCounts[i]));
         }
 
-        // 파이 차트 데이터 업데이트
-        pieEntries.clear(); // 기존 데이터 지우기
+        BarDataSet dataSet = new BarDataSet(entries, "월별 성공 횟수");
+        dataSet.setColor(getResources().getColor(R.color.theme_pink));
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(months));
+
+        // PieChart 설정
+        pieChart = binding.pieChart;
+        pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(challengeSuccessCount, "성공"));
         pieEntries.add(new PieEntry(challengeFailCount, "실패"));
         pieEntries.add(new PieEntry(challengeFloatingCount, "포기"));
 
-        PieDataSet dataSet = new PieDataSet(pieEntries, "결과");
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-        dataSet.setValueTextSize(14f);
-        dataSet.setValueTextColor(Color.WHITE);
-
-        PieData pieData = new PieData(dataSet);
-        pieChart.setData(pieData);
-        pieChart.getDescription().setEnabled(false); // 설명 제거
-        pieChart.invalidate(); // 차트 갱신 (화면 다시 그리기)
-        pieChart.animateY(1000); // 애니메이션 추가
-
-        // Firestore에 저장 (새 데이터만 저장)
-        if (x != -1) {
-            saveChartDataToFirestore();
-        }
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "결과");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        pieChart.setData(new PieData(pieDataSet));
+        pieChart.invalidate();
     }
 
 
+    private void setupButtonActions() {
+        Button button1 = binding.getRoot().findViewById(R.id.tab_in_progress);
+        Button button2 = binding.getRoot().findViewById(R.id.tab_past_challenges);
+
+        button1.setOnClickListener(view -> {
+            button1.setTextColor(Color.rgb(0, 123, 255));
+            button2.setTextColor(Color.rgb(85, 85, 85));
+            button1.setBackgroundColor(Color.rgb(211, 234, 253));
+            button2.setBackgroundColor(Color.rgb(224, 224, 224));
+            binding.challenging.setVisibility(View.VISIBLE);
+            binding.pastChallenge.setVisibility(View.GONE);
+        });
+
+        button2.setOnClickListener(view -> {
+            button1.setTextColor(Color.rgb(85, 85, 85));
+            button2.setTextColor(Color.rgb(0, 123, 255));
+            button2.setBackgroundColor(Color.rgb(211, 234, 253));
+            button1.setBackgroundColor(Color.rgb(224, 224, 224));
+            binding.challenging.setVisibility(View.GONE);
+            binding.pastChallenge.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private void updateChart(int monthIndex) {
+        if (monthIndex >= 0 && monthIndex < 12) {
+            successCounts[monthIndex]++;
+            saveChartDataToFirestore();
+            setupBarChart();
+        }
+    }
 
     private void saveChartDataToFirestore() {
-        if (userId == null) {
-            Log.e("UInterface", "User ID is null, cannot save chart data.");
-            return;
+        Map<String, Object> chartData = new HashMap<>();
+        for (int i = 0; i < 12; i++) {
+            chartData.put("month" + (i + 1), successCounts[i]);
         }
 
-        Map<String, Object> chartData = new HashMap<>();
-        chartData.put("successCount", challengeSuccessCount);
-        chartData.put("failCount", challengeFailCount);
-        chartData.put("floatingCount", challengeFloatingCount);
-
-        Log.d("UInterface", "Saving chartData: " + chartData);
-
-        db.collection("users").document(userId).collection("challenges").document("chartData")
+        db.collection("users").document(userId).collection("challenges")
+                .document("monthlySuccess")
                 .set(chartData)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("UInterface", "Chart data saved successfully.");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("UInterface", "Error saving chart data: " + e.getMessage());
-                });
+                .addOnSuccessListener(aVoid -> Log.d("UInterface", "Chart data updated successfully."))
+                .addOnFailureListener(e -> Log.e("UInterface", "Error saving chart data: " + e.getMessage()));
     }
+
 
     private void loadUserNickname() {
         db.collection("users").document(userId)
@@ -354,31 +390,20 @@ public class ChallengeFragment extends Fragment {
                         String challenge = documentSnapshot.getString("challenge");
                         String date = documentSnapshot.getString("date");
 
-                        // 챌린지 기간 확인
-                        Calendar currentCalendar = Calendar.getInstance();
-                        String[] dateRange = date.split(" ~ ");
-                        String endDate = dateRange.length > 1 ? dateRange[1] : "";
-
-                        if (challenge != null && date != null && !isChallengeExpired(currentCalendar, endDate)) {
-                            // 진행 중인 챌린지
+                        if (challenge != null && date != null) {
                             challengeSetText.setText(challenge);
                             challengeDetails.setText("기간: " + date);
                             binding.dailyGoalText.setText("오늘 " + challenge + "를 완료하세요!");
-                            challengeSet.setClickable(false);
-                        } else {
-                            // 기간 만료 또는 초기 상태
-                            resetChallengeUI();
                         }
                     } else {
-                        // 챌린지가 없는 경우
                         resetChallengeUI();
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("UInterface", "Error loading challenge: " + e.getMessage());
-                    Toast.makeText(getContext(), "챌린지를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
                 });
     }
+
 
 
 
@@ -397,35 +422,119 @@ public class ChallengeFragment extends Fragment {
     }
 
 
-    private void loadChartDataFromFirestore() {
+    // Firestore에서 데이터 불러오기
+    private void loadPieChartDataFromFirestore() {
         if (userId == null) {
-            Log.e("UInterface", "User ID is null, cannot load chart data.");
+            Log.e("UInterface", "User ID is null, cannot load pie chart data.");
             return;
         }
 
-        db.collection("users").document(userId).collection("challenges").document("chartData")
+        db.collection("users").document(userId).collection("challenges")
+                .document("chartData") // 원형 차트용 데이터 불러오기
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Firestore 값 불러오기
-                        int loadedSuccessCount = documentSnapshot.getLong("successCount").intValue();
-                        int loadedFailCount = documentSnapshot.getLong("failCount").intValue();
-                        int loadedFloatingCount = documentSnapshot.getLong("floatingCount").intValue();
+                        // Firestore에서 값 가져오기
+                        challengeSuccessCount = documentSnapshot.contains("successCount") ? documentSnapshot.getLong("successCount").intValue() : 0;
+                        challengeFailCount = documentSnapshot.contains("failCount") ? documentSnapshot.getLong("failCount").intValue() : 0;
+                        challengeFloatingCount = documentSnapshot.contains("floatingCount") ? documentSnapshot.getLong("floatingCount").intValue() : 0;
 
-                        // 불러온 값 누적 (현재 값에 더하기)
-                        challengeSuccessCount += loadedSuccessCount;
-                        challengeFailCount += loadedFailCount;
-                        challengeFloatingCount += loadedFloatingCount;
-
-                        Log.d("UInterface", "Loaded chartData: success=" + challengeSuccessCount +
-                                ", fail=" + challengeFailCount + ", floating=" + challengeFloatingCount);
-
-                        updateChart(-1); // UI 갱신
-                    } else {
-                        Log.d("UInterface", "No existing chart data found.");
+                        setupPieChart(); // 원형 차트 갱신
                     }
                 })
-                .addOnFailureListener(e -> Log.e("UInterface", "Error loading chart data: " + e.getMessage()));
+                .addOnFailureListener(e -> Log.e("UInterface", "Error loading pie chart data: " + e.getMessage()));
+    }
+
+    private void setupPieChart() {
+        pieEntries = new ArrayList<>();
+        pieEntries.add(new PieEntry(challengeSuccessCount, "성공"));
+        pieEntries.add(new PieEntry(challengeFailCount, "실패"));
+        pieEntries.add(new PieEntry(challengeFloatingCount, "포기"));
+
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "결과");
+
+        // 커스텀 색상 설정
+        int[] customColors = {
+                Color.rgb(76, 175, 80),  // 초록색 (성공)
+                Color.rgb(244, 67, 54),  // 빨간색 (실패)
+                Color.rgb(255, 193, 7)   // 노란색 (포기)
+        };
+        pieDataSet.setColors(customColors);
+
+        pieDataSet.setValueTextSize(16f);
+        pieDataSet.setValueTextColor(Color.BLACK);
+
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setDrawHoleEnabled(false); // 가운데 구멍 없애기
+        pieChart.animateY(1000);
+        pieChart.invalidate(); // 차트 갱신
+    }
+
+
+    private void loadBarChartDataFromFirestore() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot load bar chart data.");
+            return;
+        }
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("monthlySuccess")
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        for (int i = 0; i < 12; i++) {
+                            successCounts[i] = documentSnapshot.contains("month" + (i + 1))
+                                    ? documentSnapshot.getLong("month" + (i + 1)).intValue()
+                                    : 0;
+                            Log.d("UInterface", "Month " + (i + 1) + " Success Count: " + successCounts[i]);
+                        }
+                        setupBarChart();
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "Error loading bar chart data: " + e.getMessage()));
+    }
+
+    private void setupBarChart() {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < successCounts.length; i++) {
+            entries.add(new BarEntry(i, successCounts[i])); // 성공 횟수 반영
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "월별 성공 스티커 개수");
+        dataSet.setColor(Color.parseColor("#FF77A9")); // 테마 핑크 색상
+        dataSet.setValueTextSize(14f);
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value); // 정수만 표시
+            }
+        });
+
+        BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.8f);
+        barChart.setData(barData);
+
+        // X축 설정
+        String[] months = {"1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"};
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(months));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+
+        // Y축 설정
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setGranularity(1f);
+        leftAxis.setAxisMinimum(0f);
+        barChart.getAxisRight().setEnabled(false);
+
+        // 차트 최종 설정
+        barChart.getDescription().setEnabled(false);
+        barChart.setFitBars(true);
+        barChart.animateY(1000);
+        barChart.invalidate(); // 차트 갱신
     }
 
     private void openChallengeDialog() {
@@ -502,7 +611,7 @@ public class ChallengeFragment extends Fragment {
 
     // 캘린더 데이터를 초기화합니다.
     private void initializeCalendar() {
-        if (userId == null) { // userId 검증
+        if (userId == null) {
             Log.e("UInterface", "User ID is null, cannot initialize calendar.");
             return;
         }
@@ -513,46 +622,115 @@ public class ChallengeFragment extends Fragment {
         int currentMonth = calendar.get(Calendar.MONTH);
         int currentYear = calendar.get(Calendar.YEAR);
 
-        calendar.set(Calendar.DAY_OF_MONTH, 1); // 첫 번째 날로 설정
-        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; // 요일 (일요일: 0)
+        // 첫 번째 날 설정
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; // 일요일: 0
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        // 빈 칸 추가
+        // 첫 주 빈 칸 추가
         for (int i = 0; i < firstDayOfWeek; i++) {
             dayList.add(new DayModel("", new ArrayList<>(), false));
         }
 
-        Log.d("UInterface", "Initializing calendar for userId: " + userId);
+        // 실제 날짜 추가
+        for (int day = 1; day <= daysInMonth; day++) {
+            boolean isToday = (day == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                    && currentMonth == Calendar.getInstance().get(Calendar.MONTH)
+                    && currentYear == Calendar.getInstance().get(Calendar.YEAR));
+
+            String date = String.format("%d-%02d-%02d", currentYear, currentMonth + 1, day);
+            dayList.add(new DayModel(date, new ArrayList<>(), isToday));
+        }
+
+        adapter.notifyDataSetChanged(); // RecyclerView 갱신
 
         // Firestore에서 상태 불러오기
-        db.collection("users").document(userId).collection("calendarStatus")
+        loadCalendarStatus();
+    }
+
+    private void loadCalendarStatus() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot load calendar status.");
+            return;
+        }
+
+        db.collection("users").document(userId)
+                .collection("calendarStatus")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    Map<String, String> statusMap = new HashMap<>();
-                    for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
-                        String docId = doc.getId();
-                        String status = doc.getString("status");
-                        if (status != null) {
-                            statusMap.put(docId, status);
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                        String date = document.getId(); // 날짜 (yyyy-MM-dd)
+                        String status = document.getString("status");
+
+                        // 캘린더 리스트에서 해당 날짜를 찾아 상태 업데이트
+                        for (DayModel day : dayList) {
+                            if (day.getDate().equals(date)) {
+                                day.setStatus(status);
+                                break;
+                            }
                         }
-                    }
-
-                    // 실제 날짜 추가
-                    for (int day = 1; day <= daysInMonth; day++) {
-                        boolean isToday = (day == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                                && currentMonth == Calendar.getInstance().get(Calendar.MONTH)
-                                && currentYear == Calendar.getInstance().get(Calendar.YEAR));
-
-                        String date = String.format("%d-%02d-%02d", currentYear, currentMonth + 1, day);
-                        String status = statusMap.getOrDefault(date, ""); // Firestore에서 상태 불러오기
-                        DayModel dayModel = new DayModel(date, new ArrayList<>(), isToday);
-                        dayModel.setStatus(status);
-                        dayList.add(dayModel);
                     }
                     adapter.notifyDataSetChanged(); // RecyclerView 갱신
                 })
                 .addOnFailureListener(e -> Log.e("UInterface", "Error loading calendar status: " + e.getMessage()));
     }
+
+
+
+    private void initializeMonthlySuccess() {
+        Map<String, Object> initialData = new HashMap<>();
+        for (int i = 1; i <= 12; i++) {
+            initialData.put("month" + i, 0); // 모든 월의 값을 0으로 초기화
+        }
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("monthlySuccess")
+                .set(initialData)
+                .addOnSuccessListener(aVoid -> Log.d("UInterface", "monthlySuccess document initialized"))
+                .addOnFailureListener(e -> Log.e("UInterface", "Error initializing monthlySuccess: " + e.getMessage()));
+    }
+
+    private void aggregateMonthlySuccess() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot aggregate monthly success.");
+            return;
+        }
+
+        db.collection("users").document(userId)
+                .collection("calendarStatus")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int[] monthlySuccess = new int[12]; // 1월 ~ 12월 성공 횟수 초기화
+
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        String date = document.getId(); // 문서 이름 = 날짜 (yyyy-MM-dd)
+                        String status = document.getString("status");
+
+                        if ("success".equals(status)) { // 성공 상태만 집계
+                            int month = Integer.parseInt(date.substring(5, 7)) - 1; // 월 추출 (0부터 시작)
+                            monthlySuccess[month]++;
+                        }
+                    }
+
+                    // Firestore에 월별 성공 횟수 저장
+                    Map<String, Object> data = new HashMap<>();
+                    for (int i = 0; i < 12; i++) {
+                        data.put("month" + (i + 1), monthlySuccess[i]);
+                    }
+
+                    db.collection("users").document(userId)
+                            .collection("challenges")
+                            .document("monthlySuccess")
+                            .set(data)
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("UInterface", "Monthly success data updated successfully.");
+                                loadBarChartDataFromFirestore(); // 차트 리프레시
+                            })
+                            .addOnFailureListener(e -> Log.e("UInterface", "Error saving monthly success data: " + e.getMessage()));
+                })
+                .addOnFailureListener(e -> Log.e("UInterface", "Error aggregating calendarStatus: " + e.getMessage()));
+    }
+
 
 
     // 연도와 월 표시
@@ -564,39 +742,37 @@ public class ChallengeFragment extends Fragment {
 
     // 성공 또는 실패 상태를 업데이트
     private void updateDateStatus(String status) {
-        if (userId == null) { // userId 검증
+        if (userId == null) {
             Log.e("UInterface", "User ID is null, cannot update date status.");
             return;
         }
 
         boolean updated = false;
-        String todayDate = null; // 오늘 날짜를 저장할 변수
+        String todayDate = null;
 
         for (DayModel day : dayList) {
-            if (day.isToday()) { // 오늘 날짜인지 확인
-                todayDate = day.getDate(); // 날짜 가져오기
-                day.setStatus(status); // 상태 업데이트
+            if (day.isToday()) {
+                todayDate = day.getDate();
+                day.setStatus(status);
                 updated = true;
                 break;
             }
         }
 
-        if (todayDate == null || todayDate.isEmpty()) { // 날짜 검증
+        if (todayDate == null || todayDate.isEmpty()) {
             Log.e("UInterface", "Today date is null or empty, cannot update Firestore.");
             Toast.makeText(requireContext(), "오늘 날짜를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (updated) {
-            Log.d("UInterface", "Updating status for date: " + todayDate);
-            adapter.notifyDataSetChanged(); // RecyclerView 갱신
             saveStatusToFirestore(todayDate, status); // Firestore에 상태 저장
+            aggregateMonthlySuccess(); // 월별 데이터 업데이트
+            adapter.notifyDataSetChanged();
             Toast.makeText(requireContext(), "오늘 날짜에 " + (status.equals("success") ? "성공" : "실패") + "로 표시되었습니다.", Toast.LENGTH_SHORT).show();
-        } else {
-            Log.e("UInterface", "오늘 날짜 업데이트 실패");
-            Toast.makeText(requireContext(), "오늘 날짜를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
     // Firestore에 날짜별 상태 저장
@@ -622,7 +798,6 @@ public class ChallengeFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> Log.d("UInterface", "Status saved for date: " + date))
                 .addOnFailureListener(e -> Log.e("UInterface", "Error saving status to Firestore: " + e.getMessage()));
     }
-
 
 
     @Override
