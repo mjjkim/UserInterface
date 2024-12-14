@@ -1,7 +1,9 @@
 package com.example.userinterface;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -14,6 +16,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.userinterface.databinding.ActivitySettingBinding;
 import com.google.firebase.auth.AuthCredential;
@@ -105,7 +109,7 @@ public class SettingActivity extends AppCompatActivity {
         binding.alramSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(SettingActivity.this, AlarmActivity.class));
             }
         });
 
@@ -187,7 +191,24 @@ public class SettingActivity extends AppCompatActivity {
         });
 
     }
+    private static final int NOTIFICATION_PERMISSION_CODE = 123;
 
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_CODE);
+            } else {
+                // 이미 권한이 허용된 경우
+                Toast.makeText(this, "알림 권한이 이미 허용되어 있습니다.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Android 13 미만 버전에서는 별도의 권한 요청 없이 알림 사용 가능
+            Toast.makeText(this, "이 기기에서는 별도의 알림 권한이 필요하지 않습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
     // 갤러리 열기
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
