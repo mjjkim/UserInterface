@@ -67,15 +67,17 @@
                 />
         </LinearLayout>
     </LinearLayout>
+
     <EditText
         android:id="@+id/etReview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_margin="20dp"
         android:background="@drawable/edittext_rounded"
-        tools:ignore="Deprecated"
+        android:paddingStart="5dp"
         android:textColor="#000000"
-        android:paddingStart="5dp" />
+        tools:ignore="Deprecated" />
+
     <View
         android:layout_margin="12dp"
         android:layout_width="match_parent"

@@ -37,8 +37,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         // Notification 생성
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("Daily Reminder")
-                .setContentText("This is your daily notification!")
+                .setContentTitle("Book Connect")
+                .setContentText("오늘의 독서 목표를 아직 달성하지 않으셨네요. 지금 바로 앱을 열고 목표를 향해 한 걸음 더 나아가세요!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
