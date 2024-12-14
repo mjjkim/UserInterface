@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <!-- 제목 TextView -->
     <TextView
         android:id="@+id/messageBoardWriteNickname"
         android:layout_margin="20dp"
@@ -12,17 +13,22 @@
         android:text="   지웅이의 기록"
         android:drawableLeft="@drawable/pencil"
         android:textSize="25dp"
-        android:paddingStart="10dp"/>
+        android:paddingStart="10dp"
+        android:layout_alignParentTop="true" />
+
+    <!-- 책 정보 LinearLayout -->
     <LinearLayout
+        android:id="@+id/bookInfoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/messageBoardWriteNickname"
         android:orientation="horizontal"
         android:padding="4dp">
         <ImageView
             android:id="@+id/recordCover"
             android:layout_width="100dp"
             android:layout_height="130dp"
-            android:src="@drawable/imagewait"/>
+            android:src="@drawable/imagewait" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,14 +38,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="책 이름"
-                android:padding="4dp"
-                />
+                android:padding="4dp" />
             <TextView
                 android:id="@+id/recordAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="책 저자"
-                android:padding="4dp"/>
+                android:padding="4dp" />
             <TextView
                 android:id="@+id/recordDescription"
                 android:layout_width="wrap_content"
@@ -48,21 +53,29 @@
                 android:maxLines="3"
                 android:ellipsize="end"
                 android:padding="4dp"
-                android:text="책 소개"
-                />
+                android:text="책 소개" />
         </LinearLayout>
     </LinearLayout>
+
+    <!-- 글 입력 창 -->
     <EditText
         android:id="@+id/etReview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"/>
+        android:layout_height="0dp"
+        android:layout_margin="20dp"
+        android:layout_above="@+id/recordAddButton"
+        android:layout_below="@id/bookInfoLayout"
+        android:gravity="top"
+        android:hint="여기에 글을 입력하세요"
+        android:background="@drawable/edittext_rounded" />
 
+    <!-- 확인 버튼 -->
     <Button
         android:id="@+id/recordAddButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/rectangle_2"
+        android:layout_marginBottom="16dp"
         android:text="확인" />
-</LinearLayout>
+</RelativeLayout>
