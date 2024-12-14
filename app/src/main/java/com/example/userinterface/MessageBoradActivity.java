@@ -51,9 +51,14 @@ public class MessageBoradActivity extends AppCompatActivity {
         binding.boardBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                // MainActivity의 기존 인스턴스를 스택에 남기고 이동
+                Intent intent = new Intent(MessageBoradActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish(); // 현재 액티비티 종료
             }
         });
+
 
         // 게시글 불러오기
         loadMessageBoards();
@@ -63,18 +68,21 @@ public class MessageBoradActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            addNewPost(data);
-                        }
+                        // 게시글이 성공적으로 추가된 경우 UI 업데이트
+                        loadMessageBoards();
+                        Log.d("UInterface", "게시글 추가 후 UI 업데이트");
                     }
                 });
 
+
+
         binding.searchButton.setOnClickListener(view -> {
             Intent intent = new Intent(MessageBoradActivity.this, MyRecordActivity.class);
-            launcher.launch(intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // 부모 액티비티를 재사용
+            launcher.launch(intent);
             Log.d("UInterface", "MessageBoard to MyRecord");
         });
+
 
         adapter.setOnItemClickListener(new MessageBoardAdapter.OnItemClickListener() {
             @Override
@@ -206,18 +214,19 @@ public class MessageBoradActivity extends AppCompatActivity {
         newPost.put("liked", false);
         newPost.put("timestamp", com.google.firebase.Timestamp.now());
 
-        db.collection("message_boards").document(currentUserId)
-                .update("posts", com.google.firebase.firestore.FieldValue.arrayUnion(newPost))
+        db.collection("message_boards").document(postId)
+                .set(newPost)
                 .addOnSuccessListener(aVoid -> {
-                    items.add(new MessageBoardItem(postId, title, author, cover, false, review, currentUserId, com.google.firebase.Timestamp.now(), description));
-                    adapter.notifyDataSetChanged();
                     Log.d("UInterface", "게시글 추가 성공");
+
+                    // MainActivity의 기존 인스턴스를 스택에 남기고 이동
+                    Intent intent = new Intent(MessageBoradActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    finish(); // 현재 액티비티 종료
                 })
                 .addOnFailureListener(e -> Log.e("UInterface", "게시글 추가 실패: " + e.getMessage()));
-
-
-
-
     }
+
 
 }

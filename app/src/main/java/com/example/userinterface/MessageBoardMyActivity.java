@@ -27,7 +27,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MessageBoardMyActivity extends AppCompatActivity {
 
@@ -61,7 +60,7 @@ public class MessageBoardMyActivity extends AppCompatActivity {
 
         // Firestore에서 내가 쓴 글 가져오기
         db.collection("message_boards")
-                .whereEqualTo("userId", userId) // userId 필드가 현재 사용자와 일치하는 게시글만 필터링
+                .whereEqualTo("userId", userId)
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         Log.e("UInterface", "Firestore 데이터 가져오기 실패 : " + error.getMessage());
@@ -70,13 +69,15 @@ public class MessageBoardMyActivity extends AppCompatActivity {
                     if (querySnapshot != null) {
                         items.clear();
                         for (QueryDocumentSnapshot document : querySnapshot) {
+                            String postId = document.getId(); // 문서 ID를 postId로 사용
                             String title = document.getString("title");
                             String content = document.getString("review");
                             String cover = document.getString("cover");
                             String author = document.getString("author");
                             com.google.firebase.Timestamp timestamp = document.getTimestamp("timestamp");
 
-                            items.add(new PostItem(title, content, userId, cover, author, timestamp));
+                            // 수정된 부분: PostItem 생성자에 postId를 추가
+                            items.add(new PostItem(postId, title, content, userId, cover, author, timestamp));
                         }
 
                         // 최신순으로 정렬
@@ -86,6 +87,7 @@ public class MessageBoardMyActivity extends AppCompatActivity {
                         Log.d("UInterface", "내 게시글 로드 완료 : " + items.size());
                     }
                 });
+
 
         EditText search = findViewById(R.id.messageMySearch);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -159,9 +161,16 @@ public class MessageBoardMyActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(MessageBoardMyActivity.this, MessageBoardReviewActivity.class));
+                    Intent intent = new Intent(MessageBoardMyActivity.this, MessageBoardReviewActivity.class);
+                    intent.putExtra("postId", item.getPostId()); // 게시물의 postId 전달
+                    intent.putExtra("title", item.getTitle());
+                    intent.putExtra("author", item.getAuthor());
+                    intent.putExtra("description", item.getContent());
+                    intent.putExtra("cover", item.getCover());
+                    startActivity(intent);
                 }
             });
+
 
         }
 
@@ -193,14 +202,20 @@ public class MessageBoardMyActivity extends AppCompatActivity {
         private final String cover;
         private final String author;
         private final com.google.firebase.Timestamp timestamp; // timestamp 필드 추가
+        private final String postId;
 
-        public PostItem(String title, String content, String userId, String cover, String author, com.google.firebase.Timestamp timestamp) {
+        public PostItem(String postId, String title, String content, String userId, String cover, String author, com.google.firebase.Timestamp timestamp) {
+            this.postId = postId;
             this.title = title;
             this.content = content;
             this.userId = userId;
             this.cover = cover;
             this.author = author;
             this.timestamp = timestamp; // timestamp 초기화
+        }
+
+        public String getPostId() {
+            return postId;
         }
 
         public String getTitle() {
