@@ -6,27 +6,12 @@
     android:layout_height="match_parent"
     android:background="#ffffff">
 
-    <!-- 상단 검색 바 -->
-    <EditText
-        android:id="@+id/search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="16dp"
-        android:hint="검색"
-        android:background="@drawable/rectangle_2"
-        android:padding="12dp"
-        android:paddingStart="20dp"
-        android:drawableEnd="@drawable/mirror"
-        android:backgroundTint="@color/theme_color1"
-        android:layout_alignParentTop="true"/>
 
-    <!-- 닉네임 표시 -->
     <LinearLayout
         android:id="@+id/nickname_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/search_bar"
         android:layout_marginTop="16dp"
         android:padding="16dp">
 

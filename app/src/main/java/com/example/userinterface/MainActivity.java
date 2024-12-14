@@ -1,5 +1,9 @@
 package com.example.userinterface;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -11,6 +15,9 @@ import com.example.userinterface.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.FirebaseApp;
+
+import java.util.Calendar;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -52,4 +59,5 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 }
