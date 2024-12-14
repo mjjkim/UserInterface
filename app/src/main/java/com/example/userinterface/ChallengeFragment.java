@@ -295,6 +295,7 @@ public class ChallengeFragment extends Fragment {
         pieChart.getDescription().setEnabled(false);
         pieChart.animateY(1000);
 
+        loadUserNickname();
     }
 
     // 성공, 실패, 포기 횟수가 늘어날 때마다 카운트해서 업데이트
@@ -355,6 +356,29 @@ public class ChallengeFragment extends Fragment {
                 });
     }
 
+    private void loadUserNickname() {
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String nickname = documentSnapshot.getString("nickname");
+                        if (nickname != null && !nickname.isEmpty()) {
+                            updateChallengeTitle(nickname);
+                        } else {
+                            updateChallengeTitle("닉네임");
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "닉네임 불러오기 실패: " + e.getMessage());
+                    Toast.makeText(getContext(), "닉네임을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateChallengeTitle(String nickname) {
+        String title = nickname + "의 챌린지";
+        binding.challengeNickname.setText(title);
+    }
 
     private void loadChartDataFromFirestore() {
         if (userId == null) {
