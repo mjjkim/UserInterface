@@ -1,13 +1,19 @@
 package com.example.userinterface;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +34,7 @@ public class MessageBoardMyActivity extends AppCompatActivity {
     private PostAdapter adapter;
     private List<PostItem> items;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,15 +87,46 @@ public class MessageBoardMyActivity extends AppCompatActivity {
                     }
                 });
 
+        EditText search = findViewById(R.id.messageMySearch);
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    String query = search.getText().toString().trim();
+                    filterBooks(query);
+                    // 확인 버튼이 눌렸을 때 실행할 코드
+                    String inputText = search.getText().toString();
+                    // 입력된 텍스트를 사용하여 원하는 작업 수행
+                    Toast.makeText(getApplicationContext(), "입력된 텍스트: " + inputText, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            }
+        });
 
+    }
+    private void filterBooks(String query) {
+        List<PostItem> filteredList = new ArrayList<>();
+        for (PostItem book : items) {
+            if (book.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                filteredList.add(book);
+            }
+        }
+        adapter.updateList(filteredList);
     }
 
     // 내부 클래스: RecyclerView 어댑터
     class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-        private final List<PostItem> itemList;
+        private List<PostItem> itemList;
 
         public PostAdapter(List<PostItem> itemList) {
             this.itemList = itemList;
+        }
+
+        public void updateList(List<PostItem> filteredList) {
+            itemList = filteredList;
+            notifyDataSetChanged();
         }
 
         @NonNull
