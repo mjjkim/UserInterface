@@ -1,5 +1,6 @@
 package com.example.userinterface;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -116,6 +117,14 @@ public class MessageBoardMyActivity extends AppCompatActivity {
 
             // 별표(스크랩 아이콘) 숨기기
             holder.likeButton.setVisibility(View.GONE);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(MessageBoardMyActivity.this, MessageBoardReviewActivity.class));
+                }
+            });
+
         }
 
         @Override
