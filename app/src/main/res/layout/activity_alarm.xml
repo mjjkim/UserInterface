@@ -8,6 +8,7 @@
     android:orientation="vertical"
     tools:context=".AlarmActivity">
 
+
     <Button
         android:id="@+id/toggleNotificationButton"
         android:layout_width="wrap_content"
@@ -16,5 +17,6 @@
         android:gravity="center"
         android:text="알림 설정"
         android:textSize="50dp"
+        android:background="@drawable/rectangle_3"
         android:layout_marginTop="50dp"/>
 </LinearLayout>

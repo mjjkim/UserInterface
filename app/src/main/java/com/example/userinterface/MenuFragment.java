@@ -1,5 +1,7 @@
 package com.example.userinterface;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -136,22 +138,33 @@ public class MenuFragment extends Fragment {
 
         // 로그아웃 버튼 클릭 시 로그아웃
         binding.logoutButton.setOnClickListener(view1 -> {
-            // Firebase Authentication에서 로그아웃
-            mAuth.signOut();
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                    .setMessage("정말 로그아웃 하시겠습니까")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // Firebase Authentication에서 로그아웃
+                                    mAuth.signOut();
 
-            // 로그아웃 성공 메시지
-            Toast.makeText(requireContext(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
+                                    // 로그아웃 성공 메시지
+                                    Toast.makeText(requireContext(), "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
 
-            // 로그인 화면으로 이동
-            Intent intent = new Intent(requireContext(), LoginActivity.class);
-            // FLAG_ACTIVITY_CLEAR_TOP : 백 스택에 호출하려는 액티비티가 이미 존재하면 해당 액티비티를 맨 앞으로 가져오고, 그 위의 모든 액티비티를 제거
-            // FLAG_ACTIVITY_NEW_TASK : 호출하려는 액티비티가 존재하지 않으면 새로 생성하고 새로운 태스크로 실행
-            // 결과 : 기존이 스택에서 로그인 액티비티 위의 모든 액티비티가 제거되고, 로그인이 최상단에 위치
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+                                    // 로그인 화면으로 이동
+                                    Intent intent = new Intent(requireContext(), LoginActivity.class);
+                                    // FLAG_ACTIVITY_CLEAR_TOP : 백 스택에 호출하려는 액티비티가 이미 존재하면 해당 액티비티를 맨 앞으로 가져오고, 그 위의 모든 액티비티를 제거
+                                    // FLAG_ACTIVITY_NEW_TASK : 호출하려는 액티비티가 존재하지 않으면 새로 생성하고 새로운 태스크로 실행
+                                    // 결과 : 기존이 스택에서 로그인 액티비티 위의 모든 액티비티가 제거되고, 로그인이 최상단에 위치
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
 
-            // 현재 프래그먼트 종료
-            requireActivity().finish();
+                                    // 현재 프래그먼트 종료
+                                    requireActivity().finish();
+                                }
+                            })
+                                    .setNegativeButton("취소",null)
+                    .create();
+            alertDialog.show();
+
         });
 
         // 개시판

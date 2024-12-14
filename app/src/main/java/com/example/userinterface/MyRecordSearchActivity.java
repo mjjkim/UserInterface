@@ -89,7 +89,7 @@ public class MyRecordSearchActivity extends AppCompatActivity {
         book_search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH ||
                         (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     String searchQuery = book_search.getText().toString().trim(); // 검색어 입력값
                     if (!searchQuery.isEmpty()) { // 입력값 있을 때 엔터 누를 경우.

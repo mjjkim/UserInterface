@@ -67,7 +67,8 @@
         android:layout_below="@id/bookInfoLayout"
         android:gravity="top"
         android:hint="여기에 글을 입력하세요"
-        android:background="@drawable/edittext_rounded" />
+        android:background="@drawable/edittext_rounded"
+        android:textColor="#000000"/>
 
     <!-- 확인 버튼 -->
     <Button

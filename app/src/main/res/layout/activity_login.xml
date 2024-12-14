@@ -37,6 +37,7 @@
         android:background="@drawable/rectangle_1"
         android:inputType="text"
         android:paddingStart="16dp"
+        android:textColor="#000000"
         />
     <EditText
         android:id="@+id/passwordLogin"
@@ -51,6 +52,7 @@
         android:background="@drawable/rectangle_1"
         android:inputType="textPassword"
         android:paddingStart="16dp"
+        android:textColor="#000000"
         />
     <!-- Auto layout, variables, and unit scale are not yet supported -->
     <Button
