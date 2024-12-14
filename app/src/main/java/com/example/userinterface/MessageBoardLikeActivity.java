@@ -185,9 +185,17 @@ public class MessageBoardLikeActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(MessageBoardLikeActivity.this, MessageBoardReviewActivity.class));
+                    Intent intent = new Intent(MessageBoardLikeActivity.this, MessageBoardReviewActivity.class);
+                    intent.putExtra("postId", item.getPostId()); // 게시물의 postId 전달
+                    intent.putExtra("title", item.getTitle());
+                    intent.putExtra("author", item.getAuthor());
+                    intent.putExtra("description", item.getContent());
+                    intent.putExtra("cover", item.getCover());
+                    startActivity(intent);
                 }
             });
+
+
         }
         @Override
         public int getItemCount() {

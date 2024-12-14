@@ -33,6 +33,20 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigator = binding.bottomNavigator;
 
+        // Intent를 통해 Fragment를 결정
+        String showFragment = getIntent().getStringExtra("showFragment");
+
+        if (showFragment != null && showFragment.equals("MenuFragment")) {
+            // MenuFragment 표시 및 메뉴 아이템 선택
+            bottomNavigator.setSelectedItemId(R.id.nav_menu);
+            loadFragment(new MenuFragment());
+        } else {
+            // 기본 화면: HomeFragment
+            bottomNavigator.setSelectedItemId(R.id.nav_home);
+            loadFragment(new HomeFragment());
+        }
+
+
         //처음화면
         getSupportFragmentManager().beginTransaction().add(R.id.main_frame, new HomeFragment()).commit();
 
@@ -59,5 +73,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+    // Fragment 교체 메서드
+    private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_frame, fragment)
+                .commit();
+    }
 }

@@ -61,11 +61,16 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
 
         // 게시물 수신 및 설정
         documentId = getIntent().getStringExtra("postId");
-        if (documentId == null || documentId.isEmpty()) {
+
+        if (documentId == null || documentId.trim().isEmpty()) {
+            Log.e("UInterface", "postId is null or empty");
             Toast.makeText(this, "게시물 ID를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
+        Log.d("UInterface", "Received document ID: " + documentId);
+
 
         // 책 데이터 수신 및 표시
         String title = getIntent().getStringExtra("title");
@@ -73,12 +78,13 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
         String decription = getIntent().getStringExtra("description");
         String cover = getIntent().getStringExtra("cover");
 
-        // 책 데이터 수신 및 표시
+        // Intent로 받은 데이터 먼저 설정
         reviewTitle.setText(getIntent().getStringExtra("title"));
         reviewAuthor.setText(getIntent().getStringExtra("author"));
         reviewDescription.setText(getIntent().getStringExtra("description"));
         Glide.with(this)
                 .load(getIntent().getStringExtra("cover"))
+                .error(R.drawable.error)
                 .into(binding.reviewCover);
 
         etReview.setText(getIntent().getStringExtra("review"));
@@ -109,16 +115,17 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
             }
         });
 
-        // Firestore에서 게시물 데이터 로드
+        // Firestore에서 최신 데이터 확인
         db.collection("message_boards").document(documentId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        binding.reviewTitle.setText(documentSnapshot.getString("title"));
-                        binding.reviewAuthor.setText(documentSnapshot.getString("author"));
-                        binding.reviewDescription.setText(documentSnapshot.getString("description"));
+                        reviewTitle.setText(documentSnapshot.getString("title"));
+                        reviewAuthor.setText(documentSnapshot.getString("author"));
+                        reviewDescription.setText(documentSnapshot.getString("description"));
                         Glide.with(this)
                                 .load(documentSnapshot.getString("cover"))
+                                .error(R.drawable.error)
                                 .into(binding.reviewCover);
                     } else {
                         Toast.makeText(this, "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -140,12 +147,12 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<CommentItem> commentList = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) { // 타입 명시
-                        String userId = document.getString("userId"); // Firestore에 댓글 작성자의 userId를 저장했다고 가정
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String userId = document.getString("userId");
                         String commentText = document.getString("comment");
                         long timestamp = document.getLong("timestamp");
 
-                        // 사용자 정보 가져오기
+                        // 비동기적으로 사용자 정보 가져오기
                         db.collection("users").document(userId)
                                 .get()
                                 .addOnSuccessListener(userSnapshot -> {
@@ -153,17 +160,18 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
                                     String profileImage = userSnapshot.getString("profileImage");
 
                                     // 댓글 리스트에 추가
-                                    commentList.add(new CommentItem(username, commentText, timestamp, profileImage));
-                                    // 어댑터에 업데이트
+                                    commentList.add(new CommentItem(username != null ? username : "익명",
+                                            commentText, timestamp, profileImage));
+
+                                    // UI 업데이트
                                     adapter.setComments(commentList);
                                 })
-                                .addOnFailureListener(e -> Log.e("UInterface", "Failed to fetch user info: " + e.getMessage()));
+                                .addOnFailureListener(e -> Log.e("UInterface", "User info load failed: " + e.getMessage()));
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "댓글 불러오기 실패 : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(this, "댓글 불러오기 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
 
 
     private void addComment() {
