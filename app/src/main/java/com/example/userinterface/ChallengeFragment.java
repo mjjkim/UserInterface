@@ -125,10 +125,16 @@ public class ChallengeFragment extends Fragment {
         loadUserNickname();
 
         // 성공 버튼 클릭 이벤트
-        binding.successButton.setOnClickListener(v -> updateDateStatus("success"));
+        binding.successButton.setOnClickListener(v -> {
+            updateDateStatus("success"); // 오늘 날짜 상태를 "성공"으로 저장
+            int currentMonthIndex = Calendar.getInstance().get(Calendar.MONTH); // 현재 월 인덱스 가져오기
+            updateMonthlySuccess(currentMonthIndex); // 바 차트 갱신
+        });
 
         // 실패 버튼 클릭 이벤트
-        binding.failureButton.setOnClickListener(v -> updateDateStatus("failure"));
+        binding.failureButton.setOnClickListener(v -> {
+            updateDateStatus("failure"); // 오늘 날짜 상태를 "실패"로 저장
+        });
 
         // 초기 월 텍스트 설정
         updateMonthText();
@@ -167,31 +173,33 @@ public class ChallengeFragment extends Fragment {
             }
         });
 
+        binding.challengeSuccessButton.setOnClickListener(rootView -> {
+            new AlertDialog.Builder(getContext())
+                    .setMessage("챌린지에 성공하셨습니까?")
+                    .setPositiveButton("성공", (dialogInterface, i) -> {
+                        updatePieChart("success");        // 파이 차트 업데이트
+                        resetChallengeFirestoreAndUI();   // 챌린지 초기화 (바 차트는 갱신 안함)
+                    })
+                    .setNegativeButton("실패", (dialogInterface, i) -> {
+                        updatePieChart("failure");        // 파이 차트 업데이트
+                        resetChallengeFirestoreAndUI();   // 챌린지 초기화 (바 차트는 갱신 안함)
+                    })
+                    .create()
+                    .show();
+        });
+
         binding.challengeFloatingButton.setOnClickListener(rootView -> {
             new AlertDialog.Builder(getContext())
                     .setMessage("챌린지를 포기하시겠습니까?")
                     .setPositiveButton("확인", (dialogInterface, i) -> {
-                        resetChallengeFirestoreAndUI(2); // 포기 처리
+                        updatePieChart("floating");       // 파이 차트 업데이트
+                        resetChallengeFirestoreAndUI();   // 챌린지 초기화 (바 차트는 갱신 안함)
                     })
                     .setNegativeButton("취소", null)
                     .create()
                     .show();
         });
 
-
-
-        binding.challengeSuccessButton.setOnClickListener(rootview -> {
-            new AlertDialog.Builder(getContext())
-                    .setMessage("챌린지에 성공하셨습니까?")
-                    .setPositiveButton("성공", (dialogInterface, i) -> {
-                        resetChallengeFirestoreAndUI(0); // 성공 처리
-                    })
-                    .setNegativeButton("실패", (dialogInterface, i) -> {
-                        resetChallengeFirestoreAndUI(1); // 실패 처리
-                    })
-                    .create()
-                    .show();
-        });
 
         //past challenge
         BarChart barChart = binding.barChart;
@@ -274,6 +282,55 @@ public class ChallengeFragment extends Fragment {
 
     }
 
+    private void updateMonthlySuccess(int monthIndex) {
+        if (monthIndex >= 0 && monthIndex < 12) {
+            successCounts[monthIndex]++;       // 현재 월의 성공 횟수 +1
+            saveChartDataToFirestore();        // Firestore에 저장
+            setupBarChart();                   // 바 차트 갱신
+        }
+    }
+
+
+    private void updatePieChart(String status) {
+        // 상태에 따라 카운트 업데이트
+        switch (status) {
+            case "success":
+                challengeSuccessCount++;
+                break;
+            case "failure":
+                challengeFailCount++;
+                break;
+            case "floating":
+                challengeFloatingCount++;
+                break;
+        }
+
+        // Firestore에 저장
+        savePieChartDataToFirestore();
+
+        // 파이 차트 갱신
+        setupPieChart();
+    }
+
+    private void savePieChartDataToFirestore() {
+        if (userId == null) {
+            Log.e("UInterface", "User ID is null, cannot save pie chart data.");
+            return;
+        }
+
+        Map<String, Object> pieChartData = new HashMap<>();
+        pieChartData.put("successCount", challengeSuccessCount);
+        pieChartData.put("failCount", challengeFailCount);
+        pieChartData.put("floatingCount", challengeFloatingCount);
+
+        db.collection("users").document(userId).collection("challenges")
+                .document("chartData")
+                .set(pieChartData)
+                .addOnSuccessListener(aVoid -> Log.d("UInterface", "Pie chart data saved successfully."))
+                .addOnFailureListener(e -> Log.e("UInterface", "Error saving pie chart data: " + e.getMessage()));
+    }
+
+
     private void setupChartUI() {
         // BarChart 설정
         BarChart barChart = binding.barChart;
@@ -332,11 +389,14 @@ public class ChallengeFragment extends Fragment {
 
     private void updateChart(int monthIndex) {
         if (monthIndex >= 0 && monthIndex < 12) {
-            successCounts[monthIndex]++;
-            saveChartDataToFirestore();
-            setupBarChart();
+            successCounts[monthIndex]++; // 현재 월(0~11) 인덱스에 값 증가
+            saveChartDataToFirestore();  // Firestore에 저장
+            setupBarChart();             // 차트 갱신
+        } else {
+            Log.e("UInterface", "Invalid month index: " + monthIndex);
         }
     }
+
 
     private void saveChartDataToFirestore() {
         Map<String, Object> chartData = new HashMap<>();
@@ -485,17 +545,24 @@ public class ChallengeFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
+                        // 데이터가 존재하면 해당 데이터를 불러옵니다.
                         for (int i = 0; i < 12; i++) {
                             successCounts[i] = documentSnapshot.contains("month" + (i + 1))
                                     ? documentSnapshot.getLong("month" + (i + 1)).intValue()
                                     : 0;
-                            Log.d("UInterface", "Month " + (i + 1) + " Success Count: " + successCounts[i]);
                         }
-                        setupBarChart();
+                    } else {
+                        // 데이터가 존재하지 않으면 모든 값을 0으로 초기화합니다.
+                        for (int i = 0; i < 12; i++) {
+                            successCounts[i] = 0;
+                        }
+                        saveChartDataToFirestore(); // 초기화된 데이터를 저장합니다.
                     }
+                    setupBarChart(); // 차트를 설정합니다.
                 })
                 .addOnFailureListener(e -> Log.e("UInterface", "Error loading bar chart data: " + e.getMessage()));
     }
+
 
     private void setupBarChart() {
         ArrayList<BarEntry> entries = new ArrayList<>();
@@ -597,6 +664,10 @@ public class ChallengeFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Log.e("UInterface", "Error resetting challenge: " + e.getMessage());
                 });
+    }
+
+    private void resetChallengeFirestoreAndUI() {
+        resetChallengeFirestoreAndUI(-1); // 기본 값으로 -1 전달 (차트 갱신 없음)
     }
 
 
@@ -851,6 +922,7 @@ public class ChallengeFragment extends Fragment {
 
         private final List<DayModel> dayList;
         private final OnDateClickListener onDateClickListener;
+        private View itemView;
 
         public interface OnDateClickListener {
             void onDateClick(DayModel day);
@@ -873,8 +945,8 @@ public class ChallengeFragment extends Fragment {
             DayModel day = dayList.get(position);
             holder.bind(day);
 
-            // 오늘 날짜에만 상태를 표시
-            if (day.isToday()) {
+            // 상태에 따라 스티커 표시
+            if (day.getStatus() != null) {
                 if (day.getStatus().equals("success")) {
                     holder.statusImage.setVisibility(View.VISIBLE);
                     holder.statusImage.setImageResource(R.drawable.smile); // 성공 이미지
@@ -885,9 +957,18 @@ public class ChallengeFragment extends Fragment {
                     holder.statusImage.setVisibility(View.GONE); // 상태가 없으면 숨김
                 }
             } else {
-                holder.statusImage.setVisibility(View.GONE); // 오늘이 아닌 날짜는 상태 숨김
+                holder.statusImage.setVisibility(View.GONE); // 상태가 null인 경우 숨김
+            }
+
+            // 오늘 날짜는 배경 강조
+            if (day.isToday()) {
+                holder.itemView.setBackgroundResource(R.drawable.calendar_day_today); // 오늘 강조
+            } else {
+                holder.itemView.setBackgroundResource(R.drawable.calendar_day_background);
             }
         }
+
+
 
 
         @Override
