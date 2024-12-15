@@ -119,8 +119,8 @@ public class LoginActivity extends AppCompatActivity {
     private void setDailyAlarm() {
         // 알람 시간 설정 (오후 2시)
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 14);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        calendar.set(Calendar.MINUTE, 20);
         calendar.set(Calendar.SECOND, 0);
 
         // 오늘 시간이 지났다면 내일로 설정
