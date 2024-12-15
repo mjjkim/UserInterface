@@ -63,7 +63,9 @@
             android:padding="12dp"
             android:drawableEnd="@drawable/mirror"
             android:backgroundTint="#B3D8EF"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true"
+            android:inputType="text"
+            android:textColor="#000000"/>
     </LinearLayout>
 
     <!-- 게시판 목록 RecyclerView -->
