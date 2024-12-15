@@ -185,14 +185,14 @@ public class HomeFragment extends Fragment {
         bookItemAdapter.setOnItemClickListener(new ReviewItem.OnItemClickListener() {
             @Override
             public void onItemClick(BoardItem bookData) {
-                startActivity(new Intent(getActivity(), MyRecordModifyActivity.class)
+                Intent intent = new Intent(getActivity(), MyRecordModifyActivity.class)
                         .putExtra("title", bookData.getTitle())
                         .putExtra("author", bookData.getAuthor())
                         .putExtra("publisher", bookData.getPublisher())
                         .putExtra("cover", bookData.getBookImage())
                         .putExtra("description", bookData.getDescription())
-                        .putExtra("pubDate", bookData.getPubDate())
-                );
+                        .putExtra("pubDate", bookData.getPubDate());
+                launcher.launch(intent); // 결과 반환받기 위해 launcher 사용
             }
         });
 
@@ -216,7 +216,7 @@ public class HomeFragment extends Fragment {
                 .collection("books")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    itemList.clear();
+                    itemList.clear(); // 기존 데이터 초기화
                     if (!queryDocumentSnapshots.isEmpty()) {
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                             BoardItem item = BoardItem.fromMap(document.getData());
@@ -224,23 +224,12 @@ public class HomeFragment extends Fragment {
                                 itemList.add(item);
                             }
                         }
-                        bookItemAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d("UInterface", "No books found.");
                     }
+                    Log.d("HomeFragment", "Books loaded: " + itemList.size());
+                    bookItemAdapter.notifyDataSetChanged(); // UI 갱신
                 })
-                .addOnFailureListener(e -> Log.e("UInterface", "Books 데이터 로드 실패: " + e.getMessage()));
+                .addOnFailureListener(e -> Log.e("HomeFragment", "Books 데이터 로드 실패: " + e.getMessage()));
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // 프래그먼트로 돌아왔을 때 데이터 다시 로드
-        loadBooksFromFirestore();
-        loadPhrasesFromFirestore(); // 글귀 모음 데이터 새로 불러오기
-    }
-
-
 
     private void loadPhrasesFromFirestore() {
         db.collection("users")
@@ -248,25 +237,30 @@ public class HomeFragment extends Fragment {
                 .collection("phrases")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Log.d("UInterface", "글귀 데이터 가져오기 성공");
                     phraseAdapter.clearPhrases(); // 기존 데이터 초기화
                     if (!queryDocumentSnapshots.isEmpty()) {
                         for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                             BoardItem item = BoardItem.fromMap(document.getData());
-                            if (item != null) { // null 체크
-                                Log.d("UInterface", "가져온 데이터: " + item.getTitle());
+                            if (item != null) {
                                 phraseAdapter.addPhrase(item);
-                            } else {
-                                Log.d("UInterface", "데이터 변환 실패: " + document.getId());
                             }
                         }
-                        phraseAdapter.notifyDataSetChanged();
-                    } else {
-                        Log.d("UInterface", "글귀 데이터가 없습니다.");
                     }
+                    Log.d("HomeFragment", "Phrases loaded: " + phraseAdapter.getItemCount());
+                    phraseAdapter.notifyDataSetChanged(); // UI 갱신
                 })
-                .addOnFailureListener(e -> Log.e("UInterface", "글귀 데이터 로드 실패: " + e.getMessage()));
+                .addOnFailureListener(e -> Log.e("HomeFragment", "Phrases 데이터 로드 실패: " + e.getMessage()));
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("UInterface", "onResume triggered, refreshing data...");
+        loadBooksFromFirestore();
+        loadPhrasesFromFirestore();
+    }
+
 
     private void saveBookToFirestore(BoardItem bookItem) {
         db.collection("users")
@@ -332,6 +326,7 @@ public class HomeFragment extends Fragment {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    // 책 데이터를 추가하는 경우
                     String title = result.getData().getStringExtra("title");
                     String author = result.getData().getStringExtra("author");
                     String description = result.getData().getStringExtra("description");
@@ -339,13 +334,19 @@ public class HomeFragment extends Fragment {
                     String pubDate = result.getData().getStringExtra("pubDate");
                     String cover = result.getData().getStringExtra("cover");
 
-                    BoardItem bookItem = new BoardItem(title, author, description, cover, pubDate, publisher);
-                    itemList.add(bookItem);
-                    bookItemAdapter.notifyDataSetChanged();
-
-                    saveBookToFirestore(bookItem);
+                    if (title != null) {
+                        BoardItem bookItem = new BoardItem(title, author, description, cover, pubDate, publisher);
+                        saveBookToFirestore(bookItem); // Firestore에 저장
+                    }
+                } else if (result.getResultCode() == RESULT_OK) {
+                    // 삭제 또는 수정 후 새로고침
+                    Log.d("UInterface", "Refreshing data after delete or modify");
+                    loadBooksFromFirestore();
+                    loadPhrasesFromFirestore();
                 }
-            });
+            }
+    );
+
 
     @Override
     public void onDestroyView() {
