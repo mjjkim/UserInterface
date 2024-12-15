@@ -72,29 +72,6 @@
                 android:textColor="#000000" />
         </LinearLayout>
 
-        <!-- 댓글 단 글 -->
-        <LinearLayout
-            android:id="@+id/my_comment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:layout_marginLeft="10dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/chat"
-                android:contentDescription="댓글 단 글" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="댓글 단 글"
-                android:textSize="16sp"
-                android:textColor="#000000" />
-        </LinearLayout>
 
         <!-- 스크랩 -->
         <LinearLayout
