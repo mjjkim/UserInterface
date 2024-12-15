@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.signUpbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity (new Intent(LoginActivity.this, SignUpActivity.class));
+                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
             }
         });
 
@@ -66,7 +66,8 @@ public class LoginActivity extends AppCompatActivity {
                 String ID = binding.idLogin.getText().toString();
                 String password = binding.passwordLogin.getText().toString();
 
-                Log.d("UInterface", "ID: " + ID + ", Password: " + password);
+                Log.d("UInterface",
+                        "ID: " + ID + ", Password: " + password);
 
                 if (ID.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 입력해주시기 바랍니다.", Toast.LENGTH_SHORT).show();
@@ -82,8 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                                     // 로그인 성공 시 메인 액티비티로 이동
                                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                     finish();
-                                }
-                                else {
+                                } else {
                                     // 로그인 실패 시 에러 메시지 출력
                                     String errorMessage = task.getException() != null ? task.getException().getMessage() : "알 수 없는 오류";
                                     Toast.makeText(LoginActivity.this, "로그인에 실패하였습니다: " + errorMessage, Toast.LENGTH_SHORT).show();
@@ -98,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         setDailyAlarm();
 
     }
+
     private void checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -105,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -118,56 +120,58 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-    private void setDailyAlarm() {
-        // 알람 시간 설정 (오후 2시)
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 50);
-        calendar.set(Calendar.SECOND, 0);
 
-        // 오늘 시간이 지났다면 내일로 설정
-        if (Calendar.getInstance().after(calendar)) {
-            calendar.add(Calendar.DATE, 1);
+    private void setDailyAlarm() {
+        // 랜덤 문구 알림 설정 (오후 12시)
+        Calendar calendarPhrase = Calendar.getInstance();
+        calendarPhrase.set(Calendar.HOUR_OF_DAY, 15); // 오후 12시
+        calendarPhrase.set(Calendar.MINUTE, 47);
+        calendarPhrase.set(Calendar.SECOND, 0);
+
+        if (Calendar.getInstance().after(calendarPhrase)) {
+            calendarPhrase.add(Calendar.DATE, 1); // 시간이 지났으면 다음 날 예약
         }
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, NotificationReceiver.class);
+        Intent phraseIntent = new Intent(this, NotificationReceiver.class);
+        phraseIntent.putExtra("type", "daily_phrase"); // type 구분
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        PendingIntent phrasePendingIntent = PendingIntent.getBroadcast(
+                this, 1001, phraseIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // 매일 같은 시간에 반복되는 알람 설정
         alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
+                calendarPhrase.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY,
-                pendingIntent
+                phrasePendingIntent
         );
 
-        // 알람 시간 설정
-        Calendar calendar2 = Calendar.getInstance();
-        calendar2.set(Calendar.HOUR_OF_DAY, 12);
-        calendar2.set(Calendar.MINUTE, 51);
-        calendar2.set(Calendar.SECOND, 0);
+        // 챌린지 알림 설정 (저녁 8시)
+        Calendar calendarChallenge = Calendar.getInstance();
+        calendarChallenge.set(Calendar.HOUR_OF_DAY, 15); // 저녁 8시
+        calendarChallenge.set(Calendar.MINUTE, 46);
+        calendarChallenge.set(Calendar.SECOND, 0);
 
-        // 오늘 시간이 지났다면 내일로 설정
-        if (Calendar.getInstance().after(calendar2)) {
-            calendar2.add(Calendar.DATE, 1);
+        if (Calendar.getInstance().after(calendarChallenge)) {
+            calendarChallenge.add(Calendar.DATE, 1);
         }
-        AlarmManager alarmManager2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent2 = new Intent(this, NotificationReceiver.class);
 
-        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(
-                this, 1, intent2, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        AlarmManager alarmManager2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent challengeIntent = new Intent(this, NotificationReceiver.class);
+        challengeIntent.putExtra("type", "challenge"); // type 구분
+
+        PendingIntent challengePendingIntent = PendingIntent.getBroadcast(
+                this, 1002, challengeIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // 매일 같은 시간에 반복되는 알람 설정
         alarmManager2.setRepeating(
                 AlarmManager.RTC_WAKEUP,
-                calendar2.getTimeInMillis(),
+                calendarChallenge.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY,
-                pendingIntent2
+                challengePendingIntent
         );
+
+        Log.d("UInterface", "알람 설정 완료: 랜덤 문구(12시), 챌린지(8시)");
     }
 }
