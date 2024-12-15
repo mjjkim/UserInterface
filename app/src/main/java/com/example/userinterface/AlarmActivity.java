@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -32,6 +33,15 @@ public class AlarmActivity extends AppCompatActivity {
         updateButtonText();
 
         toggleNotificationButton.setOnClickListener(v -> toggleNotificationPermission());
+
+        // 뒤로가기 버튼 클릭 리스너
+        findViewById(R.id.backButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // 현재 액티비티 종료
+            }
+        });
+
     }
 
     private void updateButtonText() {
@@ -89,6 +99,8 @@ public class AlarmActivity extends AppCompatActivity {
             updateButtonText();
         }
     }
+
+
 
     @Override
     protected void onResume() {

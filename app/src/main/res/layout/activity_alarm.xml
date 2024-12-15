@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".AlarmActivity">
 
+    <!-- 뒤로가기 버튼 -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="30dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="뒤로가기 버튼"
+        android:src="@drawable/a" /> <!-- 뒤로가기 버튼의 이미지 -->
 
+    <!-- 알림 설정 버튼 -->
     <Button
         android:id="@+id/toggleNotificationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_centerInParent="true"
         android:text="알림 설정"
-        android:textSize="50dp"
+        android:textSize="20sp"
         android:background="@drawable/rectangle_3"
-        android:layout_marginTop="50dp"/>
-</LinearLayout>
+        android:padding="16dp" />
+</RelativeLayout>
