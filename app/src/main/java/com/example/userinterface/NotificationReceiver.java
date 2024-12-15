@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "daily_notification_channel";
+    private static final String CHANNEL_ID2 = "challenge_channel";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -26,6 +27,12 @@ public class NotificationReceiver extends BroadcastReceiver {
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             notificationManager.createNotificationChannel(channel);
+            NotificationChannel channel2 = new NotificationChannel(
+                    CHANNEL_ID2,
+                    "Challenge Notification",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            notificationManager.createNotificationChannel(channel2);
         }
 
         // 알림 클릭 시 실행될 Activity 설정
@@ -44,6 +51,21 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         notificationManager.notify(1001, builder.build());
+
+        Intent challengeIntent = new Intent(context, LoginActivity.class);
+        PendingIntent challengePPendingIntent = PendingIntent.getActivity(
+                context, 1, challengeIntent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder2 = new NotificationCompat.Builder(context, CHANNEL_ID2)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle("Book Connect")
+                .setContentText("챌린지를 도전해보세요")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(challengePPendingIntent)
+                .setAutoCancel(true);
+
+        notificationManager.notify(1002, builder2.build());
 
         Log.d("NotificationReceiver", "Alarm triggered!");
     }
