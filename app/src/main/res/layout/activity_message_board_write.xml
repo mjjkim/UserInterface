@@ -11,7 +11,7 @@
         android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="   지웅이의 기록"
+        android:text="   지웅이의 게시물"
         android:drawableLeft="@drawable/pencil"
         android:textSize="25dp"
         android:paddingStart="10dp"

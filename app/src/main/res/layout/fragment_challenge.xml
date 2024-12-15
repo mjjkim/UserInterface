@@ -175,7 +175,36 @@
                 </LinearLayout>
 
             </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
+                    <ImageButton
+                        android:id="@+id/challengeSuccessButton"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/success"
+                        android:scaleType="fitXY"
+                        android:background="@drawable/rounded_border"
+                        android:padding="3dp"/>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <!-- Floating Flag Icon -->
+                    <ImageButton
+                        android:id="@+id/challengeFloatingButton"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="16dp"
+                        android:contentDescription="Flag Icon"
+                        android:src="@drawable/giveup"
+                        android:background="@drawable/rounded_border"
+                        android:padding="3dp"/>
+                </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -233,36 +262,7 @@
                     android:textColor="#FF0000"
                     android:layout_marginStart="8dp" />
             </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/challengeSuccessButton"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:src="@drawable/success"
-                        android:scaleType="fitXY"
-                        android:background="@drawable/rounded_border"
-                        android:padding="3dp"/>
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
-                    <!-- Floating Flag Icon -->
-                    <ImageButton
-                        android:id="@+id/challengeFloatingButton"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="16dp"
-                        android:contentDescription="Flag Icon"
-                        android:src="@drawable/giveup"
-                        android:background="@drawable/rounded_border"
-                        android:padding="3dp"/>
-                </LinearLayout>
 
             </LinearLayout>
         </FrameLayout>

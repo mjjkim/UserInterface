@@ -79,7 +79,7 @@ public class MessageBoardWriteActivity extends AppCompatActivity {
                     }
                     if (documentSnapshot != null && documentSnapshot.exists()) {
                         String nickname = documentSnapshot.getString("nickname");
-                        binding.messageBoardWriteNickname.setText(nickname != null ? nickname + "의 기록" : "닉네임의 기록");
+                        binding.messageBoardWriteNickname.setText(nickname != null ? nickname + "의 게시글" : "닉네임의 게시글");
                     }
                 });
 

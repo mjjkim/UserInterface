@@ -124,8 +124,8 @@ public class LoginActivity extends AppCompatActivity {
     private void setDailyAlarm() {
         // 랜덤 문구 알림 설정 (오후 12시)
         Calendar calendarPhrase = Calendar.getInstance();
-        calendarPhrase.set(Calendar.HOUR_OF_DAY, 12); // 오후 12시
-        calendarPhrase.set(Calendar.MINUTE, 0);
+        calendarPhrase.set(Calendar.HOUR_OF_DAY, 20); // 오후 12시
+        calendarPhrase.set(Calendar.MINUTE, 35);
         calendarPhrase.set(Calendar.SECOND, 0);
 
         if (Calendar.getInstance().after(calendarPhrase)) {
@@ -150,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
         // 챌린지 알림 설정 (저녁 8시)
         Calendar calendarChallenge = Calendar.getInstance();
         calendarChallenge.set(Calendar.HOUR_OF_DAY, 20); // 저녁 8시
-        calendarChallenge.set(Calendar.MINUTE, 0);
+        calendarChallenge.set(Calendar.MINUTE, 35);
         calendarChallenge.set(Calendar.SECOND, 0);
 
         if (Calendar.getInstance().after(calendarChallenge)) {
