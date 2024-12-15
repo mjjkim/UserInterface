@@ -1,13 +1,16 @@
 package com.example.userinterface;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -240,7 +243,17 @@ public class MyRecordModifyActivity extends AppCompatActivity {
             saveRecordToFirestore();
             return true;
         } else if (item.getItemId() == R.id.remove_action) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setMessage("정말로 삭제하시겠습니까?")
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
+                        }
+                    })
+                    .setNegativeButton("취소", null)
+                    .create();
+            dialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
