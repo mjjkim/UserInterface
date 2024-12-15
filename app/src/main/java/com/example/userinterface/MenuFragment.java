@@ -111,13 +111,7 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        // 댓글 단 글
-        binding.myComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(requireContext(), MessageBoardCommentActivity.class));
-            }
-        });
+
 
         // 내가 쓴 글
         binding.myList.setOnClickListener(new View.OnClickListener() {
