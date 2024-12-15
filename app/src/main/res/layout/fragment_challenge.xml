@@ -57,7 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="지난 챌린지"
+                android:text="지난 기록"
                     android:backgroundTint="#E0E0E0"
                 android:textColor="#555555" />
         </LinearLayout>
