@@ -1,10 +1,12 @@
 package com.example.userinterface;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +25,7 @@ import java.util.HashMap;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private Button back;
+    private ImageButton back;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private boolean isEmailAvailable = false; // 이메일 중복 여부 저장

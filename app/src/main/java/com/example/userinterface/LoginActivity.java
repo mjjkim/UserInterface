@@ -111,16 +111,18 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == NOTIFICATION_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // 권한이 허용됨
+                Toast.makeText(this, "알림이 허용되었습니다", Toast.LENGTH_SHORT).show();
             } else {
                 // 권한이 거부됨
+                Toast.makeText(this, "알림이 거부되었습니다", Toast.LENGTH_SHORT).show();
             }
         }
     }
     private void setDailyAlarm() {
         // 알람 시간 설정 (오후 2시)
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 14);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 50);
         calendar.set(Calendar.SECOND, 0);
 
         // 오늘 시간이 지났다면 내일로 설정
@@ -141,6 +143,31 @@ public class LoginActivity extends AppCompatActivity {
                 calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY,
                 pendingIntent
+        );
+
+        // 알람 시간 설정
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.set(Calendar.HOUR_OF_DAY, 12);
+        calendar2.set(Calendar.MINUTE, 51);
+        calendar2.set(Calendar.SECOND, 0);
+
+        // 오늘 시간이 지났다면 내일로 설정
+        if (Calendar.getInstance().after(calendar2)) {
+            calendar2.add(Calendar.DATE, 1);
+        }
+        AlarmManager alarmManager2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent2 = new Intent(this, NotificationReceiver.class);
+
+        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(
+                this, 1, intent2, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        // 매일 같은 시간에 반복되는 알람 설정
+        alarmManager2.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendar2.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent2
         );
     }
 }
