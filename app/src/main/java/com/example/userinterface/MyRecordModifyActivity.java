@@ -2,6 +2,7 @@ package com.example.userinterface;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -245,11 +246,8 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.remove_action) {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setMessage("정말로 삭제하시겠습니까?")
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
+                    .setPositiveButton("확인", (dialogInterface, i) -> {
+                        deleteRecordAndPhrase(); // 두 문서를 삭제하는 함수 호출
                     })
                     .setNegativeButton("취소", null)
                     .create();
@@ -258,4 +256,46 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void deleteRecordAndPhrase() {
+        if (userId == null || documentId == null) {
+            Toast.makeText(this, "사용자 정보나 문서 ID를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users")
+                .document(userId)
+                .collection("books")
+                .document(documentId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("UInterface", "books 문서 삭제 성공");
+                    db.collection("users")
+                            .document(userId)
+                            .collection("phrases")
+                            .document(documentId)
+                            .delete()
+                            .addOnSuccessListener(aVoid2 -> {
+                                Log.d("UInterface", "phrases 문서 삭제 성공");
+                                Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+
+                                // 액티비티 종료
+                                setResult(RESULT_OK); // 결과 반환
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("UInterface", "phrases 문서 삭제 실패: " + e.getMessage());
+                                Toast.makeText(this, "phrases 삭제 실패", Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UInterface", "books 문서 삭제 실패: " + e.getMessage());
+                    Toast.makeText(this, "books 삭제 실패", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
 }
+
