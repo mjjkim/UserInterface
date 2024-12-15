@@ -239,8 +239,8 @@ public class MyRecordModifyActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.review_action) {
             saveRecordToFirestore();
             return true;
-        } else if (item.getItemId() == R.id.cancel_action) {
-            finish();
+        } else if (item.getItemId() == R.id.remove_action) {
+
             return true;
         }
         return super.onOptionsItemSelected(item);
