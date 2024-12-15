@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -162,16 +161,15 @@ public class MessageBoardMyActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(MessageBoardMyActivity.this, MessageBoardReviewActivity.class);
-                    intent.putExtra("postId", item.getPostId()); // 게시물의 postId 전달
+                    intent.putExtra("postId", item.getPostId());
                     intent.putExtra("title", item.getTitle());
                     intent.putExtra("author", item.getAuthor());
                     intent.putExtra("description", item.getContent());
                     intent.putExtra("cover", item.getCover());
+                    intent.putExtra("review", item.getContent()); // 리뷰 데이터를 추가
                     startActivity(intent);
                 }
             });
-
-
         }
 
         @Override

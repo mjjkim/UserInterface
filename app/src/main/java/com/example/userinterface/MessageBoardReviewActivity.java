@@ -87,7 +87,13 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
                 .error(R.drawable.error)
                 .into(binding.reviewCover);
 
-        etReview.setText(getIntent().getStringExtra("review"));
+        // 리뷰 내용 설정 - 여기 추가
+        String reviewText = getIntent().getStringExtra("review");
+        if (reviewText != null && !reviewText.isEmpty()) {
+            etReview.setText(reviewText);
+        } else {
+            etReview.setText("리뷰 내용이 없습니다."); // 기본값 설정
+        }
         etReview.setFocusable(false);
         etReview.setFocusableInTouchMode(false);
 
@@ -120,19 +126,26 @@ public class MessageBoardReviewActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        reviewTitle.setText(documentSnapshot.getString("title"));
-                        reviewAuthor.setText(documentSnapshot.getString("author"));
-                        reviewDescription.setText(documentSnapshot.getString("description"));
-                        Glide.with(this)
-                                .load(documentSnapshot.getString("cover"))
-                                .error(R.drawable.error)
-                                .into(binding.reviewCover);
+                        // Firestore 데이터가 null이 아닐 경우에만 덮어씌움
+                        String firestoreTitle = documentSnapshot.getString("title");
+                        String firestoreAuthor = documentSnapshot.getString("author");
+                        String firestoreDescription = documentSnapshot.getString("description");
+                        String firestoreCover = documentSnapshot.getString("cover");
+
+                        if (firestoreTitle != null) reviewTitle.setText(firestoreTitle);
+                        if (firestoreAuthor != null) reviewAuthor.setText(firestoreAuthor);
+                        if (firestoreDescription != null) reviewDescription.setText(firestoreDescription);
+                        if (firestoreCover != null) {
+                            Glide.with(this)
+                                    .load(firestoreCover)
+                                    .error(R.drawable.error)
+                                    .into(binding.reviewCover);
+                        }
                     } else {
-                        Toast.makeText(this, "게시물을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
-                        finish();
+                        Log.e("UInterface", "게시물을 찾을 수 없습니다.");
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, "게시물 로드 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Log.e("UInterface", "Firestore 로드 실패: " + e.getMessage()));
 
         // Firestore에서 댓글 로드
         loadCommentsFromFirestore();
