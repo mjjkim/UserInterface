@@ -52,7 +52,8 @@
             android:layout_height="wrap_content"
             android:text="author"
             android:gravity="center"
-            android:id="@+id/phraseModifyAuthor"/>
+            android:id="@+id/phraseModifyAuthor"
+            android:textColor="@color/black"/>
         <!-- 글귀 입력 -->
 
         <!-- 메모 입력 -->

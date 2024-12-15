@@ -39,7 +39,8 @@
                 android:gravity="center"
                 android:layout_marginTop="55dp"
                 android:textSize="30dp"
-                android:id="@+id/modifyTitle"/>
+                android:id="@+id/modifyTitle"
+                android:textColor="@color/black"/>
             <ImageView
                 android:layout_width="148dp"
                 android:layout_height="210dp"
@@ -53,7 +54,8 @@
                 android:gravity="center"
                 android:text="작가"
                 android:layout_margin="5dp"
-                android:id="@+id/modifyAuthor"/>
+                android:id="@+id/modifyAuthor"
+                android:textColor="@color/black"/>
 
             <RatingBar
                 android:layout_width="wrap_content"

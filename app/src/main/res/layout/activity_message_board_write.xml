@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#ffffff">
 
     <!-- 제목 TextView -->
     <TextView
@@ -14,7 +15,8 @@
         android:drawableLeft="@drawable/pencil"
         android:textSize="25dp"
         android:paddingStart="10dp"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:textColor="#000000"/>
 
     <!-- 책 정보 LinearLayout -->
     <LinearLayout
@@ -38,13 +40,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="책 이름"
-                android:padding="4dp" />
+                android:padding="4dp"
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/recordAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="책 저자"
-                android:padding="4dp" />
+                android:padding="4dp"
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/recordDescription"
                 android:layout_width="wrap_content"
@@ -53,7 +57,8 @@
                 android:maxLines="3"
                 android:ellipsize="end"
                 android:padding="4dp"
-                android:text="책 소개" />
+                android:text="책 소개"
+                android:textColor="#000000"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -68,7 +73,7 @@
         android:gravity="top"
         android:hint="여기에 글을 입력하세요"
         android:background="@drawable/edittext_rounded"
-        android:textColor="#000000"/>
+        android:textColor="#000000" />
 
     <!-- 확인 버튼 -->
     <Button

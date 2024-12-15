@@ -56,7 +56,8 @@
                 android:layout_gravity="center"
                 android:text="작가"
                 android:id="@+id/recordStoreAuthor"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"/>
             <View
                 android:layout_margin="12dp"
                 android:layout_width="match_parent"
