@@ -66,7 +66,9 @@
                 android:padding="12dp"
                 android:drawableEnd="@drawable/mirror"
                 android:backgroundTint="@color/theme_color1"
-                android:layout_alignParentTop="true"/>
+                android:layout_alignParentTop="true"
+                android:inputType="text"
+                android:textColor="#000000"/>
         </LinearLayout>
 
         <FrameLayout

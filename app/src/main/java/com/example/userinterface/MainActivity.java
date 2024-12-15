@@ -71,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        bottomNavigator.setOnItemReselectedListener(new NavigationBarView.OnItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem item) {
+
+            }
+        });
 
     }
     // Fragment 교체 메서드
